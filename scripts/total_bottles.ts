@@ -1,12 +1,14 @@
-import { prisma } from "../prisma";
+import { db } from "@/db";
+import { TotalBottles } from "@/db/schema";
 async function main() {
   try {
-    const totalBottles = await prisma.totalBottles.create({
-      data: {
+    const totalBottles = await db
+      .insert(TotalBottles)
+      .values({
         total_bottles: 1000,
         available_bottles: 1000,
-      },
-    });
+      })
+      .returning();
 
     console.log({ totalBottles });
   } catch (error) {

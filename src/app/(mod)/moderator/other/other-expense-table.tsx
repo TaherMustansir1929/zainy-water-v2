@@ -51,9 +51,11 @@ export const OtherExpenseTable = () => {
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/50">
-              <TableHead className="h-9 py-2">Date</TableHead>
-              <TableHead className="h-9 py-2">Amount</TableHead>
-              <TableHead className="h-9 py-2">Description</TableHead>
+              <TableHead className="h-9 py-2 min-w-[150px]">Date</TableHead>
+              <TableHead className="h-9 py-2 min-w-[100px]">Amount</TableHead>
+              <TableHead className="h-9 py-2 min-w-[150px]">
+                Description
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

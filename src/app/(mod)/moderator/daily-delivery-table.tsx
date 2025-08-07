@@ -18,7 +18,6 @@ import {
 } from "@/actions/moderator/mod-delivery.action";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { redirect } from "next/navigation";
 import { toast } from "sonner";
 
 type DeliveryTableData = {

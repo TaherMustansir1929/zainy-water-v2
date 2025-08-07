@@ -142,6 +142,20 @@ export const DailyDeliveryForm = () => {
       return;
     }
 
+    // Error Handling/Form Validation for empty_bottles
+    if (customerData && form.watch("empty_bottles") > customerData.bottles) {
+      form.setError(
+        "empty_bottles",
+        {
+          message:
+            "Empty bottles cannot be more than customer's remaining bottles.",
+        },
+        { shouldFocus: true }
+      );
+      setSubmitting(false);
+      return;
+    }
+
     // Calculate final balance for submission
     const raw_current_balance =
       customerData.bottle_price * values.filled_bottles;
@@ -512,8 +526,11 @@ export const DailyDeliveryForm = () => {
             className="w-full bg-primary disabled:opacity-100 disabled:hover:cursor-not-allowed shadow-lg shadow-blue-300/40 hover:shadow-xl hover:shadow-blue-400/50 font-bold"
           >
             Submit
-            <SendHorizonal className="size-4" />
-            {submitting && <Loader2 className="size-4 animate-spin" />}
+            {submitting ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <SendHorizonal className="size-4" />
+            )}
           </Button>
         </form>
       </Form>

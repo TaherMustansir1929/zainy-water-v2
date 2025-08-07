@@ -1,7 +1,9 @@
 "use server";
 
-import { OtherExpense } from "@prisma/client";
-import { prisma } from "../../lib/prisma";
+import { db } from "@/db";
+import { OtherExpense } from "@/db/schema";
+import { endOfDay, startOfDay } from "date-fns";
+import { and, desc, eq, gte, lte } from "drizzle-orm";
 
 export type OtherExpenseData = {
   moderator_id: string;
@@ -12,16 +14,17 @@ export type OtherExpenseData = {
 
 export async function createOtherExpense(
   data: OtherExpenseData
-): Promise<OtherExpense | null> {
+): Promise<typeof OtherExpense.$inferSelect | null> {
   try {
-    const expense = await prisma.otherExpense.create({
-      data: {
+    const [expense] = await db
+      .insert(OtherExpense)
+      .values({
         moderator_id: data.moderator_id,
         amount: data.amount,
         description: data.description,
         date: data.date,
-      },
-    });
+      })
+      .returning();
 
     return expense;
   } catch (error) {
@@ -32,17 +35,20 @@ export async function createOtherExpense(
 
 export async function getOtherExpensesByModeratorId(
   id: string
-): Promise<OtherExpense[] | null> {
+): Promise<(typeof OtherExpense.$inferSelect)[] | null> {
   try {
-    const expenses = await prisma.otherExpense.findMany({
-      where: {
-        moderator_id: id,
-        date: {
-          gte: new Date(new Date().setHours(0, 0, 0, 0)), // Start of today
-        },
-      },
-      orderBy: { date: "desc" }, // Order by date descending
-    });
+    const expenses = await db
+      .select()
+      .from(OtherExpense)
+      .where(
+        and(
+          eq(OtherExpense.moderator_id, id),
+          gte(OtherExpense.date, startOfDay(new Date())),
+          lte(OtherExpense.date, endOfDay(new Date()))
+        )
+      )
+      .orderBy(desc(OtherExpense.date));
+
     return expenses;
   } catch (error) {
     console.error("Error fetching other expenses:", error);

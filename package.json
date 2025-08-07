@@ -4,15 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "bunx prisma generate && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "bunx prisma generate",
-    "db:migrate": "bunx prisma migrate deploy",
-    "db:migrate:dev": "bunx prisma migrate dev"
+    "db:migrate": "bunx drizzle-kit generate && bunx drizzle-kit migrate",
+    "db:push": "bunx drizzle-kit push"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
+    "@neondatabase/serverless": "^1.0.1",
     "@prisma/client": "5.19.1",
     "@prisma/extension-accelerate": "^2.0.2",
     "@radix-ui/react-accordion": "^1.2.11",
@@ -47,6 +47,8 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
+    "dotenv": "^17.2.1",
+    "drizzle-orm": "^0.44.4",
     "embla-carousel-react": "^8.6.0",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.536.0",
@@ -74,6 +76,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "drizzle-kit": "^0.31.4",
     "eslint": "^9",
     "eslint-config-next": "15.4.5",
     "prisma": "5.19.1",

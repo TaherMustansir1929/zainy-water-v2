@@ -47,7 +47,7 @@ export function OtherExpenseForm() {
     setSubmitting(true);
 
     const data: OtherExpenseData = {
-      moderator_id: moderator?.id || "cmdwsek000000ijja4qqbsa8t",
+      moderator_id: moderator!.id,
       amount: values.amount,
       description: values.description,
       date: new Date(),
@@ -115,8 +115,11 @@ export function OtherExpenseForm() {
           className="w-full bg-primary disabled:opacity-100 disabled:hover:cursor-not-allowed shadow-lg shadow-blue-300/40 hover:shadow-xl hover:shadow-blue-400/50 font-bold"
         >
           Submit
-          <SendHorizonal className="size-4" />
-          {submitting && <Loader2 className="animate-spin" />}
+          {submitting ? (
+            <Loader2 className="animate-spin" />
+          ) : (
+            <SendHorizonal className="size-4" />
+          )}
         </Button>
       </form>
     </Form>

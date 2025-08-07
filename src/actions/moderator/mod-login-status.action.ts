@@ -1,7 +1,9 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { prisma } from "../../lib/prisma";
+import { db } from "@/db";
+import { Moderator } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export async function modLoginStatus() {
   try {
@@ -10,9 +12,11 @@ export async function modLoginStatus() {
       return { success: false, message: "Not logged in" };
     }
 
-    const mod_db = await prisma.moderator.findUnique({
-      where: { id: mod_id.value },
-    });
+    const [mod_db] = await db
+      .select()
+      .from(Moderator)
+      .where(eq(Moderator.id, mod_id.value))
+      .limit(1);
 
     if (!mod_db) {
       return { success: false, message: "Moderator not found" };
