@@ -17,13 +17,13 @@ export default function Home() {
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
           <Button className="bg-blue-500 text-white min-w-[120px] text-lg">
-            <Link href={"/admin/login"} className="flex items-center gap-2">
+            <Link href={"/admin"} className="flex items-center gap-2">
               <UserStar className="size-5 animate-pulse" />
               Admin
             </Link>
           </Button>
           <Button className="bg-green-500 text-white min-w-[120px] text-lg">
-            <Link href={"/moderator/login"} className="flex items-center gap-2">
+            <Link href={"/moderator"} className="flex items-center gap-2">
               <UserPen className="size-5 animate-pulse" />
               Moderator
             </Link>

@@ -16,7 +16,13 @@ export async function loginAdmin(name: string, password: string) {
     return { success: false, message: "Invalid credentials", id: null };
   }
 
-  (await cookies()).set("admin_id", admin_data.id);
+  (await cookies()).set("admin_id", admin_data.id, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 30, // 30 days
+    sameSite: "lax",
+  });
 
   return { success: true, message: "Login successful", admin_data };
 }

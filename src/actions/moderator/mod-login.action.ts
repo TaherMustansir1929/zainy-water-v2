@@ -24,7 +24,13 @@ export async function loginModerator(name: string, password: string) {
     };
   }
 
-  (await cookies()).set("moderator_id", mod_data.id);
+  (await cookies()).set("moderator_id", mod_data.id, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 30, // 30 days
+    sameSite: "lax",
+  });
 
   return { success: true, message: "Login successful", mod_data };
 }
