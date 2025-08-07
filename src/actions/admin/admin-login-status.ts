@@ -1,7 +1,9 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { prisma } from "../../lib/prisma";
+import { db } from "@/db";
+import { Admin } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export async function adminLoginStatus() {
   try {
@@ -10,16 +12,18 @@ export async function adminLoginStatus() {
       return { success: false, message: "Admin not logged in" };
     }
 
-    const admin_db = await prisma.admin.findUnique({
-      where: { id: admin_id.value },
-    });
+    const [admin_db] = await db
+      .select()
+      .from(Admin)
+      .where(eq(Admin.id, admin_id.value))
+      .limit(1);
 
     if (!admin_db) {
       return { success: false, message: "Admin not found" };
     }
 
     return { success: true, message: `Found admin with id: ${admin_id.value}` };
-  } catch (error) {
+  } catch {
     return {
       success: false,
       message: "Error occurred while checking admin login status",

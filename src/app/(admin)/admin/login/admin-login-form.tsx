@@ -20,6 +20,7 @@ import { loginAdmin } from "@/actions/admin/admin-login.action";
 import { toast } from "sonner";
 import { useAdminStore } from "@/lib/admin-state";
 import { redirect } from "next/navigation";
+import { LoadingDotsPulse } from "@/components/loading-dots";
 
 const formSchema = z.object({
   name: z.string().min(2),
@@ -47,7 +48,8 @@ export const AdminLoginForm = () => {
     setSubmitting(false);
 
     if (!success || !admin_data) {
-      form.setError("root", { type: "manual", message });
+      form.setError("name", { message });
+      form.setError("password", { message });
       toast.error(message);
       return;
     }
@@ -97,7 +99,7 @@ export const AdminLoginForm = () => {
         <div className="w-full flex justify-end">
           <Button type="submit" disabled={submitting}>
             Login
-            {submitting && <Loader2 className="animate-spin" />}
+            {submitting && <LoadingDotsPulse size="sm" />}
           </Button>
         </div>
       </form>

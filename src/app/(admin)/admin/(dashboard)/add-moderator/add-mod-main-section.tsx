@@ -13,12 +13,8 @@ import { EditForm } from "./edit-form";
 import { useAddModDrawer } from "@/lib/ui-states/add-moderator-drawer";
 import { useGetModeratorList } from "@/queries/admin/useGetModeratorList";
 import { Button } from "@/components/ui/button";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { cn } from "@/lib/utils";
 
 export const AddModMainSection = () => {
-  const isMobile = useIsMobile();
-
   const { mod_data, isEditOpen, isAddOpen, closeDrawer, openAddDrawer } =
     useAddModDrawer();
   const moderator = mod_data;

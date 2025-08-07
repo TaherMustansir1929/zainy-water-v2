@@ -1,10 +1,13 @@
 "use server";
 
-import { prisma } from "../../../lib/prisma";
+import { db } from "@/db";
+import { Moderator } from "@/db/schema";
 
-export async function getAllModeratorList() {
+export async function getAllModeratorList(): Promise<
+  (typeof Moderator.$inferSelect)[]
+> {
   try {
-    const data = await prisma.moderator.findMany();
+    const data = await db.select().from(Moderator);
     return data;
   } catch (error) {
     console.error("Error fetching moderators:", error);

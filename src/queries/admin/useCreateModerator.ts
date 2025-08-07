@@ -1,13 +1,17 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Moderator as ModeratorPrisma } from "@prisma/client";
-import { Moderator } from "@/app/(admin)/admin/(dashboard)/add-moderator/columns";
+import { Moderator as ModeratorData } from "@/app/(admin)/admin/(dashboard)/add-moderator/columns";
 import { createModerator } from "@/actions/admin/add-moderator-actions/admin-create-mod.action";
 import { toast } from "sonner";
+import { Moderator } from "@/db/schema";
 
 export const useCreateModerator = () => {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation<ModeratorPrisma, Error, Moderator>({
+  const mutation = useMutation<
+    typeof Moderator.$inferSelect,
+    Error,
+    ModeratorData
+  >({
     mutationKey: ["create_moderator"],
     mutationFn: async (data) => {
       const newModerator = await createModerator(data);

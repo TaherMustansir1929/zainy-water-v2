@@ -18,6 +18,8 @@ import { changeAdminPasswordAndId } from "@/actions/admin/admin-change-password.
 import { toast } from "sonner";
 import { useAdminStore } from "@/lib/admin-state";
 import { redirect } from "next/navigation";
+import { useState } from "react";
+import { LoadingDotsPulse } from "@/components/loading-dots";
 
 const formSchema = z
   .object({
@@ -41,12 +43,16 @@ export const AdminChangePasswordForm = () => {
     },
   });
 
+  const [submitting, setSubmitting] = useState(false);
+
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setSubmitting(true);
     const response = await changeAdminPasswordAndId(
       values.current_password,
       values.new_password
     );
+    setSubmitting(false);
 
     if (response.error) {
       toast.error(`Error: ${response.error}`);
@@ -105,7 +111,15 @@ export const AdminChangePasswordForm = () => {
             )}
           />
           <div className="flex justify-end">
-            <Button type="submit">Update</Button>
+            <Button type="submit" disabled={submitting}>
+              {submitting ? (
+                <div className="flex items-center gap-2">
+                  Updating <LoadingDotsPulse size="sm" />
+                </div>
+              ) : (
+                "Update"
+              )}
+            </Button>
           </div>
         </form>
       </Form>

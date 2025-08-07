@@ -1,5 +1,4 @@
 import { changeModeratorWorkingStatus } from "@/actions/admin/add-moderator-actions/admin-mod-change-status.action";
-import { Moderator } from "@/app/(admin)/admin/(dashboard)/add-moderator/columns";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 

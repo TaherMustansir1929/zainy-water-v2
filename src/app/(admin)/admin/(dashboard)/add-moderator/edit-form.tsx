@@ -25,10 +25,10 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Moderator } from "./columns";
 import { useAddModDrawer } from "@/lib/ui-states/add-moderator-drawer";
-import { Loader2 } from "lucide-react";
 import { useUpdateModerator } from "@/queries/admin/useUpdateModerator";
 import { useCreateModerator } from "@/queries/admin/useCreateModerator";
 import { Plus, X } from "lucide-react";
+import { LoadingDotsPulse } from "@/components/loading-dots";
 
 const formSchema = z
   .object({
@@ -224,8 +224,14 @@ export function EditForm({ mod_data }: Props) {
 
           <div className="w-full flex flex-row justify-around items-center gap-x-10">
             <Button type="submit" className="w-1/2" disabled={isSubmitting}>
-              {mod_data ? "Update" : "Create"}
-              {isSubmitting && <Loader2 className="animate-spin" />}
+              {isSubmitting ? (
+                <>
+                  {mod_data ? "Updating " : "Creating "}
+                  <LoadingDotsPulse size="sm" />
+                </>
+              ) : (
+                <>{mod_data ? "Update" : "Create"}</>
+              )}
             </Button>
             <Button
               variant="outline"

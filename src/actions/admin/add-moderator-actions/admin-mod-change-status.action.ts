@@ -1,14 +1,20 @@
 "use server";
-import { prisma } from "../../../lib/prisma";
+
+import { db } from "@/db";
+import { Moderator } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export async function changeModeratorWorkingStatus(
   name: string,
   currentStatus: boolean
 ) {
-  const updatedModerator = await prisma.moderator.update({
-    where: { name: name },
-    data: { isWorking: !currentStatus },
-  });
+  const [updatedModerator] = await db
+    .update(Moderator)
+    .set({
+      isWorking: !currentStatus,
+    })
+    .where(eq(Moderator.name, name))
+    .returning();
 
   if (updatedModerator) {
     console.log(`Moderator: ${name} status changed successfully.`);

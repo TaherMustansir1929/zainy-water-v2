@@ -1,20 +1,20 @@
 "use server";
 
-import { Moderator } from "@/app/(admin)/admin/(dashboard)/add-moderator/columns";
-import { Moderator as ModeratorPrisma } from "@prisma/client";
-import { prisma } from "../../../lib/prisma";
+import { Moderator as ModeratorData } from "@/app/(admin)/admin/(dashboard)/add-moderator/columns";
+import { Moderator } from "@/db/schema";
+import { db } from "@/db";
+import { eq } from "drizzle-orm";
 
 export async function updateModeratorByName(
   name: string,
-  data: Moderator
-): Promise<ModeratorPrisma> {
+  data: ModeratorData
+): Promise<typeof Moderator.$inferSelect> {
   try {
-    const updatedModerator = await prisma.moderator.update({
-      where: { name: name },
-      data: {
-        ...data,
-      },
-    });
+    const [updatedModerator] = await db
+      .update(Moderator)
+      .set({ ...data })
+      .where(eq(Moderator.name, name))
+      .returning();
 
     return updatedModerator;
   } catch (error) {

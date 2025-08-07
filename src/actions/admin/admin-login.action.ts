@@ -1,15 +1,16 @@
 "use server";
 
-import { prisma } from "../../lib/prisma";
+import { db } from "@/db";
+import { Admin } from "@/db/schema";
+import { and, eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 
 export async function loginAdmin(name: string, password: string) {
-  const admin_data = await prisma.admin.findUnique({
-    where: {
-      name,
-      password,
-    },
-  });
+  const [admin_data] = await db
+    .select()
+    .from(Admin)
+    .where(and(eq(Admin.name, name), eq(Admin.password, password)))
+    .limit(1);
 
   if (!admin_data) {
     return { success: false, message: "Invalid credentials", id: null };

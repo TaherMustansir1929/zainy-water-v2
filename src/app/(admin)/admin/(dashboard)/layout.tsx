@@ -9,7 +9,7 @@ type Props = { children: React.ReactNode };
 const DashboardLayout = async ({ children }: Props) => {
   const admin = await adminMiddleware();
 
-  if (!admin) {
+  if (!admin.success) {
     redirect("/admin/login");
   }
 

@@ -1,12 +1,13 @@
 "use server";
 
-import { prisma } from "../../../lib/prisma";
+import { db } from "@/db";
+import { Moderator } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export async function deleteModerator(name: string) {
   try {
-    await prisma.moderator.delete({
-      where: { name: name },
-    });
+    await db.delete(Moderator).where(eq(Moderator.name, name));
+
     console.log(`Moderator: ${name} deleted successfully.`);
   } catch (error) {
     console.error(`Error deleting moderator: ${name}:`, error);

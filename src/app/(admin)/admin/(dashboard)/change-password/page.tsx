@@ -15,17 +15,19 @@ const AdminChangePassword = () => {
         greeting="Hello"
         text="Change your current admin password. You will be logged out of all the devices after this change."
       />
-      <Card className="w-full max-w-4xl mx-auto my-8">
-        <CardHeader>
-          <CardTitle>Change Admin Password</CardTitle>
-          <CardDescription>
-            You will be logged out after changing your password.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <AdminChangePasswordForm />
-        </CardContent>
-      </Card>
+      <div className="w-full p-4">
+        <Card className="w-full max-w-4xl mx-auto my-8">
+          <CardHeader>
+            <CardTitle>Change Admin Password</CardTitle>
+            <CardDescription>
+              You will be logged out after changing your password.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <AdminChangePasswordForm />
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

@@ -1,21 +1,25 @@
 "use server";
 
+import { db } from "@/db";
+import { Admin } from "@/db/schema";
+import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
-import { prisma } from "../../lib/prisma";
 
 export async function adminMiddleware() {
   const admin_id = (await cookies()).get("admin_id")?.value;
   console.log({ admin_id });
 
-  if (!admin_id) return false;
+  if (!admin_id) return { success: false, error: "Admin not logged in" };
 
-  const admin_db = await prisma.admin.findUnique({
-    where: { id: admin_id },
-  });
+  const [admin_db] = await db
+    .select()
+    .from(Admin)
+    .where(eq(Admin.id, admin_id))
+    .limit(1);
 
   if (!admin_db) {
-    return false;
+    return { success: false, error: "Admin not found" };
   }
 
-  return true;
+  return { success: true, data: admin_db };
 }
