@@ -1,9 +1,11 @@
 "use client";
 
+import { handleModeratorLogout } from "@/actions/moderator/mod-handle-logout.action";
 import { Button } from "@/components/ui/button";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useModeratorStore } from "@/lib/moderator-state";
 import Image from "next/image";
+import Link from "next/link";
 import { redirect, usePathname } from "next/navigation";
 
 export const ModHeader = () => {
@@ -20,16 +22,16 @@ export const ModHeader = () => {
 
     // Clear moderator state and cookies
     useModeratorStore.getState().setModerator(null);
-    await cookieStore.delete("moderator_id");
+    await handleModeratorLogout();
     redirect("/moderator/login");
   };
 
   return (
     <header className="w-full border-b border-gray-200 p-2 flex justify-between items-center">
       <LogoutConfirmDialog />
-      <h1 className="text-lg font-semibold">
+      <Link href={"/"} className="text-lg font-semibold">
         <Image src={"/logo.jpg"} alt="Zainy Water" width={120} height={120} />
-      </h1>
+      </Link>
       {!(pathname === "/moderator/login") && (
         <Button variant="outline" size={"sm"} onClick={handleLogout}>
           Logout

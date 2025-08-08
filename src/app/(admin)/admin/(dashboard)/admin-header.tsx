@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { SidebarToggleButton } from "../../_components/sidebar-toggle-button";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useAdminStore } from "@/lib/admin-state";
+import { handleAdminLogout } from "@/actions/admin/admin-handle-logout.action";
 
 export const AdminHeader = () => {
   const [LogoutConfirmDialog, logout_confirm] = useConfirm(
@@ -18,7 +19,7 @@ export const AdminHeader = () => {
 
     // Clear admin state and cookies
     useAdminStore.getState().setAdmin(null);
-    await cookieStore.delete("admin_id");
+    await handleAdminLogout();
     redirect("/admin/login");
   };
 
