@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -16,15 +17,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useModeratorStore } from "@/lib/moderator-state";
-import {
-  createOtherExpense,
-  OtherExpenseData,
-} from "@/actions/moderator/mod-other-exp.action";
-import { useState } from "react";
+import { OtherExpenseData } from "@/actions/moderator/mod-other-exp.action";
 import { toast } from "sonner";
 import { Loader2, SendHorizonal } from "lucide-react";
+import { useCreateOtherExpense } from "@/queries/moderator/useCreateOtherExpense";
 
 const formSchema = z.object({
+  refilled_bottles: z.number().min(0),
   amount: z.number().min(1),
   description: z.string().min(1).max(250),
 });
@@ -33,21 +32,27 @@ export function OtherExpenseForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      refilled_bottles: 0,
       amount: 0,
       description: "",
     },
   });
 
-  const { moderator } = useModeratorStore();
+  const moderator = useModeratorStore((state) => state.moderator);
 
-  const [submitting, setSubmitting] = useState(false);
+  const createOtherExpenseMutation = useCreateOtherExpense();
+  const submitting = createOtherExpenseMutation.isPending;
 
   // FORM submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setSubmitting(true);
+    if (!moderator) {
+      toast.error("Moderator not found. Please log in.");
+      return;
+    }
 
     const data: OtherExpenseData = {
-      moderator_id: moderator!.id,
+      moderator_id: moderator.id,
+      refilled_bottles: values.refilled_bottles,
       amount: values.amount,
       description: values.description,
       date: new Date(),
@@ -55,23 +60,46 @@ export function OtherExpenseForm() {
     console.log(data);
 
     // Call the action to create the other expense
-    const expense = await createOtherExpense(data);
+    const expense = await createOtherExpenseMutation.mutateAsync({ ...data });
 
-    setSubmitting(false);
-
-    if (expense) {
-      console.log("Expense created successfully:", expense);
-      form.reset(); // Reset the form after successful submission
+    if (expense.success) {
       toast.success("Expense created successfully!");
+      form.reset(); // Reset the form after successful submission
     } else {
       console.error("Failed to create expense");
-      alert("Failed to create expense. Please try again.");
+      alert(`Failed to create expense. ${expense.error}`);
     }
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <FormField
+          control={form.control}
+          name="refilled_bottles"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Refilled Bottles</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  placeholder="Refilled Bottles"
+                  type="number"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // Convert to number or null if empty
+                    field.onChange(value ? parseFloat(value) : null);
+                  }}
+                />
+              </FormControl>
+              <FormDescription>
+                This is the number of bottles refilled from other plant.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="amount"

@@ -59,6 +59,19 @@ export const OtherExpenseTable = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
+            {expenses.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={9} className="text-center py-4">
+                  {loading ? (
+                    <div className="flex items-center justify-center h-full">
+                      <Loader2 className="animate-spin size-6" />
+                    </div>
+                  ) : (
+                    "No results"
+                  )}
+                </TableCell>
+              </TableRow>
+            )}
             {expenses.map((expense) => (
               <TableRow key={expense.id}>
                 <TableCell className="py-2 font-medium">

@@ -37,29 +37,6 @@ export async function addDailyDeliveryRecord(data: DeliveryRecord): Promise<
   | { success: false; error: string }
 > {
   try {
-    const [newDeliveryRecord] = await db
-      .insert(Delivery)
-      .values({
-        customer_id: data.customer_id,
-        moderator_id: data.moderator_id,
-        delivery_date: data.delivery_date,
-        payment: data.payment,
-        filled_bottles: data.filled_bottles,
-        empty_bottles: data.empty_bottles,
-        foc: data.foc,
-        damaged_bottles: data.damaged_bottles,
-      })
-      .returning();
-
-    const [updatedCustomer] = await db
-      .update(Customer)
-      .set({
-        balance: data.balance,
-        bottles: data.customer_bottles,
-      })
-      .where(eq(Customer.customer_id, data.customer_id))
-      .returning();
-
     const [bottleUsage] = await db
       .select()
       .from(BottleUsage)
@@ -73,10 +50,33 @@ export async function addDailyDeliveryRecord(data: DeliveryRecord): Promise<
       .orderBy(desc(BottleUsage.createdAt))
       .limit(1);
 
+    const [totalBottles] = await db
+      .select()
+      .from(TotalBottles)
+      .orderBy(desc(TotalBottles.createdAt))
+      .limit(1);
+
     if (!bottleUsage)
       return { success: false, error: "Bottle usage record not found." };
 
     const updatedSales = bottleUsage.sales + data.filled_bottles;
+
+    if (bottleUsage.filled_bottles < updatedSales) {
+      return { success: false, error: "Sales cannot exceed filled bottles." };
+    }
+
+    if (bottleUsage.returned_bottles < data.filled_bottles) {
+      return { success: false, error: "Insufficient bottles to sale." };
+    }
+
+    const [updatedCustomer] = await db
+      .update(Customer)
+      .set({
+        balance: data.balance,
+        bottles: data.customer_bottles,
+      })
+      .where(eq(Customer.customer_id, data.customer_id))
+      .returning();
 
     const [updatedBottleUsage] = await db
       .update(BottleUsage)
@@ -88,21 +88,28 @@ export async function addDailyDeliveryRecord(data: DeliveryRecord): Promise<
       .where(eq(BottleUsage.id, bottleUsage.id))
       .returning();
 
-    const [totalBottles] = await db
-      .select()
-      .from(TotalBottles)
-      .orderBy(desc(TotalBottles.createdAt))
-      .limit(1);
-
-    if (!totalBottles)
-      return { success: false, error: "Total bottles record not found." };
-
     const [updatedTotalBottles] = await db
       .update(TotalBottles)
       .set({
         damaged_bottles: totalBottles.damaged_bottles + data.damaged_bottles,
+        available_bottles:
+          totalBottles.available_bottles - data.damaged_bottles,
       })
       .where(eq(TotalBottles.id, totalBottles.id))
+      .returning();
+
+    const [newDeliveryRecord] = await db
+      .insert(Delivery)
+      .values({
+        customer_id: data.customer_id,
+        moderator_id: data.moderator_id,
+        delivery_date: data.delivery_date,
+        payment: data.payment,
+        filled_bottles: data.filled_bottles,
+        empty_bottles: data.empty_bottles,
+        foc: data.foc,
+        damaged_bottles: data.damaged_bottles,
+      })
       .returning();
 
     return {

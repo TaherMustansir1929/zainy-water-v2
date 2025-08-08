@@ -1,12 +1,13 @@
 "use server";
 
 import { db } from "@/db";
-import { OtherExpense } from "@/db/schema";
+import { BottleUsage, OtherExpense } from "@/db/schema";
 import { endOfDay, startOfDay } from "date-fns";
 import { and, desc, eq, gte, lte } from "drizzle-orm";
 
 export type OtherExpenseData = {
   moderator_id: string;
+  refilled_bottles: number;
   amount: number;
   description: string;
   date: Date;
@@ -14,22 +15,49 @@ export type OtherExpenseData = {
 
 export async function createOtherExpense(
   data: OtherExpenseData
-): Promise<typeof OtherExpense.$inferSelect | null> {
+): Promise<{ success: true } | { success: false; error: string }> {
   try {
-    const [expense] = await db
-      .insert(OtherExpense)
-      .values({
-        moderator_id: data.moderator_id,
-        amount: data.amount,
-        description: data.description,
-        date: data.date,
-      })
-      .returning();
+    if (data.refilled_bottles > 0) {
+      const [bottleUsage] = await db
+        .select()
+        .from(BottleUsage)
+        .where(
+          and(
+            eq(BottleUsage.moderator_id, data.moderator_id),
+            gte(BottleUsage.createdAt, startOfDay(data.date)),
+            lte(BottleUsage.createdAt, endOfDay(data.date))
+          )
+        );
 
-    return expense;
+      if (
+        bottleUsage.empty_bottles < data.refilled_bottles ||
+        bottleUsage.caps < data.refilled_bottles
+      ) {
+        throw new Error(
+          "Bottle refill cannot be more than caps or empty bottles available"
+        );
+      }
+
+      await db.update(BottleUsage).set({
+        empty_bottles: bottleUsage.empty_bottles - data.refilled_bottles,
+        returned_bottles: bottleUsage.returned_bottles + data.refilled_bottles,
+      });
+    }
+
+    await db.insert(OtherExpense).values({
+      moderator_id: data.moderator_id,
+      amount: data.amount,
+      description: data.description,
+      date: data.date,
+    });
+
+    return { success: true };
   } catch (error) {
     console.error("Error creating other expense:", error);
-    return null;
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
   }
 }
 

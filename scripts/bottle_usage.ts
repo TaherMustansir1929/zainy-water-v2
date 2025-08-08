@@ -19,6 +19,7 @@ async function main() {
       .values({
         moderator_id: "mymexcwxzso394if0cb4e75e",
         filled_bottles: filled_bottles,
+        returned_bottles: filled_bottles,
       })
       .returning();
 

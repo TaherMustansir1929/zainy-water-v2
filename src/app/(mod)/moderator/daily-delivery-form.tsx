@@ -466,55 +466,81 @@ export const DailyDeliveryForm = () => {
               <h1 className="text-xl font-bold underline">Balance Summary:</h1>
 
               {(form.watch("foc") || 0) > 0 && (
-                <p>
-                  <span className="font-bold">FOC Discount:</span> -
-                  {(form.watch("foc") || 0) * customerData.bottle_price}/-
+                <p className="w-full flex items-center justify-between">
+                  <span className="font-bold">FOC Discount:</span>
+                  <span>
+                    -{(form.watch("foc") || 0) * customerData.bottle_price}/-
+                  </span>
                 </p>
               )}
-              <p>
-                <span className="font-bold">Today&apos;s Bill:</span>{" "}
-                {Math.max(
-                  0,
-                  (form.watch("filled_bottles") || 0) *
-                    customerData.bottle_price -
-                    (form.watch("foc") || 0) * customerData.bottle_price
-                )}
-                /-
+              <p className="w-full flex items-center justify-between">
+                <span className="font-bold">Today&apos;s Bill:</span>
+                <span>
+                  {Math.max(
+                    0,
+                    (form.watch("filled_bottles") || 0) *
+                      customerData.bottle_price -
+                      (form.watch("foc") || 0) * customerData.bottle_price
+                  )}
+                  /-
+                </span>
               </p>
-              <p>
-                <span className="font-bold">Total Remaining Balance:</span>{" "}
-                {previous_balance}/-
+              <p className="w-full flex items-center justify-between">
+                <span className="font-bold">Total Remaining Balance:</span>
+                <span>{previous_balance}/-</span>
               </p>
               <div className="border-t pt-2 border-gray-500">
-                <p>
+                <p className="w-full flex items-center justify-between">
                   <span className="font-bold">
                     Today&apos;s Bill (Before FOC):
-                  </span>{" "}
-                  {(form.watch("filled_bottles") || 0) *
-                    customerData.bottle_price}
-                  /-
+                  </span>
+                  <span>
+                    {(form.watch("filled_bottles") || 0) *
+                      customerData.bottle_price}
+                    /-
+                  </span>
                 </p>
                 {(form.watch("payment") || 0) > 0 && (
-                  <p>
-                    <span className="font-bold">Payment Received:</span>{" "}
-                    {form.watch("payment")}/-
+                  <p className="w-full flex items-center justify-between">
+                    <span className="font-bold">Payment Received:</span>
+                    <span>{form.watch("payment")}/-</span>
                   </p>
                 )}
-                <p>
-                  <span className="font-bold">Previous Balance:</span>{" "}
-                  {customerData.balance > 0
-                    ? `${customerData.balance}/- (Customer owes)`
-                    : customerData.balance < 0
-                    ? `${Math.abs(customerData.balance)}/- (Advance paid)`
-                    : "0/- (Clear)"}
+                <p className="w-full flex items-center justify-between">
+                  <span className="font-bold">
+                    Previous Balance
+                    {customerData.balance > 0 ? (
+                      <span className="text-green-500 font-normal">
+                        {" "}
+                        (Customer Owes)
+                      </span>
+                    ) : customerData.balance < 0 ? (
+                      <span className="text-red-500 font-normal">
+                        {" "}
+                        (Advance Paid)
+                      </span>
+                    ) : (
+                      <span className="text-gray-500 font-normal">
+                        0/- (Clear)
+                      </span>
+                    )}
+                    :
+                  </span>
+                  <span>
+                    {customerData.balance > 0
+                      ? `${customerData.balance}/-`
+                      : customerData.balance < 0
+                      ? `${Math.abs(customerData.balance)}/-`
+                      : "0/- (Clear)"}
+                  </span>
                 </p>
-                <p>
-                  <span className="font-bold">Remaining Current Balance:</span>{" "}
-                  {current_balance}/-
+                <p className="w-full flex items-center justify-between">
+                  <span className="font-bold">Remaining Current Balance:</span>
+                  <span>{current_balance}/-</span>
                 </p>
-                <p>
-                  <span className="font-bold">Advance Amount:</span>{" "}
-                  {advance_payment}/-
+                <p className="w-full flex items-center justify-between">
+                  <span className="font-bold">Advance Amount:</span>
+                  <span>{advance_payment}/-</span>
                 </p>
               </div>
             </div>
