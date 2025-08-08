@@ -61,11 +61,7 @@ export async function addDailyDeliveryRecord(data: DeliveryRecord): Promise<
 
     const updatedSales = bottleUsage.sales + data.filled_bottles;
 
-    if (bottleUsage.filled_bottles < updatedSales) {
-      return { success: false, error: "Sales cannot exceed filled bottles." };
-    }
-
-    if (bottleUsage.returned_bottles < data.filled_bottles) {
+    if (bottleUsage.remaining_bottles < data.filled_bottles) {
       return { success: false, error: "Insufficient bottles to sale." };
     }
 
@@ -83,7 +79,7 @@ export async function addDailyDeliveryRecord(data: DeliveryRecord): Promise<
       .set({
         sales: updatedSales,
         empty_bottles: bottleUsage.empty_bottles + data.empty_bottles,
-        returned_bottles: bottleUsage.filled_bottles - updatedSales,
+        remaining_bottles: bottleUsage.remaining_bottles - data.filled_bottles,
       })
       .where(eq(BottleUsage.id, bottleUsage.id))
       .returning();

@@ -165,15 +165,21 @@ export const OtherExpense = pgTable(
   })
 );
 
-// FOC table
-export const FOC = pgTable(
-  "FOC",
+// Miscellaneous table
+export const Miscellaneous = pgTable(
+  "Miscellaneous",
   {
     id: varchar("id")
       .primaryKey()
       .$defaultFn(() => createId()),
-    bottles: integer("bottles").notNull(),
+    moderator_id: varchar("moderator_id", { length: 255 }).notNull(),
+    customer_name: varchar("customer_name", { length: 255 }).notNull(),
     description: text("description").notNull(),
+    isPaid: boolean("isPaid").notNull(),
+    payment: integer("payment").notNull(),
+    filled_bottles: integer("filled_bottles").notNull(),
+    empty_bottles: integer("empty_bottles").notNull(),
+    damaged_bottles: integer("damaged_bottles").notNull(),
     createdAt: timestamp("createdAt", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -181,7 +187,15 @@ export const FOC = pgTable(
       .notNull()
       .defaultNow(),
   },
-  (table) => [index("foc_id_idx").on(table.id)]
+  (table) => ({
+    moderatorIdIdx: index("misc_moderator_id_idx").on(table.moderator_id),
+    isPaidIdx: index("misc_is_paid_idx").on(table.isPaid),
+    moderatorFk: foreignKey({
+      columns: [table.moderator_id],
+      foreignColumns: [Moderator.id],
+      name: "miscellaneous_moderator_fk",
+    }).onDelete("cascade"),
+  })
 );
 
 // TotalBottles table
@@ -210,6 +224,7 @@ export const BottleUsage = pgTable("BottleUsage", {
   filled_bottles: integer("filled_bottles").notNull(),
   sales: integer("sales").notNull().default(0),
   empty_bottles: integer("empty_bottles").notNull().default(0),
+  remaining_bottles: integer("remaining_bottles").notNull().default(0),
   returned_bottles: integer("returned_bottles").notNull().default(0),
   caps: integer("caps").notNull().default(0),
   createdAt: timestamp("createdAt", { withTimezone: true })
@@ -229,6 +244,7 @@ export const moderatorRelations = relations(Moderator, ({ many }) => ({
   deliveries: many(Delivery),
   otherExpenses: many(OtherExpense),
   bottleUsages: many(BottleUsage),
+  miscellaneous: many(Miscellaneous),
 }));
 
 export const deliveryRelations = relations(Delivery, ({ one }) => ({
@@ -252,6 +268,13 @@ export const otherExpenseRelations = relations(OtherExpense, ({ one }) => ({
 export const bottleUsageRelations = relations(BottleUsage, ({ one }) => ({
   moderator: one(Moderator, {
     fields: [BottleUsage.moderator_id],
+    references: [Moderator.id],
+  }),
+}));
+
+export const miscellaneousRelations = relations(Miscellaneous, ({ one }) => ({
+  moderator: one(Moderator, {
+    fields: [Miscellaneous.moderator_id],
     references: [Moderator.id],
   }),
 }));

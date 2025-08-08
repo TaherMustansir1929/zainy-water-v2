@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { BatteryPlus, Loader2, SendHorizonal, SquarePlus } from "lucide-react";
+import { Loader2, SendHorizonal } from "lucide-react";
 import { useModeratorStore } from "@/lib/moderator-state";
 import { toast } from "sonner";
 import { useFetchTotalBottles } from "@/queries/moderator/useFetchTotalBottles";

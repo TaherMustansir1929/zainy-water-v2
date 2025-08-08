@@ -36,7 +36,7 @@ const ModeratorPage = async () => {
           href={"/moderator/other"}
           className="flex items-center justify-center gap-2"
         >
-          Add Other Expenses
+          Add Other Records
           <LinkIcon />
         </Link>
       </Button>

@@ -1,12 +1,14 @@
-import { ChartPie, CircleDollarSign, HeartHandshake } from "lucide-react";
+import { ChartPie, CircleDollarSign, Dice5 } from "lucide-react";
 
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { OtherExpenseForm } from "./other-expense-form";
-import { OtherExpenseTable } from "./other-expense-table";
-import { BottleUsageForm } from "./bottle-usage-form";
+import { OtherExpenseForm } from "./other-expenses/other-expense-form";
+import { OtherExpenseTable } from "./other-expenses/other-expense-table";
+import { BottleUsageForm } from "./bottle-usage/bottle-usage-form";
+import { MiscDeliveryForm } from "./miscellaneous/misc-form";
+import { MiscDeliveryTable } from "./miscellaneous/misc-table";
 
 const mod_tabs = [
   {
@@ -33,9 +35,9 @@ const mod_tabs = [
   },
   {
     value: "tab-3",
-    label: "FOC",
+    label: "Miscellaneous",
     icon: (
-      <HeartHandshake
+      <Dice5
         className="-ms-0.5 me-1.5 opacity-60"
         size={16}
         aria-hidden="true"
@@ -99,9 +101,21 @@ export function ModTabs() {
           </div>
         </TabsContent>
         <TabsContent value="tab-3">
-          <p className="text-muted-foreground p-4 pt-1 text-center text-xs">
-            Content for Tab 3
-          </p>
+          <div className="w-full flex flex-col md:items-center md:justify-center gap-y-6 p-2">
+            <Card className="w-full max-w-2xl">
+              <CardHeader>
+                <CardTitle className="text-primary font-bold text-center flex items-center justify-center gap-2">
+                  <Dice5 />
+                  Miscellaneous
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <MiscDeliveryForm />
+              </CardContent>
+            </Card>
+
+            <MiscDeliveryTable />
+          </div>
         </TabsContent>
       </Tabs>
     </div>

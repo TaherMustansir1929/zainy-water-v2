@@ -8,6 +8,20 @@
       "when": 1754546345976,
       "tag": "0000_tearful_loa",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1754674623130,
+      "tag": "0001_rapid_dark_beast",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1754680532623,
+      "tag": "0002_normal_harrier",
+      "breakpoints": true
     }
   ]
 }

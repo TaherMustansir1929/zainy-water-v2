@@ -1,8 +1,8 @@
 "use server";
 
 import { db } from "@/db";
-import { BottleUsage } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { BottleUsage, TotalBottles } from "@/db/schema";
+import { desc, eq } from "drizzle-orm";
 
 type DataProps = {
   moderator_id: string;
@@ -24,18 +24,41 @@ export async function returnBottleUsage(data: DataProps) {
 
   if (
     bottleUsage.empty_bottles < data.empty_bottles ||
-    bottleUsage.returned_bottles < data.remaining_bottles
+    bottleUsage.remaining_bottles < data.remaining_bottles
   ) {
     throw new Error("Insufficient bottles to return");
   }
 
-  if (bottleUsage.empty_bottles < data.empty_bottles) {
+  if (bottleUsage.caps < data.caps) {
     throw new Error("Insufficient caps to return");
   }
 
+  const [totalBottles] = await db
+    .select()
+    .from(TotalBottles)
+    .orderBy(desc(TotalBottles.createdAt))
+    .limit(1);
+
+  if (!totalBottles) {
+    throw new Error("Total bottles record not found");
+  }
+
+  await db.update(TotalBottles).set({
+    available_bottles:
+      totalBottles.available_bottles +
+      data.empty_bottles +
+      data.remaining_bottles,
+    used_bottles:
+      totalBottles.used_bottles - data.empty_bottles - data.remaining_bottles,
+  });
+
   await db.update(BottleUsage).set({
     empty_bottles: bottleUsage.empty_bottles - data.empty_bottles,
-    returned_bottles: bottleUsage.returned_bottles - data.remaining_bottles,
+    remaining_bottles: bottleUsage.remaining_bottles - data.remaining_bottles,
+    returned_bottles:
+      bottleUsage.returned_bottles +
+      data.remaining_bottles +
+      data.empty_bottles,
     caps: bottleUsage.caps - data.caps,
   });
 }

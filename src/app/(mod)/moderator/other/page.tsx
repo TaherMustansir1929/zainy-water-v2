@@ -1,12 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { OtherExpenseForm } from "./other-expense-form";
-import { OtherExpenseTable } from "./other-expense-table";
+import { OtherExpenseForm } from "./other-expenses/other-expense-form";
+import { OtherExpenseTable } from "./other-expenses/other-expense-table";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ChartPie, CircleDollarSign, LinkIcon } from "lucide-react";
 import { moderatorMiddleware } from "@/actions/moderator/mod-middleware";
 import { redirect } from "next/navigation";
-import { BottleUsageForm } from "./bottle-usage-form";
+import { BottleUsageForm } from "./bottle-usage/bottle-usage-form";
 import { ModTabs } from "./mod-tabs";
 
 const OtherExpensePage = async () => {
@@ -23,7 +23,7 @@ const OtherExpensePage = async () => {
       
 
        */}
-      <Button variant={"outline"} className="w-full max-w-2xl" size="lg">
+      <Button variant={"outline"} className="w-full max-w-2xl mb-4" size="lg">
         <Link
           href={"/moderator"}
           className="flex items-center justify-center gap-2"

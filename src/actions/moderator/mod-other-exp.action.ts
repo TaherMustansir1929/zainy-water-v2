@@ -40,7 +40,8 @@ export async function createOtherExpense(
 
       await db.update(BottleUsage).set({
         empty_bottles: bottleUsage.empty_bottles - data.refilled_bottles,
-        returned_bottles: bottleUsage.returned_bottles + data.refilled_bottles,
+        remaining_bottles:
+          bottleUsage.remaining_bottles + data.refilled_bottles,
       });
     }
 

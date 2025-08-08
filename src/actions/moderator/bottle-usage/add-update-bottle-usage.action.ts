@@ -44,7 +44,7 @@ export async function modAddUpdateBottleUsage(
       .update(BottleUsage)
       .set({
         filled_bottles: bottleUsage.filled_bottles + data.filled_bottles,
-        returned_bottles: bottleUsage.returned_bottles + data.filled_bottles,
+        remaining_bottles: bottleUsage.remaining_bottles + data.filled_bottles,
         caps: bottleUsage.caps + data.caps,
       })
       .where(eq(BottleUsage.id, bottleUsage.id));
@@ -59,7 +59,7 @@ export async function modAddUpdateBottleUsage(
     await db.insert(BottleUsage).values({
       moderator_id: data.moderator_id,
       filled_bottles: data.filled_bottles,
-      returned_bottles: data.filled_bottles,
+      remaining_bottles: data.filled_bottles,
       caps: data.caps,
     });
 

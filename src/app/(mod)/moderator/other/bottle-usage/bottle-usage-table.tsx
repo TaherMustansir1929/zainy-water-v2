@@ -41,13 +41,14 @@ export const BottleUsageTable = ({
             <TableHead>Sale</TableHead>
             <TableHead>Empty</TableHead>
             <TableHead>Remaining</TableHead>
+            <TableHead>Returned</TableHead>
             <TableHead className="text-right">Caps</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {loading ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-4">
+              <TableCell colSpan={7} className="text-center py-4">
                 <div className="flex items-center justify-center h-full">
                   <Loader2 className="animate-spin size-6 text-muted-foreground" />
                 </div>
@@ -63,6 +64,9 @@ export const BottleUsageTable = ({
               </TableCell>
               <TableCell>{bottleUsageQuery.data?.sales || 0}</TableCell>
               <TableCell>{bottleUsageQuery.data?.empty_bottles || 0}</TableCell>
+              <TableCell>
+                {bottleUsageQuery.data?.remaining_bottles || 0}
+              </TableCell>
               <TableCell>
                 {bottleUsageQuery.data?.returned_bottles || 0}
               </TableCell>
