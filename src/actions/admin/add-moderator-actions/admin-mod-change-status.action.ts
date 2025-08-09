@@ -3,6 +3,7 @@
 import { db } from "@/db";
 import { Moderator } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { redis } from "@/lib/redis/storage";
 
 export async function changeModeratorWorkingStatus(
   name: string,
@@ -18,6 +19,13 @@ export async function changeModeratorWorkingStatus(
 
   if (updatedModerator) {
     console.log(`Moderator: ${name} status changed successfully.`);
+
+    // Invalidate moderator list cache since we changed status
+    await redis.deleteValue("cache", "admin", "mod-list");
+
+    // If the moderator has a session, invalidate that too since working status changed
+    await redis.deleteValue("session", "mod", updatedModerator.id);
+
     return updatedModerator;
   } else {
     throw new Error(`Failed to change status for moderator: ${name}`);

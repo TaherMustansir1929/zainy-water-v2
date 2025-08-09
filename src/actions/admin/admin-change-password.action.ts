@@ -5,6 +5,7 @@ import { createId } from "@paralleldrive/cuid2";
 import { Admin } from "@/db/schema";
 import { db } from "@/db";
 import { and, eq } from "drizzle-orm";
+import { redis } from "@/lib/redis/storage";
 
 export async function changeAdminPasswordAndId(
   currentPassword: string,
@@ -32,6 +33,9 @@ export async function changeAdminPasswordAndId(
       throw new Error("Failed to update admin password");
     }
 
+    // Clear old admin session cache
+    await redis.deleteValue("session", "admin", admin_id);
+
     // refresh cookie if id changed
     const cookieStore = await cookies();
     if (updatedAdmin.id && updatedAdmin.id !== admin_id) {
@@ -41,6 +45,13 @@ export async function changeAdminPasswordAndId(
         path: "/",
         maxAge: 60 * 60 * 24 * 30,
         sameSite: "lax",
+      });
+
+      // Cache new admin session data
+      await redis.setValue("session", "admin", updatedAdmin.id, {
+        id: updatedAdmin.id,
+        name: updatedAdmin.name,
+        loginTime: new Date().toISOString(),
       });
     }
 

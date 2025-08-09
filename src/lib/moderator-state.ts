@@ -1,11 +1,11 @@
-import { Area } from "@prisma/client";
+import { Area } from "@/db/schema";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-type ModeratorState = {
+export type ModeratorState = {
   id: string;
   name: string;
-  areas: Area[];
+  areas: (typeof Area.enumValues)[];
 };
 
 type ModeratorStore = {

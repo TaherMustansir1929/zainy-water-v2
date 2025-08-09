@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { BottleUsage, TotalBottles } from "@/db/schema";
 import { startOfDay } from "date-fns";
 import { and, desc, eq, gte, lte } from "drizzle-orm";
+import { redis } from "@/lib/redis/storage";
 
 type DataProp = {
   moderator_id: string;
@@ -62,6 +63,14 @@ export async function modAddUpdateBottleUsage(
       })
       .where(eq(TotalBottles.id, total_bottles.id));
 
+    // Invalidate relevant caches after bottle usage update
+    await redis.deleteValue(
+      "temp",
+      "bottle_usage",
+      `bottle-usage-${data.moderator_id}`
+    );
+    await redis.deleteValue("cache", "total_bottles", "latest");
+
     return { success: true };
   } else {
     await db.insert(BottleUsage).values({
@@ -79,6 +88,14 @@ export async function modAddUpdateBottleUsage(
         used_bottles: total_bottles.used_bottles + data.filled_bottles,
       })
       .where(eq(TotalBottles.id, total_bottles.id));
+
+    // Invalidate relevant caches after new bottle usage creation
+    await redis.deleteValue(
+      "temp",
+      "bottle_usage",
+      `bottle-usage-${data.moderator_id}`
+    );
+    await redis.deleteValue("cache", "total_bottles", "latest");
 
     return { success: true };
   }

@@ -4,6 +4,7 @@ import { Moderator as ModeratorData } from "@/app/(admin)/admin/(dashboard)/add-
 import { Moderator } from "@/db/schema";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
+import { redis } from "@/lib/redis/storage";
 
 export async function updateModeratorByName(
   name: string,
@@ -15,6 +16,14 @@ export async function updateModeratorByName(
       .set({ ...data })
       .where(eq(Moderator.name, name))
       .returning();
+
+    // Invalidate moderator list cache since we updated a moderator
+    await redis.deleteValue("cache", "admin", "mod-list");
+
+    // If the moderator has a session, invalidate that too
+    if (updatedModerator.id) {
+      await redis.deleteValue("session", "mod", updatedModerator.id);
+    }
 
     return updatedModerator;
   } catch (error) {

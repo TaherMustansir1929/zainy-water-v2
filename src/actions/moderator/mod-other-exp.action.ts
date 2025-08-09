@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { BottleUsage, OtherExpense } from "@/db/schema";
 import { endOfDay, startOfDay } from "date-fns";
 import { and, desc, eq, gte, lte } from "drizzle-orm";
+import { redis } from "@/lib/redis/storage";
 
 export type OtherExpenseData = {
   moderator_id: string;
@@ -61,6 +62,19 @@ export async function createOtherExpense(
       date: data.date,
     });
 
+    // Invalidate relevant caches after creating other expense
+    const today = new Date().toDateString();
+    const cacheKey = `other-exp-${data.moderator_id}-${today}`;
+    await redis.deleteValue("temp", "other_expenses", cacheKey);
+
+    if (data.refilled_bottles > 0) {
+      await redis.deleteValue(
+        "temp",
+        "bottle_usage",
+        `bottle-usage-${data.moderator_id}`
+      );
+    }
+
     return { success: true };
   } catch (error) {
     console.error("Error creating other expense:", error);
@@ -75,6 +89,35 @@ export async function getOtherExpensesByModeratorId(
   id: string
 ): Promise<(typeof OtherExpense.$inferSelect)[] | null> {
   try {
+    // Try to get cached other expenses first
+    const today = new Date().toDateString();
+    const cacheKey = `other-exp-${id}-${today}`;
+    const cachedExpenses = await redis.getValue(
+      "temp",
+      "other_expenses",
+      cacheKey
+    );
+
+    if (cachedExpenses.success && cachedExpenses.data) {
+      // Convert date strings back to Date objects
+      const expenses = cachedExpenses.data as (Omit<
+        typeof OtherExpense.$inferSelect,
+        "date" | "createdAt" | "updatedAt"
+      > & {
+        date: string;
+        createdAt: string;
+        updatedAt: string;
+      })[];
+
+      return expenses.map((expense) => ({
+        ...expense,
+        date: new Date(expense.date),
+        createdAt: new Date(expense.createdAt),
+        updatedAt: new Date(expense.updatedAt),
+      }));
+    }
+
+    // If cache miss, fetch from database
     const expenses = await db
       .select()
       .from(OtherExpense)
@@ -86,6 +129,19 @@ export async function getOtherExpensesByModeratorId(
         )
       )
       .orderBy(desc(OtherExpense.date));
+
+    if (expenses.length > 0) {
+      // Convert Date objects to strings for caching
+      const cacheable = expenses.map((expense) => ({
+        ...expense,
+        date: expense.date.toISOString(),
+        createdAt: expense.createdAt.toISOString(),
+        updatedAt: expense.updatedAt.toISOString(),
+      }));
+
+      // Cache with temp TTL since it's daily data that changes frequently
+      await redis.setValue("temp", "other_expenses", cacheKey, cacheable);
+    }
 
     return expenses;
   } catch (error) {
