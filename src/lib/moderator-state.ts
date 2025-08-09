@@ -5,7 +5,7 @@ import { persist } from "zustand/middleware";
 export type ModeratorState = {
   id: string;
   name: string;
-  areas: (typeof Area.enumValues)[];
+  areas: (typeof Area.enumValues)[number][];
 };
 
 type ModeratorStore = {
