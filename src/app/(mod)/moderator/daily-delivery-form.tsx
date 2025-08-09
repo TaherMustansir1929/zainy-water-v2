@@ -508,7 +508,7 @@ export const DailyDeliveryForm = () => {
                 )}
                 <p className="w-full flex items-center justify-between">
                   <span className="font-bold">
-                    Previous Balance
+                    Previous Balance:
                     {customerData.balance > 0 ? (
                       <span className="text-green-500 font-normal">
                         {" "}
@@ -524,7 +524,6 @@ export const DailyDeliveryForm = () => {
                         0/- (Clear)
                       </span>
                     )}
-                    :
                   </span>
                   <span>
                     {customerData.balance > 0

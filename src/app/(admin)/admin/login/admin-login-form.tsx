@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
 import { loginAdmin } from "@/actions/admin/admin-login.action";
 import { toast } from "sonner";
 import { useAdminStore } from "@/lib/admin-state";
