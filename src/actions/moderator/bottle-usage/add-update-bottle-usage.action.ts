@@ -22,6 +22,10 @@ export async function modAddUpdateBottleUsage(
     .orderBy(desc(TotalBottles.createdAt))
     .limit(1);
 
+  if (!total_bottles) {
+    throw new Error("Total bottles record not found");
+  }
+
   if (total_bottles.available_bottles < data.filled_bottles) {
     throw new Error("Filled_bottles cannot exceed total available bottles");
   }
@@ -49,10 +53,14 @@ export async function modAddUpdateBottleUsage(
       })
       .where(eq(BottleUsage.id, bottleUsage.id));
 
-    await db.update(TotalBottles).set({
-      available_bottles: total_bottles.available_bottles - data.filled_bottles,
-      used_bottles: total_bottles.used_bottles + data.filled_bottles,
-    });
+    await db
+      .update(TotalBottles)
+      .set({
+        available_bottles:
+          total_bottles.available_bottles - data.filled_bottles,
+        used_bottles: total_bottles.used_bottles + data.filled_bottles,
+      })
+      .where(eq(TotalBottles.id, total_bottles.id));
 
     return { success: true };
   } else {
@@ -63,10 +71,14 @@ export async function modAddUpdateBottleUsage(
       caps: data.caps,
     });
 
-    await db.update(TotalBottles).set({
-      available_bottles: total_bottles.available_bottles - data.filled_bottles,
-      used_bottles: total_bottles.used_bottles + data.filled_bottles,
-    });
+    await db
+      .update(TotalBottles)
+      .set({
+        available_bottles:
+          total_bottles.available_bottles - data.filled_bottles,
+        used_bottles: total_bottles.used_bottles + data.filled_bottles,
+      })
+      .where(eq(TotalBottles.id, total_bottles.id));
 
     return { success: true };
   }

@@ -27,7 +27,13 @@ export async function createOtherExpense(
             gte(BottleUsage.createdAt, startOfDay(data.date)),
             lte(BottleUsage.createdAt, endOfDay(data.date))
           )
-        );
+        )
+        .orderBy(desc(BottleUsage.createdAt))
+        .limit(1);
+
+      if (!bottleUsage) {
+        throw new Error("Bottle usage record not found for the given date");
+      }
 
       if (
         bottleUsage.empty_bottles < data.refilled_bottles ||
@@ -38,11 +44,14 @@ export async function createOtherExpense(
         );
       }
 
-      await db.update(BottleUsage).set({
-        empty_bottles: bottleUsage.empty_bottles - data.refilled_bottles,
-        remaining_bottles:
-          bottleUsage.remaining_bottles + data.refilled_bottles,
-      });
+      await db
+        .update(BottleUsage)
+        .set({
+          empty_bottles: bottleUsage.empty_bottles - data.refilled_bottles,
+          remaining_bottles:
+            bottleUsage.remaining_bottles + data.refilled_bottles,
+        })
+        .where(eq(BottleUsage.id, bottleUsage.id));
     }
 
     await db.insert(OtherExpense).values({

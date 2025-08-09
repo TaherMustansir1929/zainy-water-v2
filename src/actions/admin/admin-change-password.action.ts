@@ -32,6 +32,18 @@ export async function changeAdminPasswordAndId(
       throw new Error("Failed to update admin password");
     }
 
+    // refresh cookie if id changed
+    const cookieStore = await cookies();
+    if (updatedAdmin.id && updatedAdmin.id !== admin_id) {
+      cookieStore.set("admin_id", updatedAdmin.id, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        maxAge: 60 * 60 * 24 * 30,
+        sameSite: "lax",
+      });
+    }
+
     return { success: true, admin: updatedAdmin };
   } catch (error) {
     console.error("Error changing admin password:", error);

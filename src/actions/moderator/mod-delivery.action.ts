@@ -59,6 +59,10 @@ export async function addDailyDeliveryRecord(data: DeliveryRecord): Promise<
     if (!bottleUsage)
       return { success: false, error: "Bottle usage record not found." };
 
+    if (!totalBottles) {
+      return { success: false, error: "Total bottles record not found." };
+    }
+
     const updatedSales = bottleUsage.sales + data.filled_bottles;
 
     if (bottleUsage.remaining_bottles < data.filled_bottles) {

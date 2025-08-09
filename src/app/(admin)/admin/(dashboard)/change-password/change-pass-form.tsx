@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { changeAdminPasswordAndId } from "@/actions/admin/admin-change-password.action";
 import { toast } from "sonner";
 import { useAdminStore } from "@/lib/admin-state";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { LoadingDotsPulse } from "@/components/loading-dots";
 
@@ -44,6 +44,7 @@ export const AdminChangePasswordForm = () => {
   });
 
   const [submitting, setSubmitting] = useState(false);
+  const router = useRouter();
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -59,12 +60,17 @@ export const AdminChangePasswordForm = () => {
       return;
     }
 
-    await cookieStore.delete("admin_id"); // Clear admin cookie
-    useAdminStore.getState().setAdmin(null); // Clear admin state after password change
-    form.reset(); // Reset the form after successful submission
-    toast.success("Password changed successfully! You will be logged out.");
-    console.log(values);
-    redirect("/admin/login");
+    // Update localStorage (zustand persisted store) with new admin data
+    if (response.admin) {
+      useAdminStore
+        .getState()
+        .setAdmin({ id: response.admin.id, name: response.admin.name });
+    }
+
+    form.reset();
+    toast.success("Password and ID updated. Session refreshed.");
+    // Ensure app reads latest cookie on server components
+    router.refresh();
   }
 
   return (

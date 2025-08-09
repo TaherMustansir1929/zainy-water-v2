@@ -2,7 +2,7 @@
 
 import { db } from "@/db";
 import { BottleUsage } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 
 export async function fetchModeratorBottleUsage(
   id: string
@@ -12,6 +12,7 @@ export async function fetchModeratorBottleUsage(
       .select()
       .from(BottleUsage)
       .where(eq(BottleUsage.moderator_id, id))
+      .orderBy(desc(BottleUsage.createdAt))
       .limit(1);
     return bottleUsage ?? null;
   } catch (error) {

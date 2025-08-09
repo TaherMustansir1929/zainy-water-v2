@@ -16,6 +16,7 @@ export async function returnBottleUsage(data: DataProps) {
     .select()
     .from(BottleUsage)
     .where(eq(BottleUsage.moderator_id, data.moderator_id))
+    .orderBy(desc(BottleUsage.createdAt))
     .limit(1);
 
   if (!bottleUsage) {
@@ -43,22 +44,28 @@ export async function returnBottleUsage(data: DataProps) {
     throw new Error("Total bottles record not found");
   }
 
-  await db.update(TotalBottles).set({
-    available_bottles:
-      totalBottles.available_bottles +
-      data.empty_bottles +
-      data.remaining_bottles,
-    used_bottles:
-      totalBottles.used_bottles - data.empty_bottles - data.remaining_bottles,
-  });
+  await db
+    .update(TotalBottles)
+    .set({
+      available_bottles:
+        totalBottles.available_bottles +
+        data.empty_bottles +
+        data.remaining_bottles,
+      used_bottles:
+        totalBottles.used_bottles - data.empty_bottles - data.remaining_bottles,
+    })
+    .where(eq(TotalBottles.id, totalBottles.id));
 
-  await db.update(BottleUsage).set({
-    empty_bottles: bottleUsage.empty_bottles - data.empty_bottles,
-    remaining_bottles: bottleUsage.remaining_bottles - data.remaining_bottles,
-    returned_bottles:
-      bottleUsage.returned_bottles +
-      data.remaining_bottles +
-      data.empty_bottles,
-    caps: bottleUsage.caps - data.caps,
-  });
+  await db
+    .update(BottleUsage)
+    .set({
+      empty_bottles: bottleUsage.empty_bottles - data.empty_bottles,
+      remaining_bottles: bottleUsage.remaining_bottles - data.remaining_bottles,
+      returned_bottles:
+        bottleUsage.returned_bottles +
+        data.remaining_bottles +
+        data.empty_bottles,
+      caps: bottleUsage.caps - data.caps,
+    })
+    .where(eq(BottleUsage.id, bottleUsage.id));
 }

@@ -3,7 +3,7 @@
 import { db } from "@/db";
 import { BottleUsage, Miscellaneous, Moderator } from "@/db/schema";
 import { endOfDay, startOfDay } from "date-fns";
-import { and, eq, gte, lte } from "drizzle-orm";
+import { and, desc, eq, gte, lte } from "drizzle-orm";
 
 export type MiscDeliveryProps = {
   moderator_id: string;
@@ -37,6 +37,7 @@ export async function addMiscDelivery(data: MiscDeliveryProps) {
         lte(BottleUsage.createdAt, endOfDay(new Date()))
       )
     )
+    .orderBy(desc(BottleUsage.createdAt))
     .limit(1);
 
   if (!bottleUsage) {
