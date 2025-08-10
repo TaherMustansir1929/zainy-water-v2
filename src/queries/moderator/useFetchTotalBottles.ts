@@ -1,4 +1,4 @@
-import { fetchTotalBottles } from "@/actions/moderator/bottle-usage/fetch-total-bottles";
+import { fetchTotalBottles } from "@/actions/fetch-total-bottles";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 

@@ -38,16 +38,16 @@ class RedisClientSingleton {
 
     try {
       const config: RedisConfig = {
-        url: process.env.REDIS_CLOUD_URL || "redis://localhost:6379",
+        url: process.env.REDIS_URL || "redis://localhost:6379",
         password: process.env.REDIS_PASSWORD,
         database: parseInt(process.env.REDIS_DATABASE || "0"),
-        host: process.env.REDIS_CLOUD_HOST || "localhost",
-        port: Number(process.env.REDIS_CLOUD_PORT) || 16067,
+        // host: process.env.REDIS_CLOUD_HOST || "localhost",
+        // port: Number(process.env.REDIS_CLOUD_PORT) || 16067,
       };
 
       this.client = createClient({
         // LOCAL CONFIGURATION
-        // url: config.url,
+        url: config.url,
         // password: config.password,
         // database: config.database,
         socket: {
@@ -60,8 +60,8 @@ class RedisClientSingleton {
           },
 
           // CLOUD CONFIGURATION
-          host: "redis-16067.crce176.me-central-1-1.ec2.redns.redis-cloud.com",
-          port: 16067,
+          // host: "redis-16067.crce176.me-central-1-1.ec2.redns.redis-cloud.com",
+          // port: 16067,
         },
       });
 
@@ -105,4 +105,7 @@ class RedisClientSingleton {
   }
 }
 
-export const redisClient = RedisClientSingleton.getInstance();
+export const redisClient =
+  process.env.NODE_ENV === "production"
+    ? null
+    : RedisClientSingleton.getInstance();
