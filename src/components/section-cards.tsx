@@ -23,6 +23,7 @@ import { TotalBottlesDataProp } from "@/actions/admin/bottle-inventory/admin-upd
 import { useUpdateTotalBottles } from "@/queries/admin/useUpdateTotalBottles";
 import { useState, useEffect } from "react";
 import { Input } from "./ui/input";
+import { SlidingNumber } from "./animate-ui/text/sliding-number";
 
 type Props = {
   total_bottles?: typeof TotalBottles.$inferSelect;
@@ -137,7 +138,9 @@ export function SectionCards({ total_bottles }: Props) {
                   className="outline-none active:outline-none active:ring-0 focus-visible:ring-0 text-3xl p-0"
                 />
               ) : (
-                <>{card.value}</>
+                <>
+                  <SlidingNumber number={Number(card.value)} />
+                </>
               )}
             </CardTitle>
             <CardAction>

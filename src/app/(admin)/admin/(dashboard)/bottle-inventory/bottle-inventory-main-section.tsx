@@ -5,16 +5,14 @@ import { SectionCards } from "@/components/section-cards";
 import { DataTable2 } from "@/app/(admin)/_components/data-table-2";
 
 import { useFetchTotalBottles } from "@/queries/moderator/useFetchTotalBottles";
-
-import data from "./data.json";
-import { useGet90dBottleUsage } from "@/queries/admin/useGet90dBottleUsage";
-import { BottleUsage90dDataProps } from "@/actions/fetch-90d-bottle-usage";
+import { BottleUsage30dDataProps } from "@/actions/fetch-30d-bottle-usage";
+import { useGet30dBottleUsage } from "@/queries/admin/useGet30dBottleUsage";
 
 export function BottleInventoryMainSection() {
   const totalBottlesQuery = useFetchTotalBottles();
   const totalBottles = totalBottlesQuery.data?.totalBottles;
 
-  const bottleUsageQuery = useGet90dBottleUsage();
+  const bottleUsageQuery = useGet30dBottleUsage();
   const bottleUsageData = bottleUsageQuery.data;
 
   let rawChartData: {
@@ -38,7 +36,7 @@ export function BottleInventoryMainSection() {
             <div className="px-4 lg:px-6">
               <ChartAreaInteractive rawChartData={rawChartData} />
             </div>
-            <DataTable2 data={data} />
+            <DataTable2 data={bottleUsageData} />
           </div>
         </div>
       </div>
@@ -46,16 +44,16 @@ export function BottleInventoryMainSection() {
   );
 }
 
-function transformData(data: BottleUsage90dDataProps[]) {
+export function transformData(data: BottleUsage30dDataProps[]) {
   const grouped: Record<string, { label: string; value: number }[]> = {};
 
   data.forEach((item) => {
-    const date = item.createdAt.toISOString().split("T")[0]; // YYYY-MM-DD
+    const date = item.bottleUsage.createdAt.toISOString().split("T")[0]; // YYYY-MM-DD
 
     if (!grouped[date]) grouped[date] = [];
     grouped[date].push({
-      label: item.moderator_name,
-      value: item.filled_bottles,
+      label: item.moderator.name,
+      value: item.bottleUsage.filled_bottles,
     });
   });
 

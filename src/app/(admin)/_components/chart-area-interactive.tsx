@@ -40,7 +40,12 @@ export type ChartAreaProps = {
   }[];
 };
 
-export function ChartAreaInteractive({ rawChartData }: ChartAreaProps) {
+export function ChartAreaInteractive({ rawChartData: rcd }: ChartAreaProps) {
+  // Sort the raw data by date (oldest to newest) first
+  const rawChartData = [...rcd].sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+  );
+
   // 1️⃣ Transform into chart-friendly format
   const chartData = rawChartData.map((entry) => {
     const row: Record<string, string | number> = { date: entry.date };
@@ -66,7 +71,7 @@ export function ChartAreaInteractive({ rawChartData }: ChartAreaProps) {
   }
 
   const isMobile = useIsMobile();
-  const [timeRange, setTimeRange] = React.useState("30d");
+  const [timeRange, setTimeRange] = React.useState("15d");
 
   React.useEffect(() => {
     if (isMobile) {
@@ -76,10 +81,10 @@ export function ChartAreaInteractive({ rawChartData }: ChartAreaProps) {
 
   const filteredData = chartData.filter((item) => {
     const date = new Date(item.date);
-    const referenceDate = new Date("2024-06-30"); //TODO: Update reference date
-    let daysToSubtract = 30;
-    if (timeRange === "90d") {
-      daysToSubtract = 90;
+    const referenceDate = new Date();
+    let daysToSubtract = 15;
+    if (timeRange === "30d") {
+      daysToSubtract = 30;
     } else if (timeRange === "7d") {
       daysToSubtract = 7;
     }
@@ -106,8 +111,8 @@ export function ChartAreaInteractive({ rawChartData }: ChartAreaProps) {
             variant="outline"
             className="hidden *:data-[slot=toggle-group-item]:!px-4 @[767px]/card:flex"
           >
-            <ToggleGroupItem value="90d">Last 3 months</ToggleGroupItem>
             <ToggleGroupItem value="30d">Last 30 days</ToggleGroupItem>
+            <ToggleGroupItem value="15d">Last 15 days</ToggleGroupItem>
             <ToggleGroupItem value="7d">Last 7 days</ToggleGroupItem>
           </ToggleGroup>
           <Select value={timeRange} onValueChange={setTimeRange}>

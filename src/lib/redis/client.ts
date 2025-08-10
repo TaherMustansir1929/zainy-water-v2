@@ -105,7 +105,4 @@ class RedisClientSingleton {
   }
 }
 
-export const redisClient =
-  process.env.NODE_ENV === "production"
-    ? null
-    : RedisClientSingleton.getInstance();
+export const redisClient = RedisClientSingleton.getInstance();
