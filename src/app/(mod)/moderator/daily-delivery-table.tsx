@@ -9,21 +9,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useState } from "react";
-import { Delivery } from "@prisma/client";
 import { format } from "date-fns";
 import { useModeratorStore } from "@/lib/moderator-state";
-import {
-  getCustomerDataById,
-  getDailyDeliveryRecords,
-} from "@/actions/moderator/mod-delivery.action";
+import { getDailyDeliveryRecords } from "@/actions/moderator/mod-delivery.action";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { Customer, Delivery } from "@/db/schema";
 
 type DeliveryTableData = {
-  delivery: Delivery;
-  name: string;
-  address: string;
+  delivery: typeof Delivery.$inferSelect;
+  customer: typeof Customer.$inferSelect;
 };
 
 export const DailyDeliveryTable = () => {
@@ -32,38 +28,25 @@ export const DailyDeliveryTable = () => {
   const [deliveries, setDeliveries] = useState<DeliveryTableData[]>([]);
   const moderator = useModeratorStore((state) => state.moderator);
 
-  const getCustomer = async (id: string) => {
-    const data = await getCustomerDataById(id, moderator?.areas || []);
-
-    if (data.success) {
-      return data.data;
-    } else {
-      console.error("Error fetching customers data:", data.error);
-      toast.error(data.error);
-    }
-  };
-
   const fetchDeliveries = async () => {
+    if (!moderator?.id) {
+      toast.error("Moderator not found");
+      return;
+    }
+
     setListLoading(true);
     // Fetch deliveries for the current moderator
-    const delivery_data = await getDailyDeliveryRecords(moderator?.id || "");
+    const delivery_data = await getDailyDeliveryRecords(moderator.id);
 
     setListLoading(false);
 
     if (!delivery_data) return;
 
     setDeliveries(
-      await Promise.all(
-        delivery_data.map(async (delivery) => {
-          const customer = await getCustomer(delivery.customer_id);
-
-          return {
-            delivery,
-            name: customer?.name || "Unknown Customer",
-            address: customer?.address || "Unknown Address",
-          };
-        })
-      )
+      delivery_data.map((entry) => ({
+        delivery: entry.Delivery,
+        customer: entry.Customer,
+      }))
     );
   };
 
@@ -104,7 +87,7 @@ export const DailyDeliveryTable = () => {
                 </TableCell>
               </TableRow>
             )}
-            {deliveries.map(({ delivery, name, address }) => (
+            {deliveries.map(({ delivery, customer }) => (
               <TableRow key={delivery.id}>
                 <TableCell className="py-2 min-w-[100px] whitespace-nowrap">
                   {format(delivery.delivery_date, "PPP")}
@@ -113,13 +96,16 @@ export const DailyDeliveryTable = () => {
                   {delivery.customer_id.slice(-6)}
                 </TableCell>
                 <TableCell className="py-2 min-w-[120px]">
-                  <div className="truncate max-w-[120px]" title={name}>
-                    {name}
+                  <div className="truncate max-w-[120px]" title={customer.name}>
+                    {customer.name}
                   </div>
                 </TableCell>
                 <TableCell className="py-2 min-w-[150px]">
-                  <div className="truncate max-w-[150px]" title={address}>
-                    {address}
+                  <div
+                    className="truncate max-w-[150px]"
+                    title={customer.address}
+                  >
+                    {customer.address}
                   </div>
                 </TableCell>
                 <TableCell className="py-2 min-w-[60px] text-center">

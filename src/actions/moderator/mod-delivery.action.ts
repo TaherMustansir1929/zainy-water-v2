@@ -144,34 +144,13 @@ export async function addDailyDeliveryRecord(data: DeliveryRecord): Promise<
   }
 }
 
-export async function getDailyDeliveryRecords(
-  moderator_id: string
-): Promise<(typeof Delivery.$inferSelect)[] | null> {
-  // Try to get cached daily delivery records first
-  const today = new Date().toDateString();
-  const cacheKey = `delivery-${moderator_id}-${today}`;
-  const cachedDeliveries = await redis.getValue("temp", "delivery", cacheKey);
-
-  if (cachedDeliveries.success && cachedDeliveries.data) {
-    // Convert date strings back to Date objects
-    const deliveries = cachedDeliveries.data as (Omit<
-      typeof Delivery.$inferSelect,
-      "delivery_date" | "createdAt" | "updatedAt"
-    > & {
-      delivery_date: string;
-      createdAt: string;
-      updatedAt: string;
-    })[];
-
-    return deliveries.map((delivery) => ({
-      ...delivery,
-      delivery_date: new Date(delivery.delivery_date),
-      createdAt: new Date(delivery.createdAt),
-      updatedAt: new Date(delivery.updatedAt),
-    }));
-  }
-
-  // If cache miss, fetch from database
+export async function getDailyDeliveryRecords(moderator_id: string): Promise<
+  | {
+      Delivery: typeof Delivery.$inferSelect;
+      Customer: typeof Customer.$inferSelect;
+    }[]
+  | null
+> {
   const data = await db
     .select()
     .from(Delivery)
@@ -182,20 +161,8 @@ export async function getDailyDeliveryRecords(
         lte(Delivery.delivery_date, endOfDay(new Date()))
       )
     )
-    .orderBy(desc(Delivery.createdAt));
-
-  if (data.length > 0) {
-    // Convert Date objects to strings for caching
-    const cacheable = data.map((delivery) => ({
-      ...delivery,
-      delivery_date: delivery.delivery_date.toISOString(),
-      createdAt: delivery.createdAt.toISOString(),
-      updatedAt: delivery.updatedAt.toISOString(),
-    }));
-
-    // Cache with temp TTL since it's daily data that changes frequently
-    await redis.setValue("temp", "delivery", cacheKey, cacheable);
-  }
+    .orderBy(desc(Delivery.createdAt))
+    .innerJoin(Customer, eq(Delivery.customer_id, Customer.customer_id));
 
   return data;
 }

@@ -26,7 +26,8 @@ export const useReturnBottle = () => {
       });
     },
     onError: (error) => {
-      toast.error("Bottles return failed");
+      toast.error(`Bottles return failed: ${error}`);
+      alert(`Bottles return failed: ${error}`);
       console.error("Error details:", error);
     },
   });
