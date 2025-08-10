@@ -2,7 +2,6 @@
 
 import { db } from "@/db";
 import { TotalBottles } from "@/db/schema";
-import { redis } from "@/lib/redis";
 import { desc, eq } from "drizzle-orm";
 
 export type TotalBottlesDataProp = {
@@ -32,18 +31,13 @@ export async function updateTotalBottles(
       totalBottlesData.total_bottles -
       latestTotalBottles.total_bottles;
 
-    const [updatedRecord] = await db
+    await db
       .update(TotalBottles)
       .set({
         total_bottles: totalBottlesData.total_bottles,
         available_bottles: availableBottles,
       })
-      .where(eq(TotalBottles.id, latestTotalBottles.id))
-      .returning();
-
-    if (updatedRecord) {
-      await invalidateRedisCache(updatedRecord);
-    }
+      .where(eq(TotalBottles.id, latestTotalBottles.id));
 
     return { success: true, message: "Total bottles updated successfully" };
   } else if (!!totalBottlesData.available_bottles) {
@@ -61,18 +55,13 @@ export async function updateTotalBottles(
       (totalBottlesData.available_bottles -
         latestTotalBottles.available_bottles);
 
-    const [updatedRecord] = await db
+    await db
       .update(TotalBottles)
       .set({
         available_bottles: totalBottlesData.available_bottles,
         used_bottles: used_bottles,
       })
-      .where(eq(TotalBottles.id, latestTotalBottles.id))
-      .returning();
-
-    if (updatedRecord) {
-      await invalidateRedisCache(updatedRecord);
-    }
+      .where(eq(TotalBottles.id, latestTotalBottles.id));
 
     return { success: true, message: "Available bottles updated successfully" };
   } else if (!!totalBottlesData.used_bottles) {
@@ -88,23 +77,18 @@ export async function updateTotalBottles(
       latestTotalBottles.available_bottles -
       (totalBottlesData.used_bottles - latestTotalBottles.used_bottles);
 
-    const [updatedRecord] = await db
+    await db
       .update(TotalBottles)
       .set({
         available_bottles: available_bottles,
         used_bottles: totalBottlesData.used_bottles,
       })
-      .where(eq(TotalBottles.id, latestTotalBottles.id))
-      .returning();
-
-    if (updatedRecord) {
-      await invalidateRedisCache(updatedRecord);
-    }
+      .where(eq(TotalBottles.id, latestTotalBottles.id));
 
     return { success: true, message: "Used bottles updated successfully" };
   } else if (!!totalBottlesData.damaged_bottles) {
     // UPDATE DAMAGED BOTTLES
-    const [updatedRecord] = await db
+    await db
       .update(TotalBottles)
       .set({
         damaged_bottles: totalBottlesData.damaged_bottles,
@@ -117,29 +101,10 @@ export async function updateTotalBottles(
           (totalBottlesData.damaged_bottles -
             latestTotalBottles.damaged_bottles),
       })
-      .where(eq(TotalBottles.id, latestTotalBottles.id))
-      .returning();
-
-    if (updatedRecord) {
-      await invalidateRedisCache(updatedRecord);
-    }
+      .where(eq(TotalBottles.id, latestTotalBottles.id));
 
     return { success: true, message: "Damaged bottles updated successfully" };
   }
 
   return { success: false, message: "Atleast one field must be provided" };
-}
-
-async function invalidateRedisCache(
-  newTotalBottles: typeof TotalBottles.$inferSelect
-) {
-  // Convert Date objects to strings for caching
-  const cacheable = {
-    ...newTotalBottles,
-    createdAt: newTotalBottles.createdAt.toISOString(),
-    updatedAt: newTotalBottles.updatedAt.toISOString(),
-  };
-
-  // Cache the result for future requests
-  await redis.setValue("cache", "total_bottles", "latest", cacheable);
 }

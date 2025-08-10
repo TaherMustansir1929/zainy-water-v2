@@ -10,7 +10,6 @@ import {
 } from "../../db/schema";
 import { and, desc, eq, lte, gte } from "drizzle-orm";
 import { startOfDay, endOfDay } from "date-fns";
-import { redis } from "@/lib/redis/storage";
 
 export type DeliveryRecord = {
   filled_bottles: number;
@@ -113,21 +112,6 @@ export async function addDailyDeliveryRecord(data: DeliveryRecord): Promise<
       })
       .returning();
 
-    // Invalidate relevant caches after adding delivery record
-    const today = new Date().toDateString();
-    await redis.deleteValue(
-      "temp",
-      "delivery",
-      `delivery-${data.moderator_id}-${today}`
-    );
-    await redis.deleteValue(
-      "temp",
-      "bottle_usage",
-      `bottle-usage-${data.moderator_id}`
-    );
-    await redis.deleteValue("cache", "total_bottles", "latest");
-    await redis.deleteValue("cache", "customer", data.customer_id);
-
     return {
       success: true,
       delivery: newDeliveryRecord,
@@ -182,42 +166,7 @@ export async function getCustomerDataById(
       };
     }
 
-    // Try to get cached customer data first
-    const cachedCustomer = await redis.getValue(
-      "cache",
-      "customer",
-      customer_id
-    );
-
-    if (cachedCustomer.success && cachedCustomer.data) {
-      // Convert date strings back to Date objects
-      const customer = cachedCustomer.data as Omit<
-        typeof Customer.$inferSelect,
-        "createdAt" | "updatedAt"
-      > & {
-        createdAt: string;
-        updatedAt: string;
-      };
-
-      const customerData = {
-        ...customer,
-        createdAt: new Date(customer.createdAt),
-        updatedAt: new Date(customer.updatedAt),
-      };
-
-      // Still validate the customer is active and in authorized area
-      if (customerData.isActive === false) {
-        return { success: false, error: "Customer is not active." };
-      }
-
-      if (!areas.includes(customerData.area)) {
-        return { success: false, error: "Customer area is not authorized." };
-      }
-
-      return { success: true, data: customerData };
-    }
-
-    // If cache miss, fetch from database
+    // Fetch from database directly
     const [data] = await db
       .select()
       .from(Customer)
@@ -227,14 +176,6 @@ export async function getCustomerDataById(
     if (!data) {
       return { success: false, error: "Customer not found." };
     }
-
-    // Cache the customer data for future requests
-    const cacheable = {
-      ...data,
-      createdAt: data.createdAt.toISOString(),
-      updatedAt: data.updatedAt.toISOString(),
-    };
-    await redis.setValue("cache", "customer", customer_id, cacheable);
 
     if (data.isActive === false) {
       return { success: false, error: "Customer is not active." };

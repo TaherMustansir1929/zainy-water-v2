@@ -20,10 +20,7 @@ export async function changeModeratorWorkingStatus(
   if (updatedModerator) {
     console.log(`Moderator: ${name} status changed successfully.`);
 
-    // Invalidate moderator list cache since we changed status
-    await redis.deleteValue("cache", "admin", "mod-list");
-
-    // If the moderator has a session, invalidate that too since working status changed
+    // Invalidate the moderator's session since working status changed
     await redis.deleteValue("session", "mod", updatedModerator.id);
 
     return updatedModerator;

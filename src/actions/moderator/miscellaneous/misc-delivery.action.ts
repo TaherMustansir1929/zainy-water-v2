@@ -4,7 +4,6 @@ import { db } from "@/db";
 import { BottleUsage, Miscellaneous, Moderator } from "@/db/schema";
 import { endOfDay, startOfDay } from "date-fns";
 import { and, desc, eq, gte, lte } from "drizzle-orm";
-import { redis } from "@/lib/redis/storage";
 
 export type MiscDeliveryProps = {
   moderator_id: string;
@@ -62,14 +61,4 @@ export async function addMiscDelivery(data: MiscDeliveryProps) {
       empty_bottles: bottleUsage.empty_bottles + data.empty_bottles,
     })
     .where(eq(BottleUsage.id, bottleUsage.id));
-
-  // Invalidate relevant caches after adding misc delivery
-  const today = new Date().toDateString();
-  const cacheKey = `misc-delivery-${data.moderator_id}-${today}`;
-  await redis.deleteValue("temp", "miscellaneous", cacheKey);
-  await redis.deleteValue(
-    "temp",
-    "bottle_usage",
-    `bottle-usage-${data.moderator_id}`
-  );
 }

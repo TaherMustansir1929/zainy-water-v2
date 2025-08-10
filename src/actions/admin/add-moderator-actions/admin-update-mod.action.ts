@@ -17,10 +17,7 @@ export async function updateModeratorByName(
       .where(eq(Moderator.name, name))
       .returning();
 
-    // Invalidate moderator list cache since we updated a moderator
-    await redis.deleteValue("cache", "admin", "mod-list");
-
-    // If the moderator has a session, invalidate that too
+    // If the moderator has a session, invalidate that
     if (updatedModerator.id) {
       await redis.deleteValue("session", "mod", updatedModerator.id);
     }

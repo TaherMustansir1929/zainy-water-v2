@@ -3,7 +3,6 @@
 import { db } from "@/db";
 import { BottleUsage, TotalBottles } from "@/db/schema";
 import { desc, eq } from "drizzle-orm";
-import { redis } from "@/lib/redis/storage";
 
 type DataProps = {
   moderator_id: string;
@@ -69,12 +68,4 @@ export async function returnBottleUsage(data: DataProps) {
       caps: bottleUsage.caps - data.caps,
     })
     .where(eq(BottleUsage.id, bottleUsage.id));
-
-  // Invalidate relevant caches after bottle usage return
-  await redis.deleteValue(
-    "temp",
-    "bottle_usage",
-    `bottle-usage-${data.moderator_id}`
-  );
-  await redis.deleteValue("cache", "total_bottles", "latest");
 }
