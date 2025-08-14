@@ -1,12 +1,11 @@
 "use client";
 import {
-  Calendar,
-  Home,
-  Inbox,
-  Key,
-  PlusCircle,
-  Search,
-  Settings,
+    Home,
+    Inbox,
+    Key,
+    PlusCircle,
+    Search,
+    Settings, User,
 } from "lucide-react";
 
 import {
@@ -33,24 +32,19 @@ const items = [
     icon: Home,
   },
   {
-    title: "Customer History",
-    url: "/admin/customer-history",
+    title: "Deliveries",
+    url: "/admin/deliveries",
     icon: Inbox,
   },
   {
-    title: "Set Bottle Price",
-    url: "/admin/set-bottle-price",
-    icon: Calendar,
+    title: "Customer Information",
+    url: "/admin/customer-information",
+    icon: User,
   },
   {
     title: "Other Expenses",
     url: "/admin/other-expenses",
     icon: Search,
-  },
-  {
-    title: "Moderator Reports",
-    url: "/admin/moderator-reports",
-    icon: Settings,
   },
 ];
 

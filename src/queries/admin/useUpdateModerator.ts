@@ -3,9 +3,11 @@ import { Moderator as ModeratorData } from "@/app/(admin)/admin/(dashboard)/add-
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Moderator } from "@/db/schema";
+import { useRouter } from "next/navigation";
 
 export const useUpdateModerator = () => {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const mutation = useMutation<
     typeof Moderator.$inferSelect,
@@ -20,6 +22,7 @@ export const useUpdateModerator = () => {
     onSuccess: () => {
       toast.success("Moderator updated successfully!");
       queryClient.invalidateQueries({ queryKey: ["moderator_list"] });
+      router.refresh();
     },
     onError: (error) => {
       toast.error(`Failed to update moderator: ${error.message}`);

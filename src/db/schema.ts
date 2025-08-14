@@ -59,6 +59,7 @@ export const Customer = pgTable(
     bottle_price: integer("bottle_price").notNull(),
     bottles: integer("bottles").notNull(),
     deposit: integer("deposit").notNull(),
+    deposit_price: integer("deposit_price").notNull().default(1000),
     balance: integer("balance").notNull(),
     isActive: boolean("isActive").notNull().default(true),
     createdAt: timestamp("createdAt", { withTimezone: true })
@@ -95,7 +96,7 @@ export const Moderator = pgTable(
   (table) => [index("moderator_id_idx").on(table.id)]
 );
 
-// Delivery tablD
+// Delivery table
 export const Delivery = pgTable(
   "Delivery",
   {

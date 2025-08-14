@@ -72,7 +72,7 @@ export function SectionCards({ total_bottles }: Props) {
       ) : (
         <Loader2 className="animate-spin" />
       ),
-      footer: "Bottles at main plant",
+      footer: "Damaged/Unavailable bottles",
       icon: <ShieldX className="size-4" />,
     },
   ];

@@ -2,11 +2,12 @@
 
 import { ChartAreaInteractive } from "@/app/(admin)/_components/chart-area-interactive";
 import { SectionCards } from "@/components/section-cards";
-import { DataTable2 } from "@/app/(admin)/_components/data-table-2";
+import { DataTable2BottleInventory } from "@/app/(admin)/admin/(dashboard)/bottle-inventory/data-table-2-bottle-inventory";
 
 import { useFetchTotalBottles } from "@/queries/moderator/useFetchTotalBottles";
 import { BottleUsage30dDataProps } from "@/actions/fetch-30d-bottle-usage";
 import { useGet30dBottleUsage } from "@/queries/admin/useGet30dBottleUsage";
+import { ChartLineInteractive } from "@/app/(admin)/_components/line-chart-interactive";
 
 export function BottleInventoryMainSection() {
   const totalBottlesQuery = useFetchTotalBottles();
@@ -28,15 +29,22 @@ export function BottleInventoryMainSection() {
   }
 
   return (
-    <div className="w-full p-4 max-w-7xl">
+    <div className="min-h-screen w-full p-4 max-w-7xl">
       <div className="flex flex-1 flex-col">
         <div className="@container/main flex flex-1 flex-col gap-2">
           <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
             <SectionCards total_bottles={totalBottles} />
             <div className="px-4 lg:px-6">
-              <ChartAreaInteractive rawChartData={rawChartData} />
+              {/*<ChartAreaInteractive*/}
+              {/*  rawChartData={rawChartData}*/}
+              {/*  title={"Total Bottle Usage"}*/}
+              {/*/>*/}
+              <ChartLineInteractive
+                rawChartData={rawChartData}
+                title={"Total Bottle Usage"}
+              />
             </div>
-            <DataTable2 data={bottleUsageData} />
+            <DataTable2BottleInventory data={bottleUsageData} />
           </div>
         </div>
       </div>

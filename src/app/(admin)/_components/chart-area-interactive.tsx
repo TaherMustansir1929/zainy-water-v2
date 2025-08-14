@@ -38,12 +38,16 @@ export type ChartAreaProps = {
       value: number;
     }[];
   }[];
+  title: string;
 };
 
-export function ChartAreaInteractive({ rawChartData: rcd }: ChartAreaProps) {
+export function ChartAreaInteractive({
+  rawChartData: rcd,
+  title,
+}: ChartAreaProps) {
   // Sort the raw data by date (oldest to newest) first
   const rawChartData = [...rcd].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
   );
 
   // 1️⃣ Transform into chart-friendly format
@@ -58,7 +62,7 @@ export function ChartAreaInteractive({ rawChartData: rcd }: ChartAreaProps) {
   // 2️⃣ Generate ChartConfig dynamically
   const chartConfig: ChartConfig = {};
   const allLabels = new Set(
-    rawChartData.flatMap((entry) => entry.targets.map((t) => t.label))
+    rawChartData.flatMap((entry) => entry.targets.map((t) => t.label)),
   );
 
   let colorIndex = 1;
@@ -96,10 +100,10 @@ export function ChartAreaInteractive({ rawChartData: rcd }: ChartAreaProps) {
   return (
     <Card className="@container/card">
       <CardHeader>
-        <CardTitle>Total Visitors</CardTitle>
+        <CardTitle>{title}</CardTitle>
         <CardDescription>
           <span className="hidden @[540px]/card:block">
-            Total for the last 3 months
+            Total for the last 30 days
           </span>
           <span className="@[540px]/card:hidden">Last 3 months</span>
         </CardDescription>

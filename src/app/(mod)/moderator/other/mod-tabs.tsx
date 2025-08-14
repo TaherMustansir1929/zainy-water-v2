@@ -9,6 +9,8 @@ import { OtherExpenseTable } from "./other-expenses/other-expense-table";
 import { BottleUsageForm } from "./bottle-usage/bottle-usage-form";
 import { MiscDeliveryForm } from "./miscellaneous/misc-form";
 import { MiscDeliveryTable } from "./miscellaneous/misc-table";
+import { MiscBottleUsageForm } from "@/app/(mod)/moderator/other/miscellaneous/misc-bottle-usage-form";
+import { Separator } from "@/components/ui/separator";
 
 const mod_tabs = [
   {
@@ -58,7 +60,7 @@ export function ModTabs() {
                 value={tab.value}
                 className={cn(
                   "data-[state=active]:bg-muted data-[state=active]:after:bg-primary relative overflow-hidden rounded-none border py-2 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 first:rounded-s last:rounded-e",
-                  "flex-1 min-w-[150px]"
+                  "flex-1 min-w-[150px]",
                 )}
               >
                 {tab.icon}
@@ -106,11 +108,34 @@ export function ModTabs() {
               <CardHeader>
                 <CardTitle className="text-primary font-bold text-center flex items-center justify-center gap-2">
                   <Dice5 />
-                  Miscellaneous
+                  Miscellaneous Delivery
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <MiscDeliveryForm />
+              </CardContent>
+              <Separator />
+              <CardHeader className={"mt-4"}>
+                <CardTitle className="flex flex-col items-center justify-center gap-2">
+                  <h1
+                    className={
+                      "text-primary font-bold text-center flex items-center justify-center gap-2"
+                    }
+                  >
+                    <Dice5 />
+                    Miscellaneous Bottle Usage
+                  </h1>
+                  <p
+                    className={
+                      "text-xs md:text-sm text-muted-foreground opacity-50"
+                    }
+                  >
+                    (use with caution!)
+                  </p>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <MiscBottleUsageForm />
               </CardContent>
             </Card>
 

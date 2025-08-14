@@ -29,7 +29,7 @@ export const ModHeader = () => {
   return (
     <header className="w-full border-b border-gray-200 p-2 flex justify-between items-center">
       <LogoutConfirmDialog />
-      <Link href={"/"} className="text-lg font-semibold">
+      <Link href={"/moderator"} className="text-lg font-semibold">
         <Image src={"/logo.jpg"} alt="Zainy Water" width={120} height={120} />
       </Link>
       {!(pathname === "/moderator/login") && (

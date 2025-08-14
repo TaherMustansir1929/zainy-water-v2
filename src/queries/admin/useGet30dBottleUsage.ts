@@ -1,4 +1,4 @@
-import { fetch30dBottleUsage } from "@/actions/fetch-30d-bottle-usage";
+import { fetch30dBottleUsage } from "@/actions/fetch-30d-bottle-usage.action";
 import { useQuery } from "@tanstack/react-query";
 
 // Shared query configuration for server-side prefetching

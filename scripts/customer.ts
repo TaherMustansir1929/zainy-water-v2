@@ -11,8 +11,9 @@ async function main() {
         area: "Saddar",
         phone: "123-456-7890",
         bottle_price: 100,
-        bottles: 5,
-        deposit: 200,
+        bottles: 1,
+        deposit: 5,
+        deposit_price: 800,
         balance: 300,
       })
       .returning();

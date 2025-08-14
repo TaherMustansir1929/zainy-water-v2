@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Customer } from "@prisma/client";
 import {
   addDailyDeliveryRecord,
   DeliveryRecord,
@@ -26,6 +25,7 @@ import { Loader2, Search, SendHorizonal } from "lucide-react";
 import { useModeratorStore } from "@/lib/moderator-state";
 import { toast } from "sonner";
 import { BottleInput } from "@/components/bottle-input";
+import { Customer } from "@/db/schema";
 
 // FORM SCHEMA
 const formSchema = z
@@ -61,7 +61,9 @@ export const DailyDeliveryForm = () => {
   });
 
   // STATES
-  const [customerData, setCustomerData] = useState<Customer | null>(null);
+  const [customerData, setCustomerData] = useState<
+    typeof Customer.$inferSelect | null
+  >(null);
   const moderator = useModeratorStore((state) => state.moderator);
 
   // Calculate balances based on payment flow
@@ -304,10 +306,7 @@ export const DailyDeliveryForm = () => {
                 </p>
                 <p>
                   <span className="font-bold">Deposit:</span>{" "}
-                  {customerData.deposit *
-                    (Number(
-                      process.env.NEXT_PUBLIC_PER_BOTTLE_DEPOSIT_AMOUNT
-                    ) || 1000)}
+                  {customerData.deposit * customerData.deposit_price}
                   /-
                   <span className="font-mono text-muted-foreground">
                     {" "}
@@ -510,12 +509,12 @@ export const DailyDeliveryForm = () => {
                   <span className="font-bold">
                     Previous Balance:
                     {customerData.balance > 0 ? (
-                      <span className="text-green-500 font-normal">
+                      <span className="text-red-500 font-normal">
                         {" "}
                         (Customer Owes)
                       </span>
                     ) : customerData.balance < 0 ? (
-                      <span className="text-red-500 font-normal">
+                      <span className="text-green-500 font-normal">
                         {" "}
                         (Advance Paid)
                       </span>
@@ -529,8 +528,8 @@ export const DailyDeliveryForm = () => {
                     {customerData.balance > 0
                       ? `${customerData.balance}/-`
                       : customerData.balance < 0
-                      ? `${Math.abs(customerData.balance)}/-`
-                      : "0/- (Clear)"}
+                        ? `${Math.abs(customerData.balance)}/-`
+                        : "0/- (Clear)"}
                   </span>
                 </p>
                 <p className="w-full flex items-center justify-between">

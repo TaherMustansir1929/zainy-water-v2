@@ -3,7 +3,7 @@ import { AddModMainSection } from "./add-mod-main-section";
 
 const AddModeratorPage = () => {
   return (
-    <div className="w-full min-h-screen flex flex-col justify-center items-center">
+    <div className="w-full min-h-screen flex flex-col justify-start items-center">
       <WelcomeSection
         text="Here you can manage moderators for your platform. You can add, edit, and
         remove moderators as needed."
