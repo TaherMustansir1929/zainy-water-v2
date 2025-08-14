@@ -28,12 +28,9 @@ import {
   IconChevronsLeft,
   IconChevronsRight,
   IconCircleCheckFilled,
-  IconDotsVertical,
   IconGripVertical,
   IconLayoutColumns,
   IconLoader,
-  IconPlus,
-  IconTrendingUp,
 } from "@tabler/icons-react";
 import {
   ColumnDef,
@@ -50,36 +47,14 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
-import { toast } from "sonner";
-import { z } from "zod";
 
-import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -91,7 +66,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import {
   Table,
   TableBody,
@@ -100,13 +74,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Customer, Delivery, Moderator } from "@/db/schema";
-import { format, formatDistanceToNow, startOfDay } from "date-fns";
-import { useEffect } from "react";
-import { cn } from "@/lib/utils";
-import { Atom } from "react-loading-indicators";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { formatDistanceToNow, startOfDay } from "date-fns";
 import { DeliveriesTableCellViewer } from "@/app/(admin)/admin/(dashboard)/deliveries/deliveries-table-cell-viewer";
 
 export type columnSchema = {
@@ -292,13 +261,13 @@ export function DataTable3DailyDeliveries({
   data?: columnSchema[];
 }) {
   const [data, setData] = React.useState<columnSchema[] | undefined>(
-    initialData,
+    initialData
   );
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
+    []
   );
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -316,12 +285,12 @@ export function DataTable3DailyDeliveries({
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
     useSensor(TouchSensor, {}),
-    useSensor(KeyboardSensor, {}),
+    useSensor(KeyboardSensor, {})
   );
 
   const dataIds = React.useMemo<UniqueIdentifier[]>(
     () => data?.map(({ Delivery }) => Delivery.id) || [],
-    [data],
+    [data]
   );
 
   const table = useReactTable({
@@ -416,7 +385,7 @@ export function DataTable3DailyDeliveries({
                 .filter(
                   (column) =>
                     typeof column.accessorFn !== "undefined" &&
-                    column.getCanHide(),
+                    column.getCanHide()
                 )
                 .map((column) => {
                   return (
@@ -455,7 +424,7 @@ export function DataTable3DailyDeliveries({
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
-                              header.getContext(),
+                              header.getContext()
                             )}
                       </TableHead>
                     );

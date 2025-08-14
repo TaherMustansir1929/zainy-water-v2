@@ -28,14 +28,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { CircleDollarSign, Loader2 } from "lucide-react";
-import { useUpdateDailyDeliveryRecord } from "@/queries/admin/useUpdateDailyDeliveryRecord";
 import { useUpdateOtherExpense } from "@/queries/admin/useUpdateOtherExpense";
 import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z.object({
   amount: z.number().min(1),
   description: z.string().min(2),
-})
+});
 
 export const OtherExpTableCellViewer = ({ item }: { item: columnSchema }) => {
   const isMobile = useIsMobile();
@@ -46,7 +45,7 @@ export const OtherExpTableCellViewer = ({ item }: { item: columnSchema }) => {
       amount: item.OtherExpense.amount || 0,
       description: item.OtherExpense.description || "",
     },
-  })
+  });
 
   const updateMutation = useUpdateOtherExpense();
 
@@ -58,9 +57,9 @@ export const OtherExpTableCellViewer = ({ item }: { item: columnSchema }) => {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     await updateMutation.mutateAsync({
       other_exp_id: item.OtherExpense.id,
-      data: {...values},
-    })
-    console.log(values)
+      data: { ...values },
+    });
+    console.log(values);
   }
 
   return (
@@ -70,7 +69,7 @@ export const OtherExpTableCellViewer = ({ item }: { item: columnSchema }) => {
           variant="link"
           className={cn(
             "text-foreground w-fit px-0 text-left cursor-pointer",
-            isMobile && "underline underline-offset-4 font-bold",
+            isMobile && "underline underline-offset-4 font-bold"
           )}
         >
           {item.Moderator.name}
@@ -100,7 +99,7 @@ export const OtherExpTableCellViewer = ({ item }: { item: columnSchema }) => {
                 >
                   <ul className="divide-y divide-border">
                     {startOfDay(item.OtherExpense.createdAt) <
-                      startOfDay(new Date()) ? (
+                    startOfDay(new Date()) ? (
                       <>
                         {Object.entries(item.OtherExpense).map(
                           ([key, value], index) => {
@@ -128,9 +127,9 @@ export const OtherExpTableCellViewer = ({ item }: { item: columnSchema }) => {
                                 </span>
                               </li>
                             );
-                          },
-                        )
-                        }</>
+                          }
+                        )}
+                      </>
                     ) : (
                       <>
                         <li className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 hover:bg-muted/50 transition-colors">
@@ -143,9 +142,7 @@ export const OtherExpTableCellViewer = ({ item }: { item: columnSchema }) => {
                                   "w-full flex flex-row items-center justify-between"
                                 }
                               >
-                                <FormLabel>
-                                  Amount
-                                </FormLabel>
+                                <FormLabel>Amount</FormLabel>
                                 <FormControl>
                                   <Input
                                     {...field}
@@ -155,7 +152,7 @@ export const OtherExpTableCellViewer = ({ item }: { item: columnSchema }) => {
                                       const value = e.target.value;
                                       // Convert to number or 0 if empty
                                       field.onChange(
-                                        value ? parseFloat(value) : 0,
+                                        value ? parseFloat(value) : 0
                                       );
                                     }}
                                     className={"max-w-[100px]"}
@@ -177,9 +174,7 @@ export const OtherExpTableCellViewer = ({ item }: { item: columnSchema }) => {
                                   "w-full flex flex-row items-center justify-between"
                                 }
                               >
-                                <FormLabel>
-                                  Description
-                                </FormLabel>
+                                <FormLabel>Description</FormLabel>
                                 <FormControl>
                                   <Textarea
                                     {...field}
@@ -196,25 +191,25 @@ export const OtherExpTableCellViewer = ({ item }: { item: columnSchema }) => {
                   </ul>
                   {startOfDay(item.OtherExpense.createdAt) >=
                     startOfDay(new Date()) && (
-                      <div
-                        className={"w-full flex justify-center items-start px-4"}
+                    <div
+                      className={"w-full flex justify-center items-start px-4"}
+                    >
+                      <Button
+                        type={"submit"}
+                        className={"min-w-[150px]"}
+                        disabled={button_disabled}
                       >
-                        <Button
-                          type={"submit"}
-                          className={"min-w-[150px]"}
-                          disabled={button_disabled}
-                        >
-                          {updateMutation.isPending ? (
-                            <>
-                              Saving
-                              <Loader2 className={"animate-spin"} />
-                            </>
-                          ) : (
-                            <>Save</>
-                          )}
-                        </Button>
-                      </div>
-                    )}
+                        {updateMutation.isPending ? (
+                          <>
+                            Saving
+                            <Loader2 className={"animate-spin"} />
+                          </>
+                        ) : (
+                          <>Save</>
+                        )}
+                      </Button>
+                    </div>
+                  )}
                 </form>
               </Form>
             </CardContent>
@@ -227,5 +222,5 @@ export const OtherExpTableCellViewer = ({ item }: { item: columnSchema }) => {
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
-  )
-}
+  );
+};

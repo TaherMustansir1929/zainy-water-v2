@@ -1,11 +1,10 @@
 "use client";
 
-import { ChartAreaInteractive } from "@/app/(admin)/_components/chart-area-interactive";
 import { SectionCards } from "@/components/section-cards";
 import { DataTable2BottleInventory } from "@/app/(admin)/admin/(dashboard)/bottle-inventory/data-table-2-bottle-inventory";
 
 import { useFetchTotalBottles } from "@/queries/moderator/useFetchTotalBottles";
-import { BottleUsage30dDataProps } from "@/actions/fetch-30d-bottle-usage";
+import { BottleUsage30dDataProps } from "@/actions/fetch-30d-bottle-usage.action";
 import { useGet30dBottleUsage } from "@/queries/admin/useGet30dBottleUsage";
 import { ChartLineInteractive } from "@/app/(admin)/_components/line-chart-interactive";
 

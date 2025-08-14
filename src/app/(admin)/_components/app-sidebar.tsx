@@ -1,12 +1,5 @@
 "use client";
-import {
-    Home,
-    Inbox,
-    Key,
-    PlusCircle,
-    Search,
-    Settings, User,
-} from "lucide-react";
+import { Home, Inbox, Key, PlusCircle, Search, User } from "lucide-react";
 
 import {
   Sidebar,

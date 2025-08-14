@@ -28,7 +28,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useUpdateDailyDeliveryRecord } from "@/queries/admin/useUpdateDailyDeliveryRecord";
 import { Loader2 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
@@ -77,12 +76,12 @@ export function MiscellaneousTableCellViewer({ item }: { item: columnSchema }) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!values.isPaid && values.payment > 0) {
       toast.error(
-        "Please set isPaid to true if the customer paid for the delivery",
+        "Please set isPaid to true if the customer paid for the delivery"
       );
       return;
     } else if (values.isPaid && values.payment === 0) {
       toast.error(
-        "Please set isPaid to false if the customer did not pay for the delivery",
+        "Please set isPaid to false if the customer did not pay for the delivery"
       );
       return;
     }
@@ -103,7 +102,7 @@ export function MiscellaneousTableCellViewer({ item }: { item: columnSchema }) {
           variant="link"
           className={cn(
             "text-foreground w-fit px-0 text-left cursor-pointer",
-            isMobile && "underline underline-offset-4 font-bold",
+            isMobile && "underline underline-offset-4 font-bold"
           )}
         >
           {item.Miscellaneous.customer_name}
@@ -163,7 +162,7 @@ export function MiscellaneousTableCellViewer({ item }: { item: columnSchema }) {
                                 </span>
                               </li>
                             );
-                          },
+                          }
                         )}
                       </>
                     ) : (
@@ -206,69 +205,35 @@ export function MiscellaneousTableCellViewer({ item }: { item: columnSchema }) {
                             )}
                           />
                         </li>
-                        {Object.entries(item.Miscellaneous).map(
-                          ([key, value]) => {
-                            if (
-                              [
-                                "id",
-                                "customer_name",
-                                "description",
-                                "moderator_id",
-                                "createdAt",
-                                "updatedAt",
-                              ].includes(key)
-                            ) {
-                              return null;
-                            }
-                            if (key === "isPaid") {
-                              return (
-                                <li key={key}>
-                                  <FormField
-                                    control={form.control}
-                                    name={"isPaid"}
-                                    render={({ field }) => (
-                                      <FormItem className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 hover:bg-muted/50 transition-colors">
-                                        <FormLabel className={"capitalize"}>
-                                          {key.replace(/_/g, " ")}
-                                        </FormLabel>
-                                        <FormControl>
-                                          <Switch
-                                            checked={field.value}
-                                            onCheckedChange={field.onChange}
-                                            aria-readonly
-                                          />
-                                        </FormControl>
-                                        <FormMessage />
-                                      </FormItem>
-                                    )}
-                                  />
-                                </li>
-                              );
-                            }
+                        {Object.entries(item.Miscellaneous).map(([key]) => {
+                          if (
+                            [
+                              "id",
+                              "customer_name",
+                              "description",
+                              "moderator_id",
+                              "createdAt",
+                              "updatedAt",
+                            ].includes(key)
+                          ) {
+                            return null;
+                          }
+                          if (key === "isPaid") {
                             return (
                               <li key={key}>
                                 <FormField
                                   control={form.control}
-                                  name={key as keyof z.infer<typeof formSchema>}
+                                  name={"isPaid"}
                                   render={({ field }) => (
                                     <FormItem className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 hover:bg-muted/50 transition-colors">
                                       <FormLabel className={"capitalize"}>
                                         {key.replace(/_/g, " ")}
                                       </FormLabel>
                                       <FormControl>
-                                        <Input
-                                          {...field}
-                                          type={"number"}
-                                          // @ts-expect-error remove field.value type error
-                                          value={field.value}
-                                          onChange={(e) => {
-                                            const value = e.target.value;
-                                            // Convert to number or 0 if empty
-                                            field.onChange(
-                                              value ? parseFloat(value) : 0,
-                                            );
-                                          }}
-                                          className={"max-w-[100px]"}
+                                        <Switch
+                                          checked={field.value}
+                                          onCheckedChange={field.onChange}
+                                          aria-readonly
                                         />
                                       </FormControl>
                                       <FormMessage />
@@ -277,8 +242,40 @@ export function MiscellaneousTableCellViewer({ item }: { item: columnSchema }) {
                                 />
                               </li>
                             );
-                          },
-                        )}
+                          }
+                          return (
+                            <li key={key}>
+                              <FormField
+                                control={form.control}
+                                name={key as keyof z.infer<typeof formSchema>}
+                                render={({ field }) => (
+                                  <FormItem className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 hover:bg-muted/50 transition-colors">
+                                    <FormLabel className={"capitalize"}>
+                                      {key.replace(/_/g, " ")}
+                                    </FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        {...field}
+                                        type={"number"}
+                                        // @ts-expect-error remove field.value type error
+                                        value={field.value}
+                                        onChange={(e) => {
+                                          const value = e.target.value;
+                                          // Convert to number or 0 if empty
+                                          field.onChange(
+                                            value ? parseFloat(value) : 0
+                                          );
+                                        }}
+                                        className={"max-w-[100px]"}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </li>
+                          );
+                        })}
                       </>
                     )}
                   </ul>

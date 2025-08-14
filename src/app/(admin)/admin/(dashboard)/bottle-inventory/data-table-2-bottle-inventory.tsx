@@ -31,7 +31,6 @@ import {
   IconGripVertical,
   IconLayoutColumns,
   IconLoader,
-  IconPlus,
   IconTrendingUp,
 } from "@tabler/icons-react";
 import {
@@ -90,7 +89,6 @@ import {
 import { BottleUsage, Moderator } from "@/db/schema";
 import { format, formatDistanceToNow, startOfDay } from "date-fns";
 import { Separator } from "@/components/ui/separator";
-import { ChartConfig } from "@/components/ui/chart";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Atom } from "react-loading-indicators";
 import { cn } from "@/lib/utils";
@@ -296,13 +294,13 @@ export function DataTable2BottleInventory({
   data?: columnSchema[];
 }) {
   const [data, setData] = React.useState<columnSchema[] | undefined>(
-    initialData,
+    initialData
   );
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
+    []
   );
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -319,12 +317,12 @@ export function DataTable2BottleInventory({
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
     useSensor(TouchSensor, {}),
-    useSensor(KeyboardSensor, {}),
+    useSensor(KeyboardSensor, {})
   );
 
   const dataIds = React.useMemo<UniqueIdentifier[]>(
     () => data?.map(({ bottleUsage }) => bottleUsage.id) || [],
-    [data],
+    [data]
   );
 
   const table = useReactTable({
@@ -364,10 +362,10 @@ export function DataTable2BottleInventory({
     const { active, over } = event;
     if (active && over && active.id !== over.id && data) {
       const oldIndex = data.findIndex(
-        (item) => item.bottleUsage.id === active.id,
+        (item) => item.bottleUsage.id === active.id
       );
       const newIndex = data.findIndex(
-        (item) => item.bottleUsage.id === over.id,
+        (item) => item.bottleUsage.id === over.id
       );
 
       if (oldIndex !== -1 && newIndex !== -1) {
@@ -402,7 +400,7 @@ export function DataTable2BottleInventory({
                 .filter(
                   (column) =>
                     typeof column.accessorFn !== "undefined" &&
-                    column.getCanHide(),
+                    column.getCanHide()
                 )
                 .map((column) => {
                   return (
@@ -441,7 +439,7 @@ export function DataTable2BottleInventory({
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
-                              header.getContext(),
+                              header.getContext()
                             )}
                       </TableHead>
                     );
@@ -591,7 +589,7 @@ function TableCellViewer({ item }: { item: columnSchema }) {
           variant="link"
           className={cn(
             "text-foreground w-fit px-0 text-left cursor-pointer",
-            isMobile && "underline underline-offset-4 font-bold",
+            isMobile && "underline underline-offset-4 font-bold"
           )}
         >
           {item.moderator.name}
@@ -677,7 +675,7 @@ function TableCellViewer({ item }: { item: columnSchema }) {
                 {Object.entries(item.bottleUsage).map(([key, value], index) => {
                   if (
                     ["id", "moderator_id", "createdAt", "updatedAt"].includes(
-                      key,
+                      key
                     )
                   ) {
                     return null;

@@ -37,7 +37,7 @@ export function ChartLineInteractive({
 }: ChartLineProps) {
   // Sort the raw data by date (oldest to newest) first
   const rawChartData = [...rcd].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
 
   // 1️⃣ Transform into chart-friendly format
@@ -55,7 +55,7 @@ export function ChartLineInteractive({
   const chartConfig = React.useMemo(() => {
     const config: ChartConfig = {};
     const allLabels = new Set(
-      rawChartData.flatMap((entry) => entry.targets.map((t) => t.label)),
+      rawChartData.flatMap((entry) => entry.targets.map((t) => t.label))
     );
 
     let colorIndex = 1;
@@ -83,7 +83,7 @@ export function ChartLineInteractive({
 
   const total = React.useMemo(() => {
     return Object.entries(chartConfig).reduce(
-      (acc, [key, value]) => {
+      (acc, [key]) => {
         const total = chartData.reduce((acc, curr) => {
           const val = curr[key];
           return acc + (typeof val === "number" ? val : 0);
@@ -93,7 +93,7 @@ export function ChartLineInteractive({
           [key]: total,
         };
       },
-      {} as Record<string, number>,
+      {} as Record<string, number>
     );
   }, [chartData, chartConfig]);
 
