@@ -1,5 +1,5 @@
 "use client";
-import { Home, Inbox, Key, PlusCircle, Search, User } from "lucide-react";
+import { Home, Inbox, PlusCircle, Search, User } from "lucide-react";
 
 import {
   Sidebar,
@@ -47,11 +47,6 @@ const admin_features = [
     url: "/admin/add-moderator",
     icon: PlusCircle,
   },
-  {
-    title: "Change Password",
-    url: "/admin/change-password",
-    icon: Key,
-  },
 ];
 
 type Props = {
@@ -85,7 +80,7 @@ export function AppSidebar({ className }: Props) {
                     asChild
                     className={cn(
                       "hover:bg-gray-100",
-                      pathname === item.url && "bg-gray-300 hover:bg-gray-300"
+                      pathname === item.url && "bg-gray-300 hover:bg-gray-300",
                     )}
                   >
                     <Link href={item.url} className="text-lg">
@@ -104,7 +99,7 @@ export function AppSidebar({ className }: Props) {
                     asChild
                     className={cn(
                       "hover:bg-gray-100",
-                      pathname === item.url && "bg-gray-300 hover:bg-gray-300"
+                      pathname === item.url && "bg-gray-300 hover:bg-gray-300",
                     )}
                   >
                     <Link href={item.url}>

@@ -2,10 +2,6 @@
 
 echo -e "🚀 Starting database seeding...\n"
 
-echo -e "👑 Seeding admin..."
-bun run ./scripts/admin.ts
-echo -e "✅ Admin seeding completed.\n"
-
 echo -e "🛡️ Seeding moderator..."
 bun run ./scripts/moderator.ts
 echo -e "✅ Moderator seeding completed.\n"
