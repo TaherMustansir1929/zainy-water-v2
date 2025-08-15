@@ -28,26 +28,22 @@ const quotes_list = [
 ];
 
 export const WelcomeSection = ({ text, greeting }: Props) => {
-  const { user, isLoaded } = useUser();
-  const [adminName, setAdminName] = useState<string>("");
   const [quote, setQuote] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (user?.firstName && user?.lastName) {
-      setAdminName(`${user.firstName} ${user.lastName}`);
-    }
-  }, [isLoaded, user?.firstName, user?.lastName]);
+  const { user, isLoaded } = useUser();
 
   useEffect(() => {
     const randomIndex = Math.floor(Math.random() * quotes_list.length);
     setQuote(quotes_list[randomIndex]);
-  }, [user]);
+  }, [isLoaded]);
+
+  if (!isLoaded) return null;
 
   return (
     <div className="p-4 w-full max-w-7xl border-b">
       <div className="mb-4">
         <h1 className="text-2xl md:text-4xl font-bold mb-2">
-          {greeting ?? "Welcome"}, {isLoaded ? adminName : "Admin"}!
+          {greeting ?? "Welcome"}, {`${user?.firstName} ${user?.lastName}`}!
         </h1>
         <h2 className="font-mono text-xl">
           {quote ?? "👍 Let's get started!"}
