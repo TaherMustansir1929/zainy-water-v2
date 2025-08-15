@@ -3,7 +3,10 @@ import { db } from "@/db";
 import { Admin } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
-export const adminMiddleware = async () => {
+export const adminMiddleware = async (): Promise<{
+  status: number;
+  message: string;
+}> => {
   "use server";
 
   try {

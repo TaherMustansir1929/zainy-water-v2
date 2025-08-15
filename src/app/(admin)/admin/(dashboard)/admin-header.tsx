@@ -16,7 +16,7 @@ export const AdminHeader = () => {
     if (isSpinning) return; // Prevent multiple clicks during animation
 
     setIsSpinning(true);
-    router.prefetch(pathname);
+    router.push(pathname);
     router.refresh();
 
     // Reset animation after 600ms (duration of the animation)

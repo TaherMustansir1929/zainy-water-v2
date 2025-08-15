@@ -1,4 +1,3 @@
-import React from "react";
 import { LoadingDotsBounce } from "@/components/loading-dots";
 import { adminMiddleware } from "@/actions/admin/adminMiddleware";
 import { redirect } from "next/navigation";
