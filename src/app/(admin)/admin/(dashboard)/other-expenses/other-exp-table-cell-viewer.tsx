@@ -30,6 +30,7 @@ import { Input } from "@/components/ui/input";
 import { CircleDollarSign, Loader2 } from "lucide-react";
 import { useUpdateOtherExpense } from "@/queries/admin/useUpdateOtherExpense";
 import { Textarea } from "@/components/ui/textarea";
+import { GeneratedAvatar } from "@/lib/avatar";
 
 const formSchema = z.object({
   amount: z.number().min(1),
@@ -69,16 +70,17 @@ export const OtherExpTableCellViewer = ({ item }: { item: columnSchema }) => {
           variant="link"
           className={cn(
             "text-foreground w-fit px-0 text-left cursor-pointer",
-            isMobile && "underline underline-offset-4 font-bold"
+            isMobile && "underline underline-offset-4 font-bold",
           )}
         >
+          <GeneratedAvatar seed={item.Moderator.name} />
           {item.Moderator.name}
         </Button>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="gap-1">
-          <DrawerTitle className="flex gap-2">
-            <CircleDollarSign /> {item.Moderator.name}
+          <DrawerTitle className="flex items-center gap-2">
+            <GeneratedAvatar seed={item.Moderator.name} /> {item.Moderator.name}
           </DrawerTitle>
           <DrawerDescription>
             <div>Showing details of expenses for {item.Moderator.name}</div>
@@ -127,7 +129,7 @@ export const OtherExpTableCellViewer = ({ item }: { item: columnSchema }) => {
                                 </span>
                               </li>
                             );
-                          }
+                          },
                         )}
                       </>
                     ) : (
@@ -152,7 +154,7 @@ export const OtherExpTableCellViewer = ({ item }: { item: columnSchema }) => {
                                       const value = e.target.value;
                                       // Convert to number or 0 if empty
                                       field.onChange(
-                                        value ? parseFloat(value) : 0
+                                        value ? parseFloat(value) : 0,
                                       );
                                     }}
                                     className={"max-w-[100px]"}

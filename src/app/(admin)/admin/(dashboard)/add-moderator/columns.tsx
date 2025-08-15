@@ -6,6 +6,7 @@ import { Area } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { GeneratedAvatar } from "@/lib/avatar";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -17,28 +18,6 @@ export type Moderator = {
 };
 
 export const columns: ColumnDef<Moderator>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
   {
     accessorKey: "serial_number",
     header: "S.No.",
@@ -58,6 +37,14 @@ export const columns: ColumnDef<Moderator>[] = [
           Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
+      );
+    },
+    cell: ({ row }) => {
+      return (
+        <div className={"flex flex-row items-center gap-2"}>
+          <GeneratedAvatar seed={row.original.name} />
+          {row.original.name}
+        </div>
       );
     },
   },

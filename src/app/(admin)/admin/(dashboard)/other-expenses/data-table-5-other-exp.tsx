@@ -27,9 +27,10 @@ import {
   IconChevronRight,
   IconChevronsLeft,
   IconChevronsRight,
-  IconCircleCheckFilled, IconGripVertical,
+  IconCircleCheckFilled,
+  IconGripVertical,
   IconLayoutColumns,
-  IconLoader
+  IconLoader,
 } from "@tabler/icons-react";
 import {
   ColumnDef,
@@ -53,7 +54,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
-  DropdownMenuContent, DropdownMenuTrigger
+  DropdownMenuContent,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -111,32 +113,6 @@ const columns: ColumnDef<columnSchema>[] = [
     cell: () => null,
   },
   {
-    id: "select",
-    header: ({ table }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      </div>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
     accessorKey: "moderator",
     header: "Moderator",
     cell: ({ row }) => {
@@ -188,10 +164,10 @@ const columns: ColumnDef<columnSchema>[] = [
   {
     accessorKey: "description",
     header: "Description",
-    cell: ({row}) => {
-      return <div>{ row.original.OtherExpense.description }</div>
-    }
-  }
+    cell: ({ row }) => {
+      return <div>{row.original.OtherExpense.description}</div>;
+    },
+  },
 ];
 
 function DraggableRow({ row }: { row: Row<columnSchema> }) {
@@ -301,12 +277,12 @@ export function DataTable5OtherExpense({
 
       // Get values to search through
       const moderatorName = row.original.Moderator?.name?.toLowerCase() || "";
-      const description = row.original.OtherExpense?.description?.toLowerCase() || "";
+      const description =
+        row.original.OtherExpense?.description?.toLowerCase() || "";
 
       // Search across all relevant fields
       return (
-        moderatorName.includes(searchValue) ||
-        description.includes(searchValue)
+        moderatorName.includes(searchValue) || description.includes(searchValue)
       );
     },
   });
@@ -325,8 +301,12 @@ export function DataTable5OtherExpense({
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (active && over && active.id !== over.id && data) {
-      const oldIndex = data.findIndex((item) => item.OtherExpense.id === active.id);
-      const newIndex = data.findIndex((item) => item.OtherExpense.id === over.id);
+      const oldIndex = data.findIndex(
+        (item) => item.OtherExpense.id === active.id,
+      );
+      const newIndex = data.findIndex(
+        (item) => item.OtherExpense.id === over.id,
+      );
 
       if (oldIndex !== -1 && newIndex !== -1) {
         setData(arrayMove(data, oldIndex, newIndex));

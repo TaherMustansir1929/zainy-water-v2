@@ -45,6 +45,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useUpdateCustomerInfo } from "@/queries/admin/useUpdateCustomerInfo";
 import { PhoneInputComponent } from "@/components/phone-input";
+import { GeneratedAvatar } from "@/lib/avatar";
 
 const formSchema = z.object({
   name: z.string().min(2),
@@ -122,13 +123,14 @@ export const CustomerInfoTableCellViewer = ({
             isMobile && "underline underline-offset-4 font-bold",
           )}
         >
+          <GeneratedAvatar seed={item.Customer.name} />
           {item.Customer.name}
         </Button>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="gap-1">
-          <DrawerTitle className="flex gap-2">
-            <ContactRound /> {item.Customer.name}
+          <DrawerTitle className="flex items-center gap-2">
+            <GeneratedAvatar seed={item.Customer.name} /> {item.Customer.name}
           </DrawerTitle>
           <DrawerDescription>
             <div>Showing details for {item.Customer.name}</div>

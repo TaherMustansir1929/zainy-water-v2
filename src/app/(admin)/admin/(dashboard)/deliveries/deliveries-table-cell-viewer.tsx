@@ -30,6 +30,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useUpdateDailyDeliveryRecord } from "@/queries/admin/useUpdateDailyDeliveryRecord";
 import { Loader2 } from "lucide-react";
+import { GeneratedAvatar } from "@/lib/avatar";
 
 const formSchema = z.object({
   payment: z.number().min(0),
@@ -86,13 +87,17 @@ export function DeliveriesTableCellViewer({ item }: { item: columnSchema }) {
             isMobile && "underline underline-offset-4 font-bold",
           )}
         >
+          <GeneratedAvatar seed={item.Customer.name} />
           {item.Customer.name}
         </Button>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="gap-1">
-          <DrawerTitle>
-            {item.Moderator.name} {"->"} {item.Customer.name}
+          <DrawerTitle className={"flex items-center gap-2"}>
+            <GeneratedAvatar seed={item.Moderator.name} />
+            {item.Moderator.name} {" -> "}{" "}
+            <GeneratedAvatar seed={item.Customer.name} />
+            {item.Customer.name}
           </DrawerTitle>
           <DrawerDescription>
             <div>Showing details of delivery for {item.Customer.name}</div>
