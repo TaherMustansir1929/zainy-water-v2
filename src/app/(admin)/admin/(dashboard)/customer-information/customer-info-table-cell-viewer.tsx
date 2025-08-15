@@ -119,7 +119,7 @@ export const CustomerInfoTableCellViewer = ({
           variant="link"
           className={cn(
             "text-foreground w-fit px-0 text-left cursor-pointer",
-            isMobile && "underline underline-offset-4 font-bold"
+            isMobile && "underline underline-offset-4 font-bold",
           )}
         >
           {item.Customer.name}
@@ -420,7 +420,9 @@ export const CustomerInfoTableCellViewer = ({
                         name="isActive"
                         render={({ field }) => (
                           <FormItem className="w-full flex flex-row items-center justify-between">
-                            <FormLabel>Is Active</FormLabel>
+                            <FormLabel>
+                              {form.watch("isActive") ? "Active" : "Inactive"}
+                            </FormLabel>
                             <FormControl>
                               <Switch
                                 checked={field.value}
