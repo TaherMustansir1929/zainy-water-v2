@@ -19,8 +19,6 @@ export const fetchTotalBottlesQueryConfig = {
       throw error; // Re-throw for server-side prefetching
     }
   },
-  staleTime: 10 * 60 * 1000, // 10 minutes - data stays fresh
-  gcTime: 15 * 60 * 1000, // 15 minutes - how long to keep in cache
 };
 
 export const useFetchTotalBottles = () => {

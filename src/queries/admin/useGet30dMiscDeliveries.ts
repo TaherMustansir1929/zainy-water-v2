@@ -7,8 +7,6 @@ export const get30dMiscDeliveriesQueryConfig = {
     const response = await fetch30DMiscDeliveries();
     return response;
   },
-  staleTime: 1000 * 60 * 5,
-  gcTime: 1000 * 60 * 10,
 };
 
 export const useGet30dMiscDeliveries = () => {

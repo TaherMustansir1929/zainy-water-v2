@@ -4,17 +4,19 @@ import { SidebarToggleButton } from "../../_components/sidebar-toggle-button";
 import { UserButton } from "@clerk/nextjs";
 import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
 export const AdminHeader = () => {
   const router = useRouter();
+  const pathname = usePathname();
   const [isSpinning, setIsSpinning] = useState(false);
 
   const handleRefresh = () => {
     if (isSpinning) return; // Prevent multiple clicks during animation
 
     setIsSpinning(true);
+    router.prefetch(pathname);
     router.refresh();
 
     // Reset animation after 600ms (duration of the animation)

@@ -6,8 +6,6 @@ export const get30dDeliveriesQueryConfig = {
   queryFn: async () => {
     return await fetch30DDeliveries();
   },
-  staleTime: 1000 * 60 * 5,
-  gcTime: 1000 * 60 * 10,
 };
 
 export const useGet30dDeliveries = () => {
