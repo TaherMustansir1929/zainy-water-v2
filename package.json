@@ -12,6 +12,7 @@
     "db:studio": "bunx drizzle-kit studio"
   },
   "dependencies": {
+    "@ai-sdk/google": "^2.0.7",
     "@ai-sdk/groq": "^2.0.10",
     "@ai-sdk/react": "^2.0.15",
     "@clerk/nextjs": "^6.31.1",
