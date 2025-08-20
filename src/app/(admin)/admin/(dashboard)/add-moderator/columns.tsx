@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Area } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
 import { GeneratedAvatar } from "@/lib/avatar";
 
 // This type is used to define the shape of our data.

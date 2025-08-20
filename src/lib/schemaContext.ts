@@ -12,8 +12,13 @@ import {
 } from "@/db/schema"; // Adjust the import path to your schema file
 
 // Helper to check if an object is a PgColumn
-function isPgColumn(obj: any): obj is PgColumn {
-  return obj && typeof obj.getSQLType === "function" && "notNull" in obj;
+function isPgColumn(obj: unknown): obj is PgColumn {
+  return (
+    obj !== null &&
+    typeof obj === "object" &&
+    typeof (obj as Record<string, unknown>).getSQLType === "function" &&
+    "notNull" in obj
+  );
 }
 
 export function getSchemaDescription() {

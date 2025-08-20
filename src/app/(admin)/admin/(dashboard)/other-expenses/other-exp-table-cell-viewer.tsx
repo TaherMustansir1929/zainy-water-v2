@@ -27,7 +27,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { CircleDollarSign, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useUpdateOtherExpense } from "@/queries/admin/useUpdateOtherExpense";
 import { Textarea } from "@/components/ui/textarea";
 import { GeneratedAvatar } from "@/lib/avatar";

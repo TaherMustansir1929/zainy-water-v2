@@ -79,6 +79,11 @@ const isTavilySearchPart = (part: any): part is TavilyToolPart => {
   return part.type === "tool-tavilySearch" && "output" in part;
 };
 
+// More specific type guard for filtered parts
+const isTavilyToolPart = (part: any): part is TavilyToolPart => {
+  return part.type === "tool-tavilySearch";
+};
+
 const models: {
   name: string;
   value: string;
@@ -170,7 +175,7 @@ const ChatBotDemo = () => {
             provider: provider,
             webSearch: webSearch,
           },
-        },
+        }
       );
       setInput("");
 
@@ -221,7 +226,7 @@ const ChatBotDemo = () => {
         // Focus the input after clearing
         setTimeout(() => {
           const textarea = document.querySelector(
-            'textarea[name="message"]',
+            'textarea[name="message"]'
           ) as HTMLTextAreaElement;
           if (textarea) {
             textarea.focus();
@@ -233,7 +238,7 @@ const ChatBotDemo = () => {
       if ((e.ctrlKey || e.metaKey) && e.key === "/") {
         e.preventDefault();
         const textarea = document.querySelector(
-          'textarea[name="message"]',
+          'textarea[name="message"]'
         ) as HTMLTextAreaElement;
         if (textarea) {
           textarea.focus();
@@ -318,7 +323,7 @@ const ChatBotDemo = () => {
                 key={message.id}
                 className={cn(
                   "animate-in slide-in-from-bottom-4 duration-300",
-                  `animation-delay-${Math.min(messageIndex * 100, 500)}`,
+                  `animation-delay-${Math.min(messageIndex * 100, 500)}`
                 )}
               >
                 <Message
@@ -418,28 +423,28 @@ const ChatBotDemo = () => {
                           return (
                             <>
                               <SourcesTrigger
-                                count={message.parts
-                                  .filter(isTavilySearchPart)
-                                  .reduce((total, tavilyPart) => {
+                                count={message.parts.reduce((total, part) => {
+                                  if (isTavilySearchPart(part)) {
                                     return (
                                       total +
-                                      (tavilyPart.output?.data?.results
-                                        ?.length || 0)
+                                      (part.output?.data?.results?.length || 0)
                                     );
-                                  }, 0)}
+                                  }
+                                  return total;
+                                }, 0)}
                               />
                               <SourcesContent key={`${message.id}-${i}`}>
                                 {results.map(
                                   (
                                     result: TavilySearchResult,
-                                    resultIndex: number,
+                                    resultIndex: number
                                   ) => (
                                     <Source
                                       key={`${message.id}-${i}-${resultIndex}`}
                                       href={result?.url || "Unknown"}
                                       title={result?.title || "Unknown"}
                                     />
-                                  ),
+                                  )
                                 )}
                               </SourcesContent>
                             </>
@@ -466,7 +471,7 @@ const ChatBotDemo = () => {
             "transition-all duration-300 ease-out mb-6",
             isSticky
               ? "fixed bottom-6 left-1/2 transform -translate-x-1/2 w-full max-w-3xl px-4 z-50"
-              : "relative w-full",
+              : "relative w-full"
           )}
         >
           <div className={"text-sm md:text-base mb-4"}>
@@ -491,7 +496,7 @@ const ChatBotDemo = () => {
               isSticky && "shadow-2xl border-primary/20",
               "animate-in slide-in-from-bottom-4 duration-500",
               status === "streaming" && "opacity-90 pointer-events-auto",
-              status === "submitted" && "animate-pulse",
+              status === "submitted" && "animate-pulse"
             )}
           >
             <PromptInputTextarea
@@ -504,7 +509,7 @@ const ChatBotDemo = () => {
               }
               className={cn(
                 "transition-all duration-200 focus:ring-2 focus:ring-primary/20",
-                status === "streaming" && "opacity-70",
+                status === "streaming" && "opacity-70"
               )}
               disabled={status === "streaming"}
             />
@@ -516,14 +521,14 @@ const ChatBotDemo = () => {
                   className={cn(
                     "transform transition-all duration-200 hover:scale-105",
                     webSearch &&
-                      "bg-primary/10 text-primary border-primary/20 hover:text-white/80",
+                      "bg-primary/10 text-primary border-primary/20 hover:text-white/80"
                   )}
                 >
                   <GlobeIcon
                     size={16}
                     className={cn(
                       "transition-transform duration-200",
-                      webSearch && "rotate-180",
+                      webSearch && "rotate-180"
                     )}
                   />
                   <span>Search</span>
@@ -532,7 +537,7 @@ const ChatBotDemo = () => {
                   onValueChange={(value) => {
                     setModel(value);
                     const selectedModel = models.find(
-                      (model) => model.value === value,
+                      (model) => model.value === value
                     );
                     if (selectedModel) {
                       setProvider(selectedModel.provider);
@@ -565,7 +570,7 @@ const ChatBotDemo = () => {
                               model.tag === "limited" &&
                                 "border-gray-200 text-gray-500 bg-gray-50",
                               model.tag === "broken" &&
-                                "border-rose-200 text-rose-500 bg-rose-50",
+                                "border-rose-200 text-rose-500 bg-rose-50"
                             )}
                           >
                             {model.tag}
@@ -594,7 +599,7 @@ const ChatBotDemo = () => {
                     "disabled:opacity-50 disabled:scale-100 disabled:shadow-none",
                     !input.trim() && "cursor-not-allowed",
                     status === "streaming" && "animate-spin",
-                    status === "submitted" && "animate-bounce",
+                    status === "submitted" && "animate-bounce"
                   )}
                 />
               </div>
@@ -608,7 +613,7 @@ const ChatBotDemo = () => {
 
 function formatQueryResult(
   result?: { success?: boolean; data?: Record<string, unknown>[] },
-  maxLen = 50,
+  maxLen = 50
 ): string {
   if (!result || !result.data || result.data.length === 0) {
     return "No result";
@@ -641,7 +646,7 @@ function formatQueryResult(
     const rows = result.data
       .map(
         (row: Record<string, unknown>) =>
-          `| ${keys.map((k) => truncate(row[k])).join(" | ")} |`,
+          `| ${keys.map((k) => truncate(row[k])).join(" | ")} |`
       )
       .join("\n");
 
@@ -670,7 +675,7 @@ function formatSearchResult(res?: TavilySearchResponse): string {
       lines.push("## 🔎 Top Results");
       res.results.forEach((r, i) => {
         lines.push(
-          `### ${i + 1}. [${r.title}](${r.url})\n${r.content ? r.content : "_No snippet available_"}`,
+          `### ${i + 1}. [${r.title}](${r.url})\n${r.content ? r.content : "_No snippet available_"}`
         );
       });
     } else {

@@ -17,7 +17,6 @@ import { Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Customer, Delivery } from "@/db/schema";
 import { useDeleteDailyDelivery } from "@/queries/moderator/useDeleteDailyDelivery";
-import { useRouter } from "next/navigation";
 import { useConfirm } from "@/hooks/use-confirm";
 
 export type DeliveryTableData = {
@@ -26,7 +25,6 @@ export type DeliveryTableData = {
 };
 
 export const DailyDeliveryTable = () => {
-  const router = useRouter();
   const [ConfirmDialogue, confirm] = useConfirm(
     "Are you sure?",
     "WARNING: You are about to delete this delivery record. This action cannot be undone.",

@@ -18,9 +18,11 @@ const eslintConfig = [
       ".next/**/*",
       "out/**/*",
       "build/**/*",
-      "dist/**/*"
-    ]
-  }
+      "dist/**/*",
+      "src/components/ai-elements/**/*",
+      "src/app/(admin)/admin/(dashboard)/chat-bot/**/*",
+    ],
+  },
 ];
 
 export default eslintConfig;
