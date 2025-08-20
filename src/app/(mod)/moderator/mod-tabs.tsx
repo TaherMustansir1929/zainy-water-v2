@@ -1,4 +1,10 @@
-import { ChartPie, CircleDollarSign, Dice5 } from "lucide-react";
+import {
+  CalendarCheck,
+  ChartPie,
+  CircleDollarSign,
+  Dice5,
+  ShoppingCart,
+} from "lucide-react";
 
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,12 +15,25 @@ import { OtherExpenseTable } from "./other-expenses/other-expense-table";
 import { BottleUsageForm } from "./bottle-usage/bottle-usage-form";
 import { MiscDeliveryForm } from "./miscellaneous/misc-form";
 import { MiscDeliveryTable } from "./miscellaneous/misc-table";
-import { MiscBottleUsageForm } from "@/app/(mod)/moderator/other/miscellaneous/misc-bottle-usage-form";
+import { MiscBottleUsageForm } from "@/app/(mod)/moderator/miscellaneous/misc-bottle-usage-form";
 import { Separator } from "@/components/ui/separator";
+import { DailyDeliveryForm } from "@/app/(mod)/moderator/daily-delivery/daily-delivery-form";
+import { DailyDeliveryTable } from "@/app/(mod)/moderator/daily-delivery/daily-delivery-table";
 
 const mod_tabs = [
   {
-    value: "tab-1",
+    value: "daily_deliveries",
+    label: "Deliveries",
+    icon: (
+      <ShoppingCart
+        className="-ms-0.5 me-1.5 opacity-60"
+        size={16}
+        aria-hidden="true"
+      />
+    ),
+  },
+  {
+    value: "expenses",
     label: "Expenses",
     icon: (
       <CircleDollarSign
@@ -25,7 +44,7 @@ const mod_tabs = [
     ),
   },
   {
-    value: "tab-2",
+    value: "bottle_usage",
     label: "Bottle Usage",
     icon: (
       <ChartPie
@@ -36,7 +55,7 @@ const mod_tabs = [
     ),
   },
   {
-    value: "tab-3",
+    value: "miscellaneous",
     label: "Miscellaneous",
     icon: (
       <Dice5
@@ -50,8 +69,8 @@ const mod_tabs = [
 
 export function ModTabs() {
   return (
-    <div className="w-full">
-      <Tabs defaultValue="tab-1">
+    <main className="w-full">
+      <Tabs defaultValue="daily_deliveries">
         <ScrollArea>
           <TabsList className="w-full flex bg-background mb-3 h-auto -space-x-px p-0 shadow-xs rtl:space-x-reverse">
             {mod_tabs.map((tab, index) => (
@@ -70,8 +89,25 @@ export function ModTabs() {
           </TabsList>
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
-        <TabsContent value="tab-1">
-          <div className="w-full flex flex-col md:items-center md:justify-center gap-y-6 p-2">
+        <TabsContent value="daily_deliveries">
+          <section className="min-h-screen w-full flex flex-col md:items-center md:justify-center my-4 gap-y-4 p-2">
+            <Card className="w-full max-w-2xl">
+              <CardHeader>
+                <CardTitle className="text-primary font-bold text-xl text-center flex items-center justify-center gap-2">
+                  <CalendarCheck />
+                  Daily Delivery Entry
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <DailyDeliveryForm />
+              </CardContent>
+            </Card>
+
+            <DailyDeliveryTable />
+          </section>
+        </TabsContent>
+        <TabsContent value="expenses">
+          <section className="w-full flex flex-col md:items-center md:justify-center gap-y-6 p-2">
             <Card className="w-full max-w-2xl">
               <CardHeader>
                 <CardTitle className="text-primary font-bold text-center flex items-center justify-center gap-2">
@@ -85,10 +121,10 @@ export function ModTabs() {
             </Card>
 
             <OtherExpenseTable />
-          </div>
+          </section>
         </TabsContent>
-        <TabsContent value="tab-2">
-          <div className="w-full flex flex-col md:items-center md:justify-center gap-y-6 p-2">
+        <TabsContent value="bottle_usage">
+          <section className="w-full flex flex-col md:items-center md:justify-center gap-y-6 p-2">
             <Card className="w-full max-w-2xl">
               <CardHeader>
                 <CardTitle className="text-primary font-bold text-center flex items-center justify-center gap-2">
@@ -100,10 +136,10 @@ export function ModTabs() {
                 <BottleUsageForm />
               </CardContent>
             </Card>
-          </div>
+          </section>
         </TabsContent>
-        <TabsContent value="tab-3">
-          <div className="w-full flex flex-col md:items-center md:justify-center gap-y-6 p-2">
+        <TabsContent value="miscellaneous">
+          <section className="w-full flex flex-col md:items-center md:justify-center gap-y-6 p-2">
             <Card className="w-full max-w-2xl">
               <CardHeader>
                 <CardTitle className="text-primary font-bold text-center flex items-center justify-center gap-2">
@@ -140,9 +176,9 @@ export function ModTabs() {
             </Card>
 
             <MiscDeliveryTable />
-          </div>
+          </section>
         </TabsContent>
       </Tabs>
-    </div>
+    </main>
   );
 }

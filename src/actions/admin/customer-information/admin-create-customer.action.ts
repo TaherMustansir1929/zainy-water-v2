@@ -9,7 +9,12 @@ export type CreateNewCustomerDataProp = {
 
 export async function createNewCustomer(data: CreateNewCustomerDataProp) {
   try {
-    await db.insert(Customer).values(data.data);
+    await db
+      .insert(Customer)
+      .values({
+        ...data.data,
+        customer_id: data.data.customer_id.toLowerCase(),
+      });
   } catch (error) {
     console.error("Error creating new customer:", error);
     throw error;

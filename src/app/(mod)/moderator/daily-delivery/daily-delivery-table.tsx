@@ -13,16 +13,25 @@ import { format } from "date-fns";
 import { useModeratorStore } from "@/lib/moderator-state";
 import { getDailyDeliveryRecords } from "@/actions/moderator/mod-delivery.action";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Customer, Delivery } from "@/db/schema";
+import { useDeleteDailyDelivery } from "@/queries/moderator/useDeleteDailyDelivery";
+import { useRouter } from "next/navigation";
+import { useConfirm } from "@/hooks/use-confirm";
 
-type DeliveryTableData = {
+export type DeliveryTableData = {
   delivery: typeof Delivery.$inferSelect;
   customer: typeof Customer.$inferSelect;
 };
 
 export const DailyDeliveryTable = () => {
+  const router = useRouter();
+  const [ConfirmDialogue, confirm] = useConfirm(
+    "Are you sure?",
+    "WARNING: You are about to delete this delivery record. This action cannot be undone.",
+  );
+
   const [listLoading, setListLoading] = useState(false);
 
   const [deliveries, setDeliveries] = useState<DeliveryTableData[]>([]);
@@ -46,12 +55,32 @@ export const DailyDeliveryTable = () => {
       delivery_data.map((entry) => ({
         delivery: entry.Delivery,
         customer: entry.Customer,
-      }))
+      })),
     );
+  };
+
+  const deleteMutation = useDeleteDailyDelivery();
+
+  const handleDeleteDelivery = async (delivery: DeliveryTableData) => {
+    if (!moderator?.id) {
+      toast.error("Moderator not found");
+      return;
+    }
+
+    const ok = await confirm();
+    if (!ok) return;
+
+    await deleteMutation.mutateAsync({
+      moderator_id: moderator.id,
+      data: delivery,
+    });
+
+    await fetchDeliveries();
   };
 
   return (
     <div className="w-full max-w-full">
+      <ConfirmDialogue />
       <div className="w-full flex justify-end mb-4">
         <Button variant={"outline"} onClick={fetchDeliveries} className="">
           {deliveries.length > 0 ? "Refresh" : "Show"} List
@@ -71,6 +100,7 @@ export const DailyDeliveryTable = () => {
               <TableHead className="h-9 py-2 min-w-[60px]">FOC</TableHead>
               <TableHead className="h-9 py-2 min-w-[60px]">Damaged</TableHead>
               <TableHead className="h-9 py-2 min-w-[80px]">Payment</TableHead>
+              <TableHead className="h-9 py-2">Delete</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -122,6 +152,21 @@ export const DailyDeliveryTable = () => {
                 </TableCell>
                 <TableCell className="py-2 min-w-[80px] whitespace-nowrap">
                   Rs. {delivery.payment}
+                </TableCell>
+                <TableCell className="py-2 whitespace-nowrap flex justify-center">
+                  <Button
+                    variant={"ghost"}
+                    onClick={() => handleDeleteDelivery({ delivery, customer })}
+                    disabled={deleteMutation.isPending}
+                  >
+                    {deleteMutation.isPending ? (
+                      <Loader2
+                        className={"animate-spin size-4 text-rose-400"}
+                      />
+                    ) : (
+                      <Trash2 className={"text-rose-500 size-4"} />
+                    )}
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}

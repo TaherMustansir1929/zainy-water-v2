@@ -178,7 +178,7 @@ const columns: ColumnDef<columnSchema>[] = [
   },
   {
     accessorKey: "bottles",
-    header: "Bottles",
+    header: "Empty",
     cell: ({ row }) => {
       return <div>{row.original.Customer.bottles}</div>;
     },

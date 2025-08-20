@@ -1,5 +1,12 @@
 "use client";
-import { Home, Inbox, PlusCircle, Search, User } from "lucide-react";
+import {
+  Home,
+  Inbox,
+  PlusCircle,
+  Search,
+  ShoppingCart,
+  User,
+} from "lucide-react";
 
 import {
   Sidebar,
@@ -20,9 +27,14 @@ import { usePathname } from "next/navigation";
 // Menu items.
 const items = [
   {
+    title: "Dashboard",
+    url: "/admin",
+    icon: Home,
+  },
+  {
     title: "Bottle Inventory",
     url: "/admin/bottle-inventory",
-    icon: Home,
+    icon: ShoppingCart,
   },
   {
     title: "Deliveries",

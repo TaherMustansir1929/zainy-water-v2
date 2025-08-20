@@ -22,14 +22,14 @@ import {
 import { TotalBottlesDataProp } from "@/actions/admin/bottle-inventory/admin-update-total-bottles";
 import { useUpdateTotalBottles } from "@/queries/admin/useUpdateTotalBottles";
 import { useState, useEffect } from "react";
-import { Input } from "./ui/input";
-import { SlidingNumber } from "./animate-ui/text/sliding-number";
+import { Input } from "@/components/ui/input";
+import { SlidingNumber } from "@/components/animate-ui/text/sliding-number";
 
 type Props = {
   total_bottles?: typeof TotalBottles.$inferSelect;
 };
 
-export function SectionCards({ total_bottles }: Props) {
+export function BottleInventorySectionCards({ total_bottles }: Props) {
   const card_content = [
     {
       id: "total_bottles",
@@ -185,9 +185,7 @@ export function SectionCards({ total_bottles }: Props) {
             <div className="line-clamp-1 flex gap-2 font-medium">
               {card.footer} {card.icon}
             </div>
-            <div className="text-muted-foreground">
-              Account for the last month
-            </div>
+            <div className="text-muted-foreground">Account for this month</div>
           </CardFooter>
         </Card>
       ))}

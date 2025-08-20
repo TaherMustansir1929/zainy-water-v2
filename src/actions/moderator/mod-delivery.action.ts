@@ -7,7 +7,7 @@ import {
   Delivery,
   TotalBottles,
   Area,
-} from "../../db/schema";
+} from "@/db/schema";
 import { and, desc, eq, lte, gte } from "drizzle-orm";
 import { startOfDay, endOfDay } from "date-fns";
 
@@ -44,8 +44,8 @@ export async function addDailyDeliveryRecord(data: DeliveryRecord): Promise<
         and(
           eq(BottleUsage.moderator_id, data.moderator_id),
           gte(BottleUsage.createdAt, startOfDay(data.delivery_date)),
-          lte(BottleUsage.createdAt, endOfDay(data.delivery_date))
-        )
+          lte(BottleUsage.createdAt, endOfDay(data.delivery_date)),
+        ),
       )
       .orderBy(desc(BottleUsage.createdAt))
       .limit(1);
@@ -142,8 +142,8 @@ export async function getDailyDeliveryRecords(moderator_id: string): Promise<
       and(
         eq(Delivery.moderator_id, moderator_id),
         gte(Delivery.delivery_date, startOfDay(new Date())),
-        lte(Delivery.delivery_date, endOfDay(new Date()))
-      )
+        lte(Delivery.delivery_date, endOfDay(new Date())),
+      ),
     )
     .orderBy(desc(Delivery.createdAt))
     .innerJoin(Customer, eq(Delivery.customer_id, Customer.customer_id));
@@ -153,7 +153,7 @@ export async function getDailyDeliveryRecords(moderator_id: string): Promise<
 
 export async function getCustomerDataById(
   customer_id: string,
-  areas: (typeof Area.enumValues)[number][]
+  areas: (typeof Area.enumValues)[number][],
 ): Promise<
   | { success: true; data: typeof Customer.$inferSelect }
   | { success: false; error: string }
@@ -170,7 +170,7 @@ export async function getCustomerDataById(
     const [data] = await db
       .select()
       .from(Customer)
-      .where(eq(Customer.customer_id, customer_id))
+      .where(eq(Customer.customer_id, customer_id.toLowerCase()))
       .limit(1);
 
     if (!data) {

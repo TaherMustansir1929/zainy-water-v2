@@ -1,6 +1,6 @@
 "use client";
 
-import { SectionCards } from "@/components/section-cards";
+import { BottleInventorySectionCards } from "@/app/(admin)/_components/bottle-inventory-section-cards";
 import { DataTable2BottleInventory } from "@/app/(admin)/admin/(dashboard)/bottle-inventory/data-table-2-bottle-inventory";
 
 import { useFetchTotalBottles } from "@/queries/moderator/useFetchTotalBottles";
@@ -32,7 +32,7 @@ export function BottleInventoryMainSection() {
       <div className="flex flex-1 flex-col">
         <div className="@container/main flex flex-1 flex-col gap-2">
           <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-            <SectionCards total_bottles={totalBottles} />
+            <BottleInventorySectionCards total_bottles={totalBottles} />
             <div className="px-4 lg:px-6">
               {/*<ChartAreaInteractive*/}
               {/*  rawChartData={rawChartData}*/}

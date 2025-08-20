@@ -7,6 +7,7 @@ import { Delivery30dRow } from "@/actions/fetch-30d-deliveries.action";
 import { DataTable3DailyDeliveries } from "@/app/(admin)/admin/(dashboard)/deliveries/data-table-3-daily-deliveries";
 import { DataTable4MiscDeliveries } from "@/app/(admin)/admin/(dashboard)/deliveries/data-table-4-misc-deliveries";
 import { useGet30dMiscDeliveries } from "@/queries/admin/useGet30dMiscDeliveries";
+import { Separator } from "@/components/ui/separator";
 
 export const DeliveriesMainSection = () => {
   const deliveryQuery = useGet30dDeliveries();
@@ -35,7 +36,10 @@ export const DeliveriesMainSection = () => {
             <div>
               <span className={"text-2xl font-semibold"}>
                 You have a total of{" "}
-                <HighlightText className="font-semibold" text={`${deliveryData?.length ?? 0}`} />{" "}
+                <HighlightText
+                  className="font-semibold"
+                  text={`${deliveryData?.length ?? 0}`}
+                />{" "}
                 deliveries for last 30 days.
               </span>
             </div>
@@ -51,9 +55,20 @@ export const DeliveriesMainSection = () => {
             </div>
             <DataTable3DailyDeliveries data={deliveryData} />
             <div className={"mt-4"}>
-              <h1 className={"text-2xl font-bold text-gray-800"}>
+              <Separator />
+              <h1 className={"text-2xl font-bold text-gray-800 mt-6"}>
                 Miscellaneous Deliveries
               </h1>
+            </div>
+            <div>
+              <span className={"text-xl font-normal"}>
+                You have a total of{" "}
+                <HighlightText
+                  className="font-semibold"
+                  text={`${miscDeliveriesData?.length ?? 0}`}
+                />{" "}
+                miscellaneous deliveries for last 30 days.
+              </span>
             </div>
             <DataTable4MiscDeliveries data={miscDeliveriesData} />
           </div>

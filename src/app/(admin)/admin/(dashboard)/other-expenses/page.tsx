@@ -10,8 +10,6 @@ import ErrorState from "@/components/hydration-states/error-state";
 import { ErrorBoundary } from "react-error-boundary";
 import { Suspense } from "react";
 import { Atom } from "react-loading-indicators";
-import { currentUser } from "@clerk/nextjs/server";
-import { RedirectToSignIn } from "@clerk/nextjs";
 
 export default async function OtherExpensePage() {
   const queryClient = new QueryClient();

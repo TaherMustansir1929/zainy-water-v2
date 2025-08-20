@@ -11,7 +11,10 @@ export type UpdateCustomerInfoDataProp = {
 
 export async function updateCustomerInfo(data: UpdateCustomerInfoDataProp) {
   try {
-    await db.update(Customer).set(data.data).where(eq(Customer.id, data.id));
+    await db
+      .update(Customer)
+      .set({ ...data.data, customer_id: data.data.customer_id.toLowerCase() })
+      .where(eq(Customer.id, data.id));
   } catch (error) {
     console.error("Error updating customer information:", error);
     throw error;

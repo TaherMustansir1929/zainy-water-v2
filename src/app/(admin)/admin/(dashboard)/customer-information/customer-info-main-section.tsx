@@ -1,11 +1,10 @@
 "use client";
 
-import { HighlightText } from "@/components/animate-ui/text/highlight"
-import { CustomerInfoTabs } from "./customer-info-tabs"
-import { useGetAllCustomers } from "@/queries/admin/useGetAllCustomers"
+import { HighlightText } from "@/components/animate-ui/text/highlight";
+import { CustomerInfoTabs } from "./customer-info-tabs";
+import { useGetAllCustomers } from "@/queries/admin/useGetAllCustomers";
 
 export const CustomerInformationMainSection = () => {
-
   const customersQuery = useGetAllCustomers();
   const customersData = customersQuery.data;
 
@@ -16,9 +15,12 @@ export const CustomerInformationMainSection = () => {
           <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
             <div>
               <span className={"text-2xl font-semibold"}>
-                You have a total of {" "}
-                <HighlightText className="font-semibold" text={`${10}`} />{" "}
-               active customers.
+                You have a total of{" "}
+                <HighlightText
+                  className="font-semibold"
+                  text={`${customersData?.length ?? "_"}`}
+                />{" "}
+                active customers.
               </span>
             </div>
             <CustomerInfoTabs data={customersData} />
@@ -26,5 +28,5 @@ export const CustomerInformationMainSection = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

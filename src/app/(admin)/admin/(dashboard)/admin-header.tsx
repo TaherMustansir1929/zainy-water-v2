@@ -19,7 +19,7 @@ export const AdminHeader = () => {
     router.push(pathname);
     router.refresh();
 
-    // Reset animation after 600ms (duration of the animation)
+    // Reset animation after 600 ms (duration of the animation)
     setTimeout(() => setIsSpinning(false), 600);
   };
 
@@ -37,7 +37,7 @@ export const AdminHeader = () => {
       </div>
       <h1 className="text-lg font-semibold font-mono">Admin Dashboard</h1>
       <div>
-        <div className={"flex items-center gap-2"}>
+        <div className={"flex items-center gap-2 mr-2"}>
           <UserButton />
         </div>
       </div>
