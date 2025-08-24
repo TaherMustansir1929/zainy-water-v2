@@ -1,7 +1,7 @@
 import {
   createOtherExpense,
   OtherExpenseData,
-} from "@/actions/moderator/mod-other-exp.action";
+} from "@/actions/moderator/other-exp/mod-other-exp.action";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const useCreateOtherExpense = () => {

@@ -1,10 +1,29 @@
 import { AppSidebar } from "../../_components/app-sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AdminHeader } from "./admin-header";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { currentUser } from "@clerk/nextjs/server";
+import { db } from "@/db";
+import { Admin } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 type Props = { children: React.ReactNode };
 
 const DashboardLayout = async ({ children }: Props) => {
+  const user = await currentUser();
+  if (!user) {
+    return <></>;
+  }
+
+  await checkAuthorizationState(user.id);
+
+  const license_key = (await cookies()).get("license_key");
+  if (!license_key || license_key.value !== user.id) {
+    redirect("/callback");
+  }
+  console.log(license_key);
+
   return (
     <SidebarProvider>
       <main className="w-full min-h-screen flex justify-between">
@@ -18,3 +37,15 @@ const DashboardLayout = async ({ children }: Props) => {
   );
 };
 export default DashboardLayout;
+
+async function checkAuthorizationState(clerk_id: string) {
+  "use server";
+  const [admin] = await db
+    .select()
+    .from(Admin)
+    .where(eq(Admin.clerk_id, clerk_id));
+
+  if (!admin || !admin.isAuthorized) {
+    redirect("/callback");
+  }
+}

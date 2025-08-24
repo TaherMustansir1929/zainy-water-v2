@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useModeratorStore } from "@/lib/moderator-state";
-import { OtherExpenseData } from "@/actions/moderator/mod-other-exp.action";
+import { OtherExpenseData } from "@/actions/moderator/other-exp/mod-other-exp.action";
 import { toast } from "sonner";
 import { Loader2, SendHorizonal } from "lucide-react";
 import { useCreateOtherExpense } from "@/queries/moderator/useCreateOtherExpense";

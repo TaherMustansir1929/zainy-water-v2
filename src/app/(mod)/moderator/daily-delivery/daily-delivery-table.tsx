@@ -11,7 +11,7 @@ import {
 import { useState } from "react";
 import { format } from "date-fns";
 import { useModeratorStore } from "@/lib/moderator-state";
-import { getDailyDeliveryRecords } from "@/actions/moderator/mod-delivery.action";
+import { getDailyDeliveryRecords } from "@/actions/moderator/deliveries/mod-delivery.action";
 import { Button } from "@/components/ui/button";
 import { Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -27,7 +27,7 @@ export type DeliveryTableData = {
 export const DailyDeliveryTable = () => {
   const [ConfirmDialogue, confirm] = useConfirm(
     "Are you sure?",
-    "WARNING: You are about to delete this delivery record. This action cannot be undone.",
+    "WARNING: You are about to delete this delivery record. This action cannot be undone."
   );
 
   const [listLoading, setListLoading] = useState(false);
@@ -53,7 +53,7 @@ export const DailyDeliveryTable = () => {
       delivery_data.map((entry) => ({
         delivery: entry.Delivery,
         customer: entry.Customer,
-      })),
+      }))
     );
   };
 

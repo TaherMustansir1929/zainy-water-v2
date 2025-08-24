@@ -33,10 +33,10 @@ const mod_tabs = [
     ),
   },
   {
-    value: "expenses",
-    label: "Expenses",
+    value: "bottle_usage",
+    label: "Bottle Usage",
     icon: (
-      <CircleDollarSign
+      <ChartPie
         className="-ms-0.5 me-1.5 opacity-60"
         size={16}
         aria-hidden="true"
@@ -44,10 +44,10 @@ const mod_tabs = [
     ),
   },
   {
-    value: "bottle_usage",
-    label: "Bottle Usage",
+    value: "expenses",
+    label: "Expenses",
     icon: (
-      <ChartPie
+      <CircleDollarSign
         className="-ms-0.5 me-1.5 opacity-60"
         size={16}
         aria-hidden="true"
@@ -79,7 +79,7 @@ export function ModTabs() {
                 value={tab.value}
                 className={cn(
                   "data-[state=active]:bg-muted data-[state=active]:after:bg-primary relative overflow-hidden rounded-none border py-2 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 first:rounded-s last:rounded-e",
-                  "flex-1 min-w-[150px]",
+                  "flex-1 min-w-[150px]"
                 )}
               >
                 {tab.icon}

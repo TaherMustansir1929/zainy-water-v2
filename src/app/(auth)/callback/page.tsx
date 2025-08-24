@@ -1,15 +1,29 @@
-import { LoadingDotsBounce } from "@/components/loading-dots";
-import { adminMiddleware } from "@/actions/admin/adminMiddleware";
 import { redirect } from "next/navigation";
+import { adminMiddleware } from "@/actions/admin/adminMiddleware";
+import { cookies } from "next/headers";
+import { currentUser } from "@clerk/nextjs/server";
+import { UserButton } from "@clerk/nextjs";
+import { CallbackForm } from "./callback-form";
 
-async function CallbackPage() {
+export default async function LicenseApproval() {
   const response = await adminMiddleware();
   console.log(response);
 
-  if (response.status === 200 || response.status === 201) {
-    redirect("/admin");
-  } else if (response.status === 401 || response.status === 500) {
+  const license_key = (await cookies()).get("license_key")?.value;
+  console.log("License Key: ", license_key);
+
+  const user = await currentUser();
+
+  if (response.status === 401 || response.status === 500) {
+    console.log("Error logging in: redirecting to sign-in");
     redirect("/sign-in");
+  } else if (
+    response.status === 202 &&
+    license_key &&
+    user &&
+    license_key === user.id
+  ) {
+    redirect("/admin");
   }
 
   return (
@@ -18,10 +32,8 @@ async function CallbackPage() {
         "min-h-screen w-full flex flex-col gap-2 justify-center items-center"
       }
     >
-      Attempting to login...
-      <LoadingDotsBounce />
+      <UserButton />
+      <CallbackForm />
     </div>
   );
 }
-
-export default CallbackPage;

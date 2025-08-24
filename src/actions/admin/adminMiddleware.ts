@@ -1,3 +1,4 @@
+"use server";
 import { currentUser } from "@clerk/nextjs/server";
 import { db } from "@/db";
 import { Admin } from "@/db/schema";
@@ -7,8 +8,6 @@ export const adminMiddleware = async (): Promise<{
   status: number;
   message: string;
 }> => {
-  "use server";
-
   try {
     const user = await currentUser();
 
@@ -23,11 +22,22 @@ export const adminMiddleware = async (): Promise<{
       .limit(1);
 
     if (!!admin) {
-      return { status: 200, message: "Admin already exists" };
+      if (admin.isAuthorized) {
+        return {
+          status: 202,
+          message: "Admin already exists and is authorized",
+        };
+      }
+      return {
+        status: 200,
+        message: "Admin already exists but not authorized",
+      };
     }
 
     await db.insert(Admin).values({
+      name: user.fullName || "Unknown Admin",
       clerk_id: user.id,
+      isAuthorized: false,
     });
 
     console.log("Admin created successfully");

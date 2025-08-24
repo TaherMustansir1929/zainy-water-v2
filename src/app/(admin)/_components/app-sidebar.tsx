@@ -3,6 +3,7 @@ import {
   Home,
   Inbox,
   PlusCircle,
+  QrCode,
   Search,
   ShoppingCart,
   User,
@@ -59,6 +60,11 @@ const admin_features = [
     url: "/admin/add-moderator",
     icon: PlusCircle,
   },
+  {
+    title: "QR Code",
+    url: "/admin/qrcode",
+    icon: QrCode,
+  },
 ];
 
 type Props = {
@@ -92,7 +98,7 @@ export function AppSidebar({ className }: Props) {
                     asChild
                     className={cn(
                       "hover:bg-gray-100",
-                      pathname === item.url && "bg-gray-300 hover:bg-gray-300",
+                      pathname === item.url && "bg-gray-300 hover:bg-gray-300"
                     )}
                   >
                     <Link href={item.url} className="text-lg">
@@ -111,7 +117,7 @@ export function AppSidebar({ className }: Props) {
                     asChild
                     className={cn(
                       "hover:bg-gray-100",
-                      pathname === item.url && "bg-gray-300 hover:bg-gray-300",
+                      pathname === item.url && "bg-gray-300 hover:bg-gray-300"
                     )}
                   >
                     <Link href={item.url}>

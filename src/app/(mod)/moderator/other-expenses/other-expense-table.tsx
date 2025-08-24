@@ -1,6 +1,6 @@
 "use client";
 
-import { getOtherExpensesByModeratorId } from "@/actions/moderator/mod-other-exp.action";
+import { getOtherExpensesByModeratorId } from "@/actions/moderator/other-exp/mod-other-exp.action";
 import { Button } from "@/components/ui/button";
 import {
   Table,
