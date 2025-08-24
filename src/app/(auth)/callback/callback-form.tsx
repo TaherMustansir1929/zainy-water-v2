@@ -57,10 +57,12 @@ export function CallbackForm() {
     try {
       const licenseResponse = await checkLicenseKey(values.license_key);
       if (licenseResponse.success) {
-        toast.success(licenseResponse.message);
+        console.log(licenseResponse.message);
+        toast.success("Request successful. Please wait...");
         router.push("/admin");
       } else {
-        toast.error(licenseResponse.error);
+        toast.error("An Error Occurred");
+        console.log(licenseResponse.error);
       }
     } catch (error) {
       console.error(error);
