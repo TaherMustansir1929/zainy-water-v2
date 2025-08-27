@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -21,12 +21,40 @@ import {
   DeliveryRecord,
   getCustomerDataById,
 } from "@/actions/moderator/deliveries/mod-delivery.action";
-import { Loader2, Search, SendHorizonal } from "lucide-react";
+import {
+  CheckIcon,
+  ChevronsUpDownIcon,
+  Loader2,
+  Search,
+  SendHorizonal,
+} from "lucide-react";
 import { useModeratorStore } from "@/lib/moderator-state";
 import { toast } from "sonner";
 import { BottleInput } from "@/components/bottle-input";
 import { Customer } from "@/db/schema";
 import { sendWhatsAppMessage } from "@/actions/moderator/deliveries/mod-whatsapp-automation";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { getCustomerByArea } from "@/actions/moderator/deliveries/mod-get-customer-by-area.action";
 
 // FORM SCHEMA
 const formSchema = z
@@ -273,22 +301,50 @@ export const DailyDeliveryForm = () => {
     }
   }
 
-  const handleCustomerSearch = async () => {
-    setLoading(true);
-    const data = await getCustomerDataById(
-      form.getValues("customer_id"),
-      moderator?.areas || []
-    );
-    setLoading(false);
+  // const handleCustomerSearch = async () => {
+  //   setLoading(true);
+  //   const data = await getCustomerDataById(
+  //     form.getValues("customer_id"),
+  //     moderator?.areas || []
+  //   );
+  //   setLoading(false);
 
-    if (data.success) {
-      setCustomerData(data.data);
-      toast.success("Customer found successfully!");
-    } else {
-      setCustomerData(null);
-      alert(data.error);
+  //   if (data.success) {
+  //     setCustomerData(data.data);
+  //     toast.success("Customer found successfully!");
+  //   } else {
+  //     setCustomerData(null);
+  //     alert(data.error);
+  //   }
+  // };
+
+  const [openSelect, setOpenSelect] = useState(false);
+  const [modArea, setModArea] = useState<
+    (typeof Customer.$inferSelect)["area"] | null
+  >();
+
+  const [openCombobox, setOpenCombobox] = useState(false);
+  const [customerList, setCustomerList] = useState<
+    (typeof Customer.$inferSelect)[]
+  >([]);
+  const [fetchingCustomerList, setFetchingCustomerList] = useState(false);
+
+  useEffect(() => {
+    if (modArea) {
+      const fetchCustomers = async () => {
+        setFetchingCustomerList(true);
+        const customers = await getCustomerByArea(modArea);
+        setCustomerList(customers);
+        setFetchingCustomerList(false);
+        console.log("Fetched customer list for: ", modArea);
+      };
+      try {
+        fetchCustomers();
+      } catch (error) {
+        console.error("Error fetching customers:", error);
+      }
     }
-  };
+  }, [modArea]);
 
   return (
     <div>
@@ -300,20 +356,117 @@ export const DailyDeliveryForm = () => {
             name="customer_id"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Enter Customer ID</FormLabel>
                 <FormControl>
-                  <div className="flex items-center space-x-2">
-                    <Input {...field} />
-                    <Button
-                      type="button"
-                      onClick={handleCustomerSearch}
-                      disabled={loading}
-                      className="shadow-lg shadow-blue-300/40 hover:shadow-xl hover:shadow-blue-400/50"
-                    >
-                      <Search className="size-4" />
-                      Search Customer
-                      {loading && <Loader2 className="animate-spin" />}
-                    </Button>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <FormLabel className="flex items-center gap-2 mb-2">
+                        Select Area
+                        {fetchingCustomerList && (
+                          <Loader2 className="animate-spin size-4" />
+                        )}
+                      </FormLabel>
+                      <Select
+                        onValueChange={(value) => {
+                          setModArea(
+                            value as (typeof Customer.$inferSelect)["area"]
+                          );
+                          setCustomerData(null);
+                        }}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Area" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {moderator?.areas.map((area) => (
+                            <SelectItem value={area} key={area}>
+                              {area}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="w-full">
+                      <FormLabel className="flex items-center gap-2 mb-2">
+                        Select Customer
+                        {fetchingCustomerList && (
+                          <Loader2 className="animate-spin size-4 ml-2" />
+                        )}
+                      </FormLabel>
+                      <Popover
+                        open={openCombobox}
+                        onOpenChange={setOpenCombobox}
+                      >
+                        <PopoverTrigger
+                          asChild
+                          disabled={!modArea && fetchingCustomerList}
+                        >
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            aria-expanded={openCombobox}
+                            className="w-full justify-between"
+                          >
+                            {customerData ? (
+                              <div className="flex items-center justify-between w-full">
+                                <span>
+                                  {
+                                    customerList.find(
+                                      (customer) =>
+                                        customer.id === customerData.id
+                                    )?.name
+                                  }
+                                </span>
+                                <span>
+                                  {
+                                    customerList.find(
+                                      (customer) =>
+                                        customer.id === customerData.id
+                                    )?.customer_id
+                                  }
+                                </span>
+                              </div>
+                            ) : (
+                              "Select..."
+                            )}
+                            <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-full p-0">
+                          <Command>
+                            <CommandInput placeholder="Search Customer..." />
+                            <CommandList>
+                              <CommandEmpty>No Customer found.</CommandEmpty>
+                              <CommandGroup>
+                                {customerList.map((customer) => (
+                                  <CommandItem
+                                    key={customer.id}
+                                    value={customer.name}
+                                    onSelect={() => {
+                                      field.onChange(customer.id);
+                                      setCustomerData(customer);
+                                      setOpenCombobox(false);
+                                    }}
+                                  >
+                                    <CheckIcon
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        customerData?.id === customer.id
+                                          ? "opacity-100"
+                                          : "opacity-0"
+                                      )}
+                                    />
+                                    <div className="flex items-center justify-between w-full">
+                                      <span>{customer.name}</span>
+                                      <span>{customer.customer_id}</span>
+                                    </div>
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                    </div>
                   </div>
                 </FormControl>
                 <FormMessage />

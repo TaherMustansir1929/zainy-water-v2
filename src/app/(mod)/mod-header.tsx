@@ -10,6 +10,7 @@ import { redirect, usePathname } from "next/navigation";
 
 export const ModHeader = () => {
   const pathname = usePathname();
+  const moderator_name = useModeratorStore((state) => state.moderator?.name);
 
   const [LogoutConfirmDialog, logout_confirm] = useConfirm(
     "Are you sure you want to log out?",
@@ -32,6 +33,7 @@ export const ModHeader = () => {
       <Link href={"/moderator"} className="text-lg font-semibold">
         <Image src={"/logo.jpg"} alt="Zainy Water" width={120} height={120} />
       </Link>
+      <h1 className="capitalize">Welcome, {moderator_name}</h1>
       {!(pathname === "/moderator/login") && (
         <Button variant="outline" size={"sm"} onClick={handleLogout}>
           Logout

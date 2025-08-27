@@ -7,6 +7,7 @@ import { and, eq } from "drizzle-orm";
 import { redis } from "../../lib/redis/storage";
 
 export async function loginModerator(name: string, password: string) {
+  name = name.toLowerCase();
   const [mod_data] = await db
     .select()
     .from(Moderator)

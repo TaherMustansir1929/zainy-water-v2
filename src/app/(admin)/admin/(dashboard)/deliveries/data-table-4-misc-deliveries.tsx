@@ -75,7 +75,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Miscellaneous, Moderator } from "@/db/schema";
-import { formatDistanceToNow, startOfDay } from "date-fns";
+import { format, formatDistanceToNow, startOfDay } from "date-fns";
 import { MiscellaneousTableCellViewer } from "@/app/(admin)/admin/(dashboard)/deliveries/misc-table-cell-viewer";
 
 export type columnSchema = {
@@ -153,9 +153,7 @@ const columns: ColumnDef<columnSchema>[] = [
     cell: ({ row }) => (
       <div className="w-32">
         <Badge variant="outline" className="text-muted-foreground px-1.5">
-          {formatDistanceToNow(new Date(row.original.Miscellaneous.createdAt), {
-            addSuffix: true,
-          })}
+          {format(row.original.Miscellaneous.createdAt, "PPPP")}
         </Badge>
       </div>
     ),
@@ -183,7 +181,7 @@ const columns: ColumnDef<columnSchema>[] = [
     accessorKey: "moderator",
     header: "Moderator",
     cell: ({ row }) => {
-      return <div>{row.original.Moderator.name}</div>;
+      return <div className={"capitalize"}>{row.original.Moderator.name}</div>;
     },
     enableHiding: false,
     accessorFn: (row) => row.Moderator.name,
@@ -292,13 +290,13 @@ export function DataTable4MiscDeliveries({
   data?: columnSchema[];
 }) {
   const [data, setData] = React.useState<columnSchema[] | undefined>(
-    initialData
+    initialData,
   );
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -316,12 +314,12 @@ export function DataTable4MiscDeliveries({
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
     useSensor(TouchSensor, {}),
-    useSensor(KeyboardSensor, {})
+    useSensor(KeyboardSensor, {}),
   );
 
   const dataIds = React.useMemo<UniqueIdentifier[]>(
     () => data?.map(({ Miscellaneous }) => Miscellaneous.id) || [],
-    [data]
+    [data],
   );
 
   const table = useReactTable({
@@ -386,10 +384,10 @@ export function DataTable4MiscDeliveries({
     const { active, over } = event;
     if (active && over && active.id !== over.id && data) {
       const oldIndex = data.findIndex(
-        (item) => item.Miscellaneous.id === active.id
+        (item) => item.Miscellaneous.id === active.id,
       );
       const newIndex = data.findIndex(
-        (item) => item.Miscellaneous.id === over.id
+        (item) => item.Miscellaneous.id === over.id,
       );
 
       if (oldIndex !== -1 && newIndex !== -1) {
@@ -424,7 +422,7 @@ export function DataTable4MiscDeliveries({
                 .filter(
                   (column) =>
                     typeof column.accessorFn !== "undefined" &&
-                    column.getCanHide()
+                    column.getCanHide(),
                 )
                 .map((column) => {
                   return (
@@ -463,7 +461,7 @@ export function DataTable4MiscDeliveries({
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
-                              header.getContext()
+                              header.getContext(),
                             )}
                       </TableHead>
                     );

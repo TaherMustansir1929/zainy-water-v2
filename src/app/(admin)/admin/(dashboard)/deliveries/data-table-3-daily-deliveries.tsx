@@ -74,7 +74,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Customer, Delivery, Moderator } from "@/db/schema";
-import { formatDistanceToNow, startOfDay } from "date-fns";
+import { format, startOfDay } from "date-fns";
 import { DeliveriesTableCellViewer } from "@/app/(admin)/admin/(dashboard)/deliveries/deliveries-table-cell-viewer";
 
 export type columnSchema = {
@@ -127,9 +127,7 @@ const columns: ColumnDef<columnSchema>[] = [
     cell: ({ row }) => (
       <div className="w-32">
         <Badge variant="outline" className="text-muted-foreground px-1.5">
-          {formatDistanceToNow(new Date(row.original.Delivery.createdAt), {
-            addSuffix: true,
-          })}
+          {format(row.original.Delivery.createdAt, "PPPP")}
         </Badge>
       </div>
     ),
@@ -157,7 +155,7 @@ const columns: ColumnDef<columnSchema>[] = [
     accessorKey: "moderator",
     header: "Moderator",
     cell: ({ row }) => {
-      return <div>{row.original.Moderator.name}</div>;
+      return <div className={"capitalize"}>{row.original.Moderator.name}</div>;
     },
     enableHiding: false,
     accessorFn: (row) => row.Moderator.name,
@@ -367,7 +365,7 @@ export function DataTable3DailyDeliveries({
                       className="capitalize"
                       checked={column.getIsVisible()}
                       onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
+                        column.toggleVisibility(value)
                       }
                     >
                       {column.id}

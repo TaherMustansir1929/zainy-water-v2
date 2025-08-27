@@ -40,7 +40,7 @@ export const columns: ColumnDef<Moderator>[] = [
     },
     cell: ({ row }) => {
       return (
-        <div className={"flex flex-row items-center gap-2"}>
+        <div className={"flex flex-row items-center gap-2 capitalize"}>
           <GeneratedAvatar seed={row.original.name} />
           {row.original.name}
         </div>

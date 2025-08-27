@@ -150,9 +150,7 @@ const columns: ColumnDef<columnSchema>[] = [
     cell: ({ row }) => (
       <div className="w-32">
         <Badge variant="outline" className="text-muted-foreground px-1.5">
-          {formatDistanceToNow(new Date(row.original.bottleUsage.createdAt), {
-            addSuffix: true,
-          })}
+          {format(row.original.bottleUsage.createdAt, "PPPP")}
         </Badge>
       </div>
     ),
@@ -562,7 +560,7 @@ function TableCellViewer({ item }: { item: columnSchema }) {
         <Button
           variant="link"
           className={cn(
-            "text-foreground w-fit px-0 text-left cursor-pointer",
+            "text-foreground w-fit px-0 text-left cursor-pointer capitalize",
             isMobile && "underline underline-offset-4 font-bold",
           )}
         >

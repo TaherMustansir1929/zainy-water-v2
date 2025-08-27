@@ -2,13 +2,14 @@
 import {
   Home,
   Inbox,
+  MessageCircleCode,
   PlusCircle,
-  QrCode,
   Search,
   ShoppingCart,
   User,
 } from "lucide-react";
 
+import { Separator } from "@/components/ui/separator";
 import {
   Sidebar,
   SidebarContent,
@@ -19,10 +20,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 
 // Menu items.
@@ -61,9 +61,9 @@ const admin_features = [
     icon: PlusCircle,
   },
   {
-    title: "QR Code",
-    url: "/admin/qrcode",
-    icon: QrCode,
+    title: "Whatsapp Code",
+    url: "/admin/whatsapp-code",
+    icon: MessageCircleCode,
   },
 ];
 

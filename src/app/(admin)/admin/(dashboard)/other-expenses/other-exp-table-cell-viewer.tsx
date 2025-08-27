@@ -69,7 +69,7 @@ export const OtherExpTableCellViewer = ({ item }: { item: columnSchema }) => {
         <Button
           variant="link"
           className={cn(
-            "text-foreground w-fit px-0 text-left cursor-pointer",
+            "text-foreground w-fit px-0 text-left cursor-pointer capitalize",
             isMobile && "underline underline-offset-4 font-bold",
           )}
         >

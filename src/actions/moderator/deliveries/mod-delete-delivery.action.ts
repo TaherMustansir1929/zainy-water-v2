@@ -4,7 +4,8 @@ import { DeliveryTableData } from "@/app/(mod)/moderator/daily-delivery/daily-de
 import { db } from "@/db";
 import { BottleUsage, Customer, Delivery, TotalBottles } from "@/db/schema";
 import { and, desc, eq, gte } from "drizzle-orm";
-import { startOfDay } from "date-fns";
+import { format, startOfDay } from "date-fns";
+import { sendWhatsAppMessage } from "./mod-whatsapp-automation";
 
 export type DeleteDeliveryDataProp = {
   data: DeliveryTableData;
@@ -19,8 +20,8 @@ export async function deleteDailyDelivery(data: DeleteDeliveryDataProp) {
       .where(
         and(
           eq(BottleUsage.moderator_id, data.moderator_id),
-          gte(BottleUsage.createdAt, startOfDay(new Date())),
-        ),
+          gte(BottleUsage.createdAt, startOfDay(new Date()))
+        )
       )
       .orderBy(desc(BottleUsage.createdAt))
       .limit(1);
@@ -74,6 +75,18 @@ export async function deleteDailyDelivery(data: DeleteDeliveryDataProp) {
       .where(eq(Customer.id, data.data.customer.id));
 
     await db.delete(Delivery).where(eq(Delivery.id, data.data.delivery.id));
+
+    await sendWhatsAppMessage(
+      data.data.customer.phone,
+      `\`\`\`⚠️ NOTE: The delivery made at\`\`\` *_${format(data.data.delivery.createdAt, "hh:mm aaaa PPPP")}_* \`\`\`has been deleted.
+Short Delivery Details:
+- Customer: ${data.data.customer.name}
+- Filled Bottles: ${data.data.delivery.filled_bottles}
+- Empty Bottles: ${data.data.delivery.empty_bottles}
+- Payment: ${data.data.delivery.payment}
+
+Sorry for the inconvenience.\`\`\``
+    );
   } catch (error) {
     console.error("Error deleting delivery:", error);
     throw error;

@@ -7,8 +7,9 @@ import { redis } from "@/lib/redis/storage";
 
 export async function changeModeratorWorkingStatus(
   name: string,
-  currentStatus: boolean
+  currentStatus: boolean,
 ) {
+  name = name.toLowerCase();
   const [updatedModerator] = await db
     .update(Moderator)
     .set({
