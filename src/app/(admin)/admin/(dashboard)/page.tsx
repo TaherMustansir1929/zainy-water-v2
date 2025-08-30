@@ -17,7 +17,7 @@ const AdminPage = async () => {
   await Promise.all([queryClient.prefetchQuery(dashboardAnalyticsQueryConfig)]);
 
   return (
-    <div className="w-full min-h-screen flex flex-col justify-start items-center">
+    <div className="w-full flex flex-col justify-start items-center">
       <WelcomeSection
         text={
           "Welcome to Zainy Water Admin panel. A modern and user-friendly platform for managing your business."

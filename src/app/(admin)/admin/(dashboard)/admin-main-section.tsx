@@ -10,14 +10,14 @@ function AdminMainSection() {
 
   if (!dashboardAnalyticsData) {
     return (
-      <div className={"flex justify-center items-center h-screen"}>
+      <div className={"flex justify-center items-center"}>
         <Loader2 className={"animate-spin size-6 text-primary"} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen w-full p-4 max-w-7xl">
+    <div className="w-full p-4 max-w-7xl">
       <div className={"mt-6"}>
         <MainSectionCards data={dashboardAnalyticsData} />
       </div>

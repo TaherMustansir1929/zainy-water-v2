@@ -1,9 +1,9 @@
 "use server";
 
 import { db } from "@/db";
-import { and, count, gte, lte } from "drizzle-orm";
-import { Customer, Delivery, Moderator, OtherExpense } from "@/db/schema";
+import { Customer, Delivery, Miscellaneous, Moderator } from "@/db/schema";
 import { subDays } from "date-fns";
+import { and, count, gte, lte } from "drizzle-orm";
 
 export type DashboardAnalytics = {
   customerCount: number;
@@ -26,25 +26,25 @@ export async function fetchDashboardAnalytics() {
       .from(Delivery)
       .where(and(lte(Delivery.createdAt, now), gte(Delivery.createdAt, from)));
 
-    const otherExpenses = await db
+    const miscellaneousDeliveries = await db
       .select()
-      .from(OtherExpense)
+      .from(Miscellaneous)
       .where(
         and(
-          lte(OtherExpense.createdAt, now),
-          gte(OtherExpense.createdAt, from),
-        ),
+          lte(Miscellaneous.createdAt, now),
+          gte(Miscellaneous.createdAt, from)
+        )
       );
 
-    const totalPayment = deliveries
+    const totalDelivery = deliveries
       .map((delivery) => delivery.payment)
       .reduce((a, b) => a + b, 0);
 
-    const totalExpenses = otherExpenses
-      .map((expense) => expense.amount)
+    const totalMiscellaneous = miscellaneousDeliveries
+      .map((delivery) => delivery.payment)
       .reduce((a, b) => a + b, 0);
 
-    const totalRevenue = totalPayment - totalExpenses;
+    const totalRevenue = totalDelivery + totalMiscellaneous;
 
     return {
       totalRevenue,

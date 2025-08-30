@@ -1,4 +1,5 @@
 import { WelcomeSection } from "@/app/(admin)/_components/welcome-section";
+import { WhatsappCodeMainSection } from "./whatsapp-code-main-section";
 
 const QRCodePage = () => {
   return (
@@ -9,7 +10,7 @@ const QRCodePage = () => {
         }
         greeting="What's up"
       />
-      Under Development
+      <WhatsappCodeMainSection />
     </div>
   );
 };
