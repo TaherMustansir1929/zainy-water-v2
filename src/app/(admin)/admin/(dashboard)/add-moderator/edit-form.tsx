@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Area } from "@prisma/client";
+import { Area } from "@/db/schema";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Moderator } from "./columns";
@@ -34,7 +34,7 @@ const formSchema = z
   .object({
     name: z.string().min(2),
     password: z.string().min(4),
-    areas: z.array(z.enum(Area).optional()).min(1).max(8),
+    areas: z.array(z.enum(Area.enumValues)).min(1),
     isWorking: z.boolean(),
   })
   .refine(
@@ -76,7 +76,7 @@ export function EditForm({ mod_data }: Props) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // Filter out empty areas
     const filteredAreas = values.areas.filter(
-      (area): area is Area => area !== undefined
+      (area): area is (typeof Area.enumValues)[number] => area !== undefined
     );
     const submissionData = {
       ...values,
@@ -146,7 +146,8 @@ export function EditForm({ mod_data }: Props) {
                             value={area || ""}
                             onValueChange={(value) => {
                               const newAreas = [...field.value];
-                              newAreas[index] = value as Area;
+                              newAreas[index] =
+                                value as (typeof Area.enumValues)[number];
                               field.onChange(newAreas);
                             }}
                           >
@@ -154,7 +155,7 @@ export function EditForm({ mod_data }: Props) {
                               <SelectValue placeholder={`Area ${index + 1}`} />
                             </SelectTrigger>
                             <SelectContent>
-                              {Object.values(Area).map((areaOption) => (
+                              {Area.enumValues.map((areaOption) => (
                                 <SelectItem key={areaOption} value={areaOption}>
                                   {areaOption}
                                 </SelectItem>

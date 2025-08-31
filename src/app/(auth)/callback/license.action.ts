@@ -15,6 +15,8 @@ export async function checkLicenseKey(
     return { success: false, error: "User not found" };
   }
 
+  licenseKey = licenseKey.trim();
+
   try {
     const [admin] = await db
       .select()

@@ -33,7 +33,7 @@ export const CustomerInfoTabs = ({ data: customersData }: Props) => {
       <TabsContent value="customer_list" className="w-full mt-6">
         <div className="flex flex-col gap-y-4">
           <DataTable6CustomerInformation data={activeCustomers} />
-          <h1 className="w-full text-red-400 font-bold font-mono text-xl mt-4">
+          <h1 className="w-full text-red-400 font-bold font-mono text-xl mt-10">
             Inactive Customers:
           </h1>
           <DataTable6CustomerInformation data={inactiveCustomers} />

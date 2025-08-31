@@ -21,7 +21,32 @@ export async function updateTotalBottles(
     .limit(1);
 
   if (!latestTotalBottles) {
-    return { success: false, message: "Total bottles record not found" };
+    if (
+      (totalBottlesData.available_bottles || 0) +
+        (totalBottlesData.used_bottles || 0) >
+      (totalBottlesData.total_bottles || 0)
+    ) {
+      return {
+        success: false,
+        message:
+          "Total bottles cannot be less than the sum of available and used bottles",
+      };
+    }
+
+    await db.insert(TotalBottles).values({
+      total_bottles: totalBottlesData.total_bottles || 0,
+      available_bottles:
+        totalBottlesData.available_bottles ||
+        totalBottlesData.total_bottles ||
+        0,
+      used_bottles: totalBottlesData.used_bottles || 0,
+      damaged_bottles: totalBottlesData.damaged_bottles || 0,
+    });
+
+    return {
+      success: true,
+      message: "New Bottles record added successfully",
+    };
   }
 
   if (!!totalBottlesData.total_bottles) {
