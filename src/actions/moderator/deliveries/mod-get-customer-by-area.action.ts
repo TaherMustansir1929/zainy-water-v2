@@ -2,7 +2,7 @@
 
 import { db } from "@/db";
 import { Customer } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 export async function getCustomerByArea(
   area: (typeof Customer.$inferSelect)["area"]
@@ -11,7 +11,7 @@ export async function getCustomerByArea(
     const customers = await db
       .select()
       .from(Customer)
-      .where(eq(Customer.area, area));
+      .where(and(eq(Customer.area, area), eq(Customer.isActive, true)));
     return customers;
   } catch (error) {
     console.error("Error fetching customers by area:", error);

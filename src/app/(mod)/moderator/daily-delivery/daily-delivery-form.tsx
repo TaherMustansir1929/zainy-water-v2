@@ -55,6 +55,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getCustomerByArea } from "@/actions/moderator/deliveries/mod-get-customer-by-area.action";
+import { area_list } from "../../../../constants/data";
 
 // FORM SCHEMA
 const formSchema = z
@@ -318,7 +319,7 @@ export const DailyDeliveryForm = () => {
   //   }
   // };
 
-  const [openSelect, setOpenSelect] = useState(false);
+  const [openAreaBox, setOpenAreaBox] = useState(false);
   const [modArea, setModArea] = useState<
     (typeof Customer.$inferSelect)["area"] | null
   >();
@@ -357,8 +358,8 @@ export const DailyDeliveryForm = () => {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {/* <div>
                       <FormLabel className="flex items-center gap-2 mb-2">
                         Select Area
                         {fetchingCustomerList && (
@@ -384,6 +385,64 @@ export const DailyDeliveryForm = () => {
                           ))}
                         </SelectContent>
                       </Select>
+                    </div> */}
+                    <div className="w-full">
+                      <FormLabel className="flex items-center gap-2 mb-2">
+                        Select Area
+                        {fetchingCustomerList && (
+                          <Loader2 className="animate-spin size-4 ml-2" />
+                        )}
+                      </FormLabel>
+                      <Popover open={openAreaBox} onOpenChange={setOpenAreaBox}>
+                        <PopoverTrigger asChild disabled={fetchingCustomerList}>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            aria-expanded={openAreaBox}
+                            className="w-full justify-between"
+                          >
+                            {modArea ? (
+                              <div className="flex items-center justify-between w-full">
+                                <span>{modArea}</span>
+                              </div>
+                            ) : (
+                              "Select..."
+                            )}
+                            <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-full p-0">
+                          <Command>
+                            <CommandInput placeholder="Search Area..." />
+                            <CommandList>
+                              <CommandEmpty>No Area found.</CommandEmpty>
+                              <CommandGroup>
+                                {moderator?.areas.map((area) => (
+                                  <CommandItem
+                                    key={area}
+                                    value={area}
+                                    onSelect={() => {
+                                      field.onChange(area);
+                                      setModArea(area);
+                                      setOpenAreaBox(false);
+                                    }}
+                                  >
+                                    <CheckIcon
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        modArea === area
+                                          ? "opacity-100"
+                                          : "opacity-0"
+                                      )}
+                                    />
+                                    <span>{area}</span>
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
                     </div>
                     <div className="w-full">
                       <FormLabel className="flex items-center gap-2 mb-2">
