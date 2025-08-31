@@ -2,7 +2,7 @@
 
 import { ActionButton } from "@/app/(admin)/admin/(dashboard)/add-moderator/action-button";
 import { Button } from "@/components/ui/button";
-import { Area } from "@prisma/client";
+import { Area } from "@/db/schema";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { GeneratedAvatar } from "@/lib/avatar";
@@ -12,7 +12,7 @@ import { GeneratedAvatar } from "@/lib/avatar";
 export type Moderator = {
   name: string;
   password: string;
-  areas: Area[];
+  areas: (typeof Area.enumValues)[number][];
   isWorking: boolean;
 };
 

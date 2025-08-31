@@ -181,20 +181,18 @@ export function EditForm({ mod_data }: Props) {
                         </div>
                       ))}
                     </div>
-                    {field.value.length < 8 && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => {
-                          const newAreas = [...field.value, undefined];
-                          field.onChange(newAreas);
-                        }}
-                        className="w-fit text-muted-foreground"
-                      >
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Area
-                      </Button>
-                    )}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        const newAreas = [...field.value, undefined];
+                        field.onChange(newAreas);
+                      }}
+                      className="w-fit text-muted-foreground"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Area
+                    </Button>
                   </div>
                 </FormControl>
                 <FormMessage />
