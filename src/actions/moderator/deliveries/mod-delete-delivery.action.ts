@@ -78,7 +78,7 @@ export async function deleteDailyDelivery(data: DeleteDeliveryDataProp) {
 
     await sendWhatsAppMessage(
       data.data.customer.phone,
-      `\`\`\`⚠️ NOTE: The delivery made at\`\`\` *_${format(data.data.delivery.createdAt, "hh:mm aaaa PPPP")}_* \`\`\`has been deleted.
+      `\`\`\`⚠️ NOTE: The delivery made at\`\`\` *_${format(data.data.delivery.createdAt, "hh:mm aaaa PPPP")}_* \`\`\`has been deleted due to invalid/wrong delivery entry.
 Short Delivery Details:
 - Customer: ${data.data.customer.name}
 - Filled Bottles: ${data.data.delivery.filled_bottles}

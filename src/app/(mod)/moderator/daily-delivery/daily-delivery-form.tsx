@@ -246,27 +246,25 @@ export const DailyDeliveryForm = () => {
 
       if (deliveryRecord.success) {
         // Send WhatsApp message as a server action
-        const wa_customer_invoice = `
-      *🧑‍💼 CUSTOMER DETAILS*
-      ID: *${customerData.customer_id}*
-      Name: *${customerData.name}*
-      Phone: *${customerData.phone}*
-      Bottle Price: *${customerData.bottle_price}/-*
-      Empty Bottles Remaining: *${data.customer_bottles}*
+        const wa_customer_invoice = `*🧑‍💼 CUSTOMER DETAILS*
+ID: *${customerData.customer_id}*
+Name: *${customerData.name}*
+Phone: *${customerData.phone}*
+Bottle Price: *${customerData.bottle_price}/-*
+Empty Bottles Remaining: *${data.customer_bottles}*
 
-      *💧 BOTTLE DETAILS*
-      Filled Bottles: *${data.filled_bottles}*
-      Empty Bottles: *${data.empty_bottles}*
-      ${data.damaged_bottles ? `Damaged Bottles: *${data.damaged_bottles}*` : ""}
-      ${data.foc ? `FOC Bottles: *${data.foc}*` : ""}
+*💧 BOTTLE DETAILS*
+Filled Bottles: *${data.filled_bottles}*
+Empty Bottles: *${data.empty_bottles}*
+${data.damaged_bottles ? `Damaged Bottles: *${data.damaged_bottles}*` : ""}
+${data.foc ? `FOC Bottles: *${data.foc}*` : ""}
 
-      *💰 BALANCE SUMMARY*
-      ${data.foc ? `FOC Discount: *${data.foc * customerData.bottle_price}/-*` : ""}
-      Today's Bill: *${Math.max(0, data.filled_bottles * customerData.bottle_price - data.foc * customerData.bottle_price)}/-*
-      Payment Received: *${payment}/-*
-      Total Remaining Balance: *${previous_balance}/-*
-      Advance Amount: *${advance_payment}/-*
-      `;
+*💰 BALANCE SUMMARY*
+${data.foc ? `FOC Discount: *${data.foc * customerData.bottle_price}/-*` : ""}
+Today's Bill: *${Math.max(0, data.filled_bottles * customerData.bottle_price - data.foc * customerData.bottle_price)}/-*
+Payment Received: *${payment}/-*
+Total Remaining Balance: *${previous_balance}/-*
+Advance Amount: *${advance_payment}/-*`;
 
         try {
           const whatsappResult = await sendWhatsAppMessage(

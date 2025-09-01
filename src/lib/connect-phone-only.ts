@@ -112,10 +112,10 @@ export async function connectWithPhoneOnly(phoneNumber: string) {
 
 // Alternative phone number formats to try
 const phoneFormats = [
-  "923390036284", // Current format
-  // "+923390036284", // With + prefix
-  // "03390036284", // Local format
-  // "92-339-0036284", // With dashes
+  // "923390036284", // Taher
+  // "923353570253", // AliAsghar
+  "923075053535", // AliAsghar Business Acc
+  // "923111577553", // Admin Business Acc
 ];
 
 let currentFormatIndex = 0;
