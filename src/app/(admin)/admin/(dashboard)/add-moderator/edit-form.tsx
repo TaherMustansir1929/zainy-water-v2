@@ -20,13 +20,12 @@ import {
 } from "@/components/ui/select";
 
 import { LoadingDotsPulse } from "@/components/loading-dots";
-import { Area, Customer } from "@/db/schema";
+import { Area } from "@/db/schema";
 import { useAddModDrawer } from "@/lib/ui-states/add-moderator-drawer";
 import { useCreateModerator } from "@/queries/admin/useCreateModerator";
 import { useUpdateModerator } from "@/queries/admin/useUpdateModerator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, X } from "lucide-react";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Moderator } from "./columns";
