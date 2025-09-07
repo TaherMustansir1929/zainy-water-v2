@@ -74,9 +74,8 @@ import {
 import { Customer } from "@/db/schema";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { CustomerInfoTableCellViewer } from "./customer-info-table-cell-viewer";
-import { Menu } from "lucide-react";
 import { ActionButton } from "./_components/action-button";
+import { CustomerInfoTableCellViewer } from "./customer-info-table-cell-viewer";
 
 export type columnSchema = {
   Customer: typeof Customer.$inferSelect;

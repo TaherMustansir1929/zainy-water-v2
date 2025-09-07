@@ -19,17 +19,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { LoadingDotsPulse } from "@/components/loading-dots";
 import { Area, Customer } from "@/db/schema";
+import { useAddModDrawer } from "@/lib/ui-states/add-moderator-drawer";
+import { useCreateModerator } from "@/queries/admin/useCreateModerator";
+import { useUpdateModerator } from "@/queries/admin/useUpdateModerator";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus, X } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Moderator } from "./columns";
-import { useAddModDrawer } from "@/lib/ui-states/add-moderator-drawer";
-import { useUpdateModerator } from "@/queries/admin/useUpdateModerator";
-import { useCreateModerator } from "@/queries/admin/useCreateModerator";
-import { Plus, X } from "lucide-react";
-import { LoadingDotsPulse } from "@/components/loading-dots";
-import { useState } from "react";
 
 const formSchema = z
   .object({
@@ -72,10 +72,10 @@ export function EditForm({ mod_data }: Props) {
   const updateMutation = useUpdateModerator();
   const createMutation = useCreateModerator();
   const isSubmitting = updateMutation.isPending || createMutation.isPending;
-  const [open, setOpen] = useState(false);
-  const [modArea, setModArea] = useState<
-    (typeof Customer.$inferSelect)["area"] | null
-  >("");
+  // const [open, setOpen] = useState(false);
+  // const [modArea, setModArea] = useState<
+  //   (typeof Customer.$inferSelect)["area"] | null
+  // >("");
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {

@@ -1,11 +1,27 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
 
+import {
+  addDailyDeliveryRecord,
+  DeliveryRecord,
+} from "@/actions/moderator/deliveries/mod-delivery.action";
+import { getCustomerByArea } from "@/actions/moderator/deliveries/mod-get-customer-by-area.action";
+import { sendWhatsAppMessage } from "@/actions/moderator/deliveries/mod-whatsapp-automation";
+import { BottleInput } from "@/components/bottle-input";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import {
   Form,
   FormControl,
@@ -15,47 +31,21 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  addDailyDeliveryRecord,
-  DeliveryRecord,
-  getCustomerDataById,
-} from "@/actions/moderator/deliveries/mod-delivery.action";
-import {
-  CheckIcon,
-  ChevronsUpDownIcon,
-  Loader2,
-  Search,
-  SendHorizonal,
-} from "lucide-react";
-import { useModeratorStore } from "@/lib/moderator-state";
-import { toast } from "sonner";
-import { BottleInput } from "@/components/bottle-input";
-import { Customer } from "@/db/schema";
-import { sendWhatsAppMessage } from "@/actions/moderator/deliveries/mod-whatsapp-automation";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
+import { Customer } from "@/db/schema";
+import { useModeratorStore } from "@/lib/moderator-state";
 import { cn } from "@/lib/utils";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { getCustomerByArea } from "@/actions/moderator/deliveries/mod-get-customer-by-area.action";
-import { area_list } from "../../../../constants/data";
+  CheckIcon,
+  ChevronsUpDownIcon,
+  Loader2,
+  SendHorizonal,
+} from "lucide-react";
+import { toast } from "sonner";
 
 // FORM SCHEMA
 const formSchema = z
@@ -160,7 +150,6 @@ export const DailyDeliveryForm = () => {
   const { previous_balance, current_balance, advance_payment } =
     calculateBalances();
 
-  const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   // FORM SUBMISSION HANDLER

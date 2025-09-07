@@ -1,5 +1,14 @@
-import z, { custom } from "zod";
+import { PhoneInputComponent } from "@/components/phone-input";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import {
   Form,
   FormControl,
@@ -10,37 +19,21 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { CheckIcon, ChevronsUpDownIcon, Loader2 } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
-import { Area, Customer } from "@/db/schema";
-import { Switch } from "@/components/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { useCreateNewCustomer } from "@/queries/admin/useCreateNewCustomer";
-import { PhoneInputComponent } from "@/components/phone-input";
-import { useState } from "react";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { Area, Customer } from "@/db/schema";
 import { cn } from "@/lib/utils";
+import { useCreateNewCustomer } from "@/queries/admin/useCreateNewCustomer";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { CheckIcon, ChevronsUpDownIcon, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import z from "zod";
 
 const formSchema = z.object({
   name: z.string().min(2),

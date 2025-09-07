@@ -1,9 +1,9 @@
 "use client";
 
-import * as React from "react";
 import {
   closestCenter,
   DndContext,
+  DraggableAttributes,
   KeyboardSensor,
   MouseSensor,
   TouchSensor,
@@ -11,7 +11,6 @@ import {
   useSensors,
   type DragEndEvent,
   type UniqueIdentifier,
-  DraggableAttributes,
 } from "@dnd-kit/core";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import {
@@ -47,7 +46,9 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
+import * as React from "react";
 
+import { MiscellaneousTableCellViewer } from "@/app/(admin)/admin/(dashboard)/deliveries/misc-table-cell-viewer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -75,8 +76,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Miscellaneous, Moderator } from "@/db/schema";
-import { format, formatDistanceToNow, startOfDay } from "date-fns";
-import { MiscellaneousTableCellViewer } from "@/app/(admin)/admin/(dashboard)/deliveries/misc-table-cell-viewer";
+import { format, startOfDay } from "date-fns";
 
 export type columnSchema = {
   Moderator: typeof Moderator.$inferSelect;
@@ -290,13 +290,13 @@ export function DataTable4MiscDeliveries({
   data?: columnSchema[];
 }) {
   const [data, setData] = React.useState<columnSchema[] | undefined>(
-    initialData,
+    initialData
   );
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
+    []
   );
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -314,12 +314,12 @@ export function DataTable4MiscDeliveries({
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
     useSensor(TouchSensor, {}),
-    useSensor(KeyboardSensor, {}),
+    useSensor(KeyboardSensor, {})
   );
 
   const dataIds = React.useMemo<UniqueIdentifier[]>(
     () => data?.map(({ Miscellaneous }) => Miscellaneous.id) || [],
-    [data],
+    [data]
   );
 
   const table = useReactTable({
@@ -384,10 +384,10 @@ export function DataTable4MiscDeliveries({
     const { active, over } = event;
     if (active && over && active.id !== over.id && data) {
       const oldIndex = data.findIndex(
-        (item) => item.Miscellaneous.id === active.id,
+        (item) => item.Miscellaneous.id === active.id
       );
       const newIndex = data.findIndex(
-        (item) => item.Miscellaneous.id === over.id,
+        (item) => item.Miscellaneous.id === over.id
       );
 
       if (oldIndex !== -1 && newIndex !== -1) {
@@ -422,7 +422,7 @@ export function DataTable4MiscDeliveries({
                 .filter(
                   (column) =>
                     typeof column.accessorFn !== "undefined" &&
-                    column.getCanHide(),
+                    column.getCanHide()
                 )
                 .map((column) => {
                   return (
@@ -461,7 +461,7 @@ export function DataTable4MiscDeliveries({
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
-                              header.getContext(),
+                              header.getContext()
                             )}
                       </TableHead>
                     );

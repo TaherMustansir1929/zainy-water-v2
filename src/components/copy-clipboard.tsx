@@ -1,17 +1,16 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
 import { CheckIcon, CopyIcon } from "lucide-react";
+import { useId, useRef, useState } from "react";
 
-import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 type Props = {
   text: string;

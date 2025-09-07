@@ -1,5 +1,14 @@
-import { columnSchema } from "./data-table-6-customer-info";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { PhoneInputComponent } from "@/components/phone-input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import {
   Drawer,
   DrawerClose,
@@ -10,14 +19,6 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { Separator } from "@/components/ui/separator";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -28,43 +29,35 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
-  CheckIcon,
-  ChevronsUpDownIcon,
-  Loader2,
-  TriangleAlert,
-} from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
-import { Area, Customer } from "@/db/schema";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { useUpdateCustomerInfo } from "@/queries/admin/customer-information/useUpdateCustomerInfo";
-import { PhoneInputComponent } from "@/components/phone-input";
+import { Area, Customer } from "@/db/schema";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { GeneratedAvatar } from "@/lib/avatar";
+import { cn } from "@/lib/utils";
+import { useUpdateCustomerInfo } from "@/queries/admin/customer-information/useUpdateCustomerInfo";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
+import {
+  CheckIcon,
+  ChevronsUpDownIcon,
+  Loader2,
+  TriangleAlert,
+} from "lucide-react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { columnSchema } from "./data-table-6-customer-info";
 
 const formSchema = z.object({
   name: z.string().min(2),
