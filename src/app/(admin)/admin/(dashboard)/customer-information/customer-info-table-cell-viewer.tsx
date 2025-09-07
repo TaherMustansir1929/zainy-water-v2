@@ -27,9 +27,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Loader2 } from "lucide-react";
+import {
+  CheckIcon,
+  ChevronsUpDownIcon,
+  Loader2,
+  TriangleAlert,
+} from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { Area } from "@/db/schema";
+import { Area, Customer } from "@/db/schema";
 import { Switch } from "@/components/ui/switch";
 import {
   Select,
@@ -43,9 +48,23 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useUpdateCustomerInfo } from "@/queries/admin/useUpdateCustomerInfo";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { useUpdateCustomerInfo } from "@/queries/admin/customer-information/useUpdateCustomerInfo";
 import { PhoneInputComponent } from "@/components/phone-input";
 import { GeneratedAvatar } from "@/lib/avatar";
+import { useState } from "react";
 
 const formSchema = z.object({
   name: z.string().min(2),
@@ -88,6 +107,10 @@ export const CustomerInfoTableCellViewer = ({
   });
 
   const updateMutation = useUpdateCustomerInfo();
+  const [open, setOpen] = useState(false);
+  const [customerArea, setCustomerArea] = useState<
+    (typeof Customer.$inferSelect)["area"] | null
+  >("");
 
   const button_disabled =
     form.watch("name") === item.Customer.name &&
@@ -120,7 +143,7 @@ export const CustomerInfoTableCellViewer = ({
           variant="link"
           className={cn(
             "text-foreground w-fit px-0 text-left cursor-pointer",
-            isMobile && "underline underline-offset-4 font-bold",
+            isMobile && "underline underline-offset-4 font-bold"
           )}
         >
           <GeneratedAvatar seed={item.Customer.name} />
@@ -235,23 +258,62 @@ export const CustomerInfoTableCellViewer = ({
                         render={({ field }) => (
                           <FormItem className="w-full flex flex-row items-center justify-between">
                             <FormLabel>Area</FormLabel>
-                            <Select
-                              onValueChange={field.onChange}
-                              defaultValue={field.value}
-                            >
-                              <FormControl>
-                                <SelectTrigger className="max-w-[200px]">
-                                  <SelectValue placeholder="Select area" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {Area.enumValues.map((area) => (
-                                  <SelectItem key={area} value={area}>
-                                    {area}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                            <FormControl>
+                              <div>
+                                <Popover open={open} onOpenChange={setOpen}>
+                                  <PopoverTrigger asChild>
+                                    <Button
+                                      variant="outline"
+                                      role="combobox"
+                                      aria-expanded={open}
+                                      className="w-full justify-between"
+                                    >
+                                      {customerArea ? (
+                                        <div className="flex items-center justify-between w-full">
+                                          <span>{customerArea}</span>
+                                        </div>
+                                      ) : (
+                                        "Select Area"
+                                      )}
+                                      <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                    </Button>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="w-full p-0">
+                                    <Command>
+                                      <CommandInput placeholder="Search Area..." />
+                                      <CommandList>
+                                        <CommandEmpty>
+                                          No Area found.
+                                        </CommandEmpty>
+                                        <CommandGroup>
+                                          {Area.enumValues.map((area) => (
+                                            <CommandItem
+                                              key={area}
+                                              value={area}
+                                              onSelect={() => {
+                                                field.onChange(area);
+                                                setCustomerArea(area);
+                                                setOpen(false);
+                                              }}
+                                            >
+                                              <CheckIcon
+                                                className={cn(
+                                                  "mr-2 h-4 w-4",
+                                                  area === customerArea
+                                                    ? "opacity-100"
+                                                    : "opacity-0"
+                                                )}
+                                              />
+                                              <span>{area}</span>
+                                            </CommandItem>
+                                          ))}
+                                        </CommandGroup>
+                                      </CommandList>
+                                    </Command>
+                                  </PopoverContent>
+                                </Popover>
+                              </div>
+                            </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -267,20 +329,18 @@ export const CustomerInfoTableCellViewer = ({
                             <FormLabel>Bottles</FormLabel>
                             <FormControl>
                               <Tooltip>
-                                <TooltipTrigger type="button">
+                                <TooltipTrigger>
                                   <Input
                                     {...field}
                                     type="number"
                                     value={field.value}
                                     className="max-w-[100px]"
-                                    disabled
                                   />
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                  <p>
-                                    This field is disabled. You can change it
-                                    <br />
-                                    by modifying relevant delivery records.
+                                  <p className="flex items-center">
+                                    <TriangleAlert className="mr-1 size-4" />{" "}
+                                    Use with caution!
                                   </p>
                                 </TooltipContent>
                               </Tooltip>

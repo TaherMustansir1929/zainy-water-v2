@@ -1,18 +1,18 @@
 "use client";
 
 import { DataTable } from "@/components/data-table";
-import { columns, Moderator } from "./columns";
+import { Button } from "@/components/ui/button";
 import {
   Drawer,
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
-import { PenSquare, Plus, UserPlus } from "lucide-react";
-import { EditForm } from "./edit-form";
 import { useAddModDrawer } from "@/lib/ui-states/add-moderator-drawer";
 import { useGetModeratorList } from "@/queries/admin/useGetModeratorList";
-import { Button } from "@/components/ui/button";
+import { PenSquare, Plus, UserPlus } from "lucide-react";
+import { columns, Moderator } from "./columns";
+import { EditForm } from "./edit-form";
 
 export const AddModMainSection = () => {
   const { mod_data, isEditOpen, isAddOpen, closeDrawer, openAddDrawer } =

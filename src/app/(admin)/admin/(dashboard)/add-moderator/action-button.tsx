@@ -92,7 +92,7 @@ export const ActionButton = ({ row_data }: { row_data: Moderator }) => {
             <Trash2 className="size-4 text-rose-500" />
             <span className="text-rose-500">Delete</span>
             <span className="text-xs font-mono text-muted-foreground">
-              (Danger)
+              (Warning)
             </span>
           </DropdownMenuItem>
         </DropdownMenuContent>

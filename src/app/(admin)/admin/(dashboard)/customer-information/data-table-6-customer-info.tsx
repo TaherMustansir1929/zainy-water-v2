@@ -75,6 +75,8 @@ import { Customer } from "@/db/schema";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CustomerInfoTableCellViewer } from "./customer-info-table-cell-viewer";
+import { Menu } from "lucide-react";
+import { ActionButton } from "./_components/action-button";
 
 export type columnSchema = {
   Customer: typeof Customer.$inferSelect;
@@ -231,6 +233,11 @@ const columns: ColumnDef<columnSchema>[] = [
         </Badge>
       </div>
     ),
+  },
+  {
+    accessorKey: "actions",
+    header: "",
+    cell: ({ row }) => <ActionButton row={row} />,
   },
 ];
 

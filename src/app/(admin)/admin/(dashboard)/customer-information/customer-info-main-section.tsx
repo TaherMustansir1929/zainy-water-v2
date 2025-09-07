@@ -2,7 +2,7 @@
 
 import { HighlightText } from "@/components/animate-ui/text/highlight";
 import { CustomerInfoTabs } from "./customer-info-tabs";
-import { useGetAllCustomers } from "@/queries/admin/useGetAllCustomers";
+import { useGetAllCustomers } from "@/queries/admin/customer-information/useGetAllCustomers";
 
 export const CustomerInformationMainSection = () => {
   const customersQuery = useGetAllCustomers();
@@ -18,7 +18,7 @@ export const CustomerInformationMainSection = () => {
                 You have a total of{" "}
                 <HighlightText
                   className="font-semibold"
-                  text={`${customersData?.length ?? "_"}`}
+                  text={`${customersData?.filter((customer) => customer.Customer.isActive).length ?? "_"}`}
                 />{" "}
                 active customers.
               </span>

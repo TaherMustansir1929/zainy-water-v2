@@ -25,7 +25,7 @@ export const useUpdateCustomerInfo = () => {
     },
     onError: (error) => {
       console.error(error);
-      toast.error("Error updating customer information: ");
+      toast.error("Error updating customer information");
     },
   });
 };

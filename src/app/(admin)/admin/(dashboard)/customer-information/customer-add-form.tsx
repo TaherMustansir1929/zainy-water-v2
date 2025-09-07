@@ -1,4 +1,4 @@
-import z from "zod";
+import z, { custom } from "zod";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Form,
@@ -10,9 +10,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Loader2 } from "lucide-react";
+import { CheckIcon, ChevronsUpDownIcon, Loader2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { Area } from "@/db/schema";
+import { Area, Customer } from "@/db/schema";
 import { Switch } from "@/components/ui/switch";
 import {
   Select,
@@ -26,6 +26,21 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { useCreateNewCustomer } from "@/queries/admin/useCreateNewCustomer";
 import { PhoneInputComponent } from "@/components/phone-input";
+import { useState } from "react";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   name: z.string().min(2),
@@ -62,6 +77,10 @@ export const CustomerAddForm = () => {
   });
 
   const createMutation = useCreateNewCustomer();
+  const [open, setOpen] = useState(false);
+  const [customerArea, setCustomerArea] = useState<
+    (typeof Customer.$inferSelect)["area"] | null
+  >("");
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     await createMutation.mutateAsync({
@@ -148,23 +167,60 @@ export const CustomerAddForm = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Area</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select area" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {Area.enumValues.map((area) => (
-                          <SelectItem key={area} value={area}>
-                            {area}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <div>
+                        <Popover open={open} onOpenChange={setOpen}>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              aria-expanded={open}
+                              className="w-full justify-between"
+                            >
+                              {customerArea ? (
+                                <div className="flex items-center justify-between w-full">
+                                  <span>{customerArea}</span>
+                                </div>
+                              ) : (
+                                "Select Area"
+                              )}
+                              <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-full p-0">
+                            <Command>
+                              <CommandInput placeholder="Search Area..." />
+                              <CommandList>
+                                <CommandEmpty>No Area found.</CommandEmpty>
+                                <CommandGroup>
+                                  {Area.enumValues.map((area) => (
+                                    <CommandItem
+                                      key={area}
+                                      value={area}
+                                      onSelect={() => {
+                                        field.onChange(area);
+                                        setCustomerArea(area);
+                                        setOpen(false);
+                                      }}
+                                    >
+                                      <CheckIcon
+                                        className={cn(
+                                          "mr-2 h-4 w-4",
+                                          area === customerArea
+                                            ? "opacity-100"
+                                            : "opacity-0"
+                                        )}
+                                      />
+                                      <span>{area}</span>
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}

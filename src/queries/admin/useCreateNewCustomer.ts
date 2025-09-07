@@ -4,7 +4,7 @@ import {
 } from "@/actions/admin/customer-information/admin-create-customer.action";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { GetAllCustomersQueryConfig } from "./useGetAllCustomers";
+import { GetAllCustomersQueryConfig } from "./customer-information/useGetAllCustomers";
 import { useRouter } from "next/navigation";
 
 export const useCreateNewCustomer = () => {

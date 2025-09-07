@@ -2,19 +2,21 @@
 
 import { WelcomeSection } from "@/app/(admin)/_components/welcome-section";
 import ErrorState from "@/components/hydration-states/error-state";
-import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { Atom } from "react-loading-indicators";
 import { CustomerInformationMainSection } from "./customer-info-main-section";
-import { GetAllCustomersQueryConfig } from "@/queries/admin/useGetAllCustomers";
+import { GetAllCustomersQueryConfig } from "@/queries/admin/customer-information/useGetAllCustomers";
 
 export default async function CustomerInformationPage() {
-  const queryClient = new QueryClient()
+  const queryClient = new QueryClient();
 
-  await Promise.all([
-    queryClient.prefetchQuery(GetAllCustomersQueryConfig),
-  ])
+  await Promise.all([queryClient.prefetchQuery(GetAllCustomersQueryConfig)]);
 
   return (
     <div className="w-full min-h-screen flex flex-col justify-start items-center">
@@ -30,5 +32,5 @@ export default async function CustomerInformationPage() {
         </Suspense>
       </HydrationBoundary>
     </div>
-  )
+  );
 }
