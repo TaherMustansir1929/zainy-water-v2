@@ -1,5 +1,5 @@
 import { MainFooter } from "@/components/main-footer";
-import { ModHeader } from "./mod-header";
+import { ModHeader } from "../../modules/moderator/ui/mod-header";
 
 type Props = {
   children: React.ReactNode;
