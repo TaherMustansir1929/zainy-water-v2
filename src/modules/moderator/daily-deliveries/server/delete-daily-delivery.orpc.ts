@@ -62,12 +62,17 @@ export const deleteDailyDelivery = os
           tx
             .update(BottleUsage)
             .set({
-              sales: bottleUsage.sales - input.data.delivery.filled_bottles,
+              sales: Math.max(
+                0,
+                bottleUsage.sales - input.data.delivery.filled_bottles
+              ),
               remaining_bottles:
                 bottleUsage.remaining_bottles +
                 input.data.delivery.filled_bottles,
-              empty_bottles:
-                bottleUsage.empty_bottles - input.data.delivery.empty_bottles,
+              empty_bottles: Math.max(
+                0,
+                bottleUsage.empty_bottles - input.data.delivery.empty_bottles
+              ),
             })
             .where(eq(BottleUsage.id, bottleUsage.id)),
 

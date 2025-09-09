@@ -107,8 +107,10 @@ export const addDailyDelivery = os
             .set({
               damaged_bottles:
                 totalBottles.damaged_bottles + input.damaged_bottles,
-              available_bottles:
-                totalBottles.available_bottles - input.damaged_bottles,
+              available_bottles: Math.max(
+                0,
+                totalBottles.available_bottles - input.damaged_bottles
+              ),
             })
             .where(eq(TotalBottles.id, totalBottles.id))
             .returning(),
