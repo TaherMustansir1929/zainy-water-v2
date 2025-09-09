@@ -261,9 +261,11 @@ export const CustomerInfoTableCellViewer = ({
                                       aria-expanded={open}
                                       className="w-full justify-between"
                                     >
-                                      {customerArea ? (
+                                      {customerArea || item.Customer.area ? (
                                         <div className="flex items-center justify-between w-full">
-                                          <span>{customerArea}</span>
+                                          <span>
+                                            {customerArea || item.Customer.area}
+                                          </span>
                                         </div>
                                       ) : (
                                         "Select Area"
