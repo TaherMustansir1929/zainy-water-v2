@@ -1,4 +1,4 @@
-import { fetchModeratorById } from "@/actions/fetch-moderator-by-id";
+import { fetchModeratorById } from "@/actions/fetch-moderator-by-id.action";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 

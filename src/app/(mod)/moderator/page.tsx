@@ -1,6 +1,6 @@
 import { moderatorMiddleware } from "@/actions/moderator/mod-middleware";
 import { redirect } from "next/navigation";
-import { ModTabs } from "./mod-tabs";
+import { ModTabs } from "../../../modules/moderator/ui/mod-tabs";
 
 const OtherExpensePage = async () => {
   const moderator = await moderatorMiddleware();

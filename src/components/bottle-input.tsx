@@ -7,17 +7,18 @@ import { ControllerRenderProps, FieldValues, FieldPath } from "react-hook-form";
 
 type Props<
   T extends FieldValues = FieldValues,
-  K extends FieldPath<T> = FieldPath<T>
+  K extends FieldPath<T> = FieldPath<T>,
 > = {
   field: ControllerRenderProps<T, K>;
   onChange: (value: number) => void;
   defaultValue?: number;
+  disabled?: boolean;
 };
 
 export function BottleInput<
   T extends FieldValues = FieldValues,
-  K extends FieldPath<T> = FieldPath<T>
->({ field, onChange, defaultValue = 0 }: Props<T, K>) {
+  K extends FieldPath<T> = FieldPath<T>,
+>({ field, onChange, defaultValue = 0, disabled = false }: Props<T, K>) {
   const currentValue = field.value || defaultValue;
 
   const handleIncrement = () => {
@@ -48,7 +49,7 @@ export function BottleInput<
         variant="ghost"
         size="sm"
         onClick={handleDecrement}
-        disabled={currentValue <= 0}
+        disabled={currentValue <= 0 || disabled}
         className="h-[inherit] aspect-square rounded-s-md rounded-e-none border-0 bg-background text-muted-foreground/80 hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
       >
         <MinusIcon size={16} aria-hidden="true" />
@@ -61,12 +62,14 @@ export function BottleInput<
         onChange={handleInputChange}
         className="border-0 shadow-none text-center tabular-nums focus-visible:ring-0 focus-visible:ring-offset-0 rounded-none h-[inherit]"
         placeholder="0"
+        disabled={disabled}
       />
       <Button
         type="button"
         variant="ghost"
         size="sm"
         onClick={handleIncrement}
+        disabled={disabled}
         className="h-[inherit] aspect-square rounded-e-md rounded-s-none border-0 bg-background text-muted-foreground/80 hover:bg-accent hover:text-foreground"
       >
         <PlusIcon size={16} aria-hidden="true" />

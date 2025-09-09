@@ -5,13 +5,13 @@ import {
   dehydrate,
 } from "@tanstack/react-query";
 import { get30dBottleUsageQueryConfig } from "@/queries/admin/useGet30dBottleUsage";
-import { fetchTotalBottlesQueryConfig } from "@/queries/moderator/useFetchTotalBottles";
 import { Suspense } from "react";
 import { Atom } from "react-loading-indicators";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorState from "@/components/hydration-states/error-state";
 import { BottleInventoryMainSection } from "./bottle-inventory-main-section";
 import { getModeratorListQueryConfig } from "@/queries/admin/useGetModeratorList";
+import { orpc } from "@/lib/orpc";
 
 const BottleInventoryPage = async () => {
   const queryClient = new QueryClient();
@@ -19,7 +19,7 @@ const BottleInventoryPage = async () => {
   // Prefetch both queries in parallel for better performance
   await Promise.all([
     queryClient.prefetchQuery(get30dBottleUsageQueryConfig),
-    queryClient.prefetchQuery(fetchTotalBottlesQueryConfig),
+    queryClient.prefetchQuery(orpc.util.getTotalBottles.queryOptions()),
     queryClient.prefetchQuery(getModeratorListQueryConfig),
   ]);
 

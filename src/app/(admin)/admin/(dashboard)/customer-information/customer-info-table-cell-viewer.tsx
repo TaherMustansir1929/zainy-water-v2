@@ -327,6 +327,12 @@ export const CustomerInfoTableCellViewer = ({
                                     {...field}
                                     type="number"
                                     value={field.value}
+                                    onChange={(e) => {
+                                      const value = e.target.value;
+                                      field.onChange(
+                                        value ? parseInt(value) : 0
+                                      );
+                                    }}
                                     className="max-w-[100px]"
                                   />
                                 </TooltipTrigger>

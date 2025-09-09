@@ -3,7 +3,7 @@
 import { BottleInventorySectionCards } from "@/app/(admin)/_components/bottle-inventory-section-cards";
 import { DataTable2BottleInventory } from "@/app/(admin)/admin/(dashboard)/bottle-inventory/data-table-2-bottle-inventory";
 
-import { useFetchTotalBottles } from "@/queries/moderator/useFetchTotalBottles";
+import { useFetchTotalBottles } from "@/modules/util/server/queries/useFetchTotalBottles";
 import { BottleUsage30dDataProps } from "@/actions/fetch-30d-bottle-usage.action";
 import { useGet30dBottleUsage } from "@/queries/admin/useGet30dBottleUsage";
 import { ChartLineInteractive } from "@/app/(admin)/_components/line-chart-interactive";

@@ -1,14 +1,41 @@
 // Using NEON
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
+import {
+  drizzle as drizzleNeon,
+  NeonDatabase,
+} from "drizzle-orm/neon-serverless";
+import {
+  drizzle as drizzlePG,
+  NodePgDatabase,
+} from "drizzle-orm/node-postgres";
 import * as schema from "./schema";
+import "dotenv/config";
+import { Pool as PgPool } from "pg";
+import { Pool as NeonPool } from "@neondatabase/serverless";
 
-if (!process.env.DATABASE_URL) {
+const db_env = process.env.DB_ENV;
+const db_url = process.env.DATABASE_URL;
+if (!db_url) {
   throw new Error("DATABASE_URL environment variable is not set");
 }
 
-const sql = neon(process.env.DATABASE_URL);
-export const db = drizzle({ client: sql, schema });
+let db: NeonDatabase<typeof schema> | NodePgDatabase<typeof schema>;
+
+// Neon Serverless
+if (!db_env || db_env === "neon") {
+  // const sql = neon(db_url);
+  const pool = new NeonPool({ connectionString: db_url });
+  db = drizzleNeon({ client: pool, schema });
+
+  // LOCAL
+} else if (db_env === "local") {
+  const pool = new PgPool({
+    connectionString: db_url,
+  });
+
+  db = drizzlePG({ client: pool, schema });
+}
+
+export { db };
 
 //
 
