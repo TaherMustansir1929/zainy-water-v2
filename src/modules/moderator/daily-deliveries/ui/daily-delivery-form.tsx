@@ -161,7 +161,10 @@ export const DailyDeliveryForm = () => {
     }
 
     // Error Handling/Form Validation for empty_bottles
-    if (customerData && form.watch("empty_bottles") > customerData.bottles) {
+    if (
+      form.watch("empty_bottles") >
+      customerData.bottles + form.watch("filled_bottles")
+    ) {
       form.setError(
         "empty_bottles",
         {

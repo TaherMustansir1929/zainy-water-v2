@@ -27,6 +27,8 @@ export async function updateCustomerInfo(data: UpdateCustomerInfoDataProp) {
       total_bottles.available_bottles - bottle_difference;
     const new_used_bottles = total_bottles.used_bottles + bottle_difference;
 
+    const deposit_difference = data.data.deposit - customer_info.deposit;
+
     await Promise.all([
       await db
         .update(Customer)
@@ -36,6 +38,7 @@ export async function updateCustomerInfo(data: UpdateCustomerInfoDataProp) {
       await db
         .update(TotalBottles)
         .set({
+          total_bottles: total_bottles.total_bottles - deposit_difference,
           available_bottles: new_available_bottles,
           used_bottles: new_used_bottles,
         })
