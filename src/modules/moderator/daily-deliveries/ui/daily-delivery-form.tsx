@@ -168,7 +168,7 @@ export const DailyDeliveryForm = () => {
           message:
             "Empty bottles cannot be more than customer's remaining bottles.",
         },
-        { shouldFocus: true },
+        { shouldFocus: true }
       );
       setSubmitting(false);
       return;
@@ -180,7 +180,7 @@ export const DailyDeliveryForm = () => {
     const foc_discount = customerData.bottle_price * values.foc;
     const final_current_balance_before_payment = Math.max(
       0,
-      raw_current_balance - foc_discount,
+      raw_current_balance - foc_discount
     );
     const payment = values.payment || 0;
     const db_previous_balance = customerData.balance;
@@ -258,12 +258,12 @@ Advance Amount: *${advance_payment}/-*`;
           const whatsappResult = await sendWhatsAppMessage(
             customerData.phone,
             wa_customer_invoice,
-            false,
+            false
           );
           if (!whatsappResult.success) {
             console.warn("WhatsApp message failed:", whatsappResult.message);
             toast.error(
-              "Delivery recorded but WhatsApp message failed to send",
+              "Delivery recorded but WhatsApp message failed to send"
             );
           } else {
             toast.success("Delivery recorded and WhatsApp message sent!");
@@ -420,7 +420,7 @@ Advance Amount: *${advance_payment}/-*`;
                                         "mr-2 h-4 w-4",
                                         modArea === area
                                           ? "opacity-100"
-                                          : "opacity-0",
+                                          : "opacity-0"
                                       )}
                                     />
                                     <span>{area}</span>
@@ -459,7 +459,7 @@ Advance Amount: *${advance_payment}/-*`;
                                   {
                                     customerList.find(
                                       (customer) =>
-                                        customer.id === customerData.id,
+                                        customer.id === customerData.id
                                     )?.name
                                   }
                                 </span>
@@ -467,7 +467,7 @@ Advance Amount: *${advance_payment}/-*`;
                                   {
                                     customerList.find(
                                       (customer) =>
-                                        customer.id === customerData.id,
+                                        customer.id === customerData.id
                                     )?.customer_id
                                   }
                                 </span>
@@ -487,7 +487,7 @@ Advance Amount: *${advance_payment}/-*`;
                                 {customerList.map((customer) => (
                                   <CommandItem
                                     key={customer.id}
-                                    value={customer.name}
+                                    value={`${customer.name} ${customer.customer_id}`}
                                     onSelect={() => {
                                       field.onChange(customer.id);
                                       setCustomerData(customer);
@@ -499,7 +499,7 @@ Advance Amount: *${advance_payment}/-*`;
                                         "mr-2 h-4 w-4",
                                         customerData?.id === customer.id
                                           ? "opacity-100"
-                                          : "opacity-0",
+                                          : "opacity-0"
                                       )}
                                     />
                                     <div className="flex items-center justify-between w-full">
@@ -720,7 +720,7 @@ Advance Amount: *${advance_payment}/-*`;
                     0,
                     (form.watch("filled_bottles") || 0) *
                       customerData.bottle_price -
-                      (form.watch("foc") || 0) * customerData.bottle_price,
+                      (form.watch("foc") || 0) * customerData.bottle_price
                   )}
                   /-
                 </span>

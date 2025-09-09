@@ -20,15 +20,30 @@ import {
 } from "@/components/ui/select";
 
 import { LoadingDotsPulse } from "@/components/loading-dots";
-import { Area } from "@/db/schema";
+import { Area, Customer } from "@/db/schema";
 import { useAddModDrawer } from "@/lib/ui-states/add-moderator-drawer";
 import { useCreateModerator } from "@/queries/admin/useCreateModerator";
 import { useUpdateModerator } from "@/queries/admin/useUpdateModerator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, X } from "lucide-react";
+import { CheckIcon, ChevronsUpDownIcon, Plus, X } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Moderator } from "./columns";
+import { useState } from "react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 
 const formSchema = z
   .object({
@@ -71,10 +86,7 @@ export function EditForm({ mod_data }: Props) {
   const updateMutation = useUpdateModerator();
   const createMutation = useCreateModerator();
   const isSubmitting = updateMutation.isPending || createMutation.isPending;
-  // const [open, setOpen] = useState(false);
-  // const [modArea, setModArea] = useState<
-  //   (typeof Customer.$inferSelect)["area"] | null
-  // >("");
+  const [openStates, setOpenStates] = useState<{ [key: number]: boolean }>({});
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -146,7 +158,7 @@ export function EditForm({ mod_data }: Props) {
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                       {field.value.map((area, index) => (
                         <div key={index} className="flex items-center gap-2">
-                          <Select
+                          {/* <Select
                             value={area || ""}
                             onValueChange={(value) => {
                               const newAreas = [...field.value];
@@ -165,7 +177,70 @@ export function EditForm({ mod_data }: Props) {
                                 </SelectItem>
                               ))}
                             </SelectContent>
-                          </Select>
+                          </Select> */}
+                          <Popover
+                            open={openStates[index] || false}
+                            onOpenChange={(isOpen) =>
+                              setOpenStates((prev) => ({
+                                ...prev,
+                                [index]: isOpen,
+                              }))
+                            }
+                          >
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                role="combobox"
+                                aria-expanded={openStates[index] || false}
+                                className="w-full justify-between"
+                              >
+                                {area ? (
+                                  <div className="flex items-center justify-between w-full">
+                                    <span>{area}</span>
+                                  </div>
+                                ) : (
+                                  `Select Area ${index + 1}`
+                                )}
+                                <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-full p-0">
+                              <Command>
+                                <CommandInput placeholder="Search Area..." />
+                                <CommandList>
+                                  <CommandEmpty>No Area found.</CommandEmpty>
+                                  <CommandGroup>
+                                    {Area.enumValues.map((areaOption) => (
+                                      <CommandItem
+                                        key={areaOption}
+                                        value={areaOption}
+                                        onSelect={() => {
+                                          const newAreas = [...field.value];
+                                          newAreas[index] =
+                                            areaOption as (typeof Area.enumValues)[number];
+                                          field.onChange(newAreas);
+                                          setOpenStates((prev) => ({
+                                            ...prev,
+                                            [index]: false,
+                                          }));
+                                        }}
+                                      >
+                                        <CheckIcon
+                                          className={cn(
+                                            "mr-2 h-4 w-4",
+                                            areaOption === field.value[index]
+                                              ? "opacity-100"
+                                              : "opacity-0"
+                                          )}
+                                        />
+                                        <span>{areaOption}</span>
+                                      </CommandItem>
+                                    ))}
+                                  </CommandGroup>
+                                </CommandList>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
                           {field.value.length > 1 && (
                             <Button
                               type="button"

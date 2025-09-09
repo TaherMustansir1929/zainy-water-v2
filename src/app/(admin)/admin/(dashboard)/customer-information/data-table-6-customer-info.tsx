@@ -348,15 +348,13 @@ export function DataTable6CustomerInformation({
       // Get values to search through
       const customerName = row.original.Customer?.name?.toLowerCase() || "";
       const area = row.original.Customer?.area?.toLowerCase() || "";
-      const phone = row.original.Customer?.phone?.toLowerCase() || "";
-      const address = row.original.Customer?.address?.toLowerCase() || "";
+      const id = row.original.Customer?.customer_id?.toLowerCase() || "";
 
       // Search across all relevant fields
       return (
         customerName.includes(searchValue) ||
-        area.includes(searchValue) ||
-        phone.includes(searchValue) ||
-        address.includes(searchValue)
+        id.includes(searchValue) ||
+        area.includes(searchValue)
       );
     },
   });
@@ -389,7 +387,7 @@ export function DataTable6CustomerInformation({
       <div className="w-full flex items-center justify-between gap-4 px-4 pb-4 lg:px-6">
         <div className="flex items-center">
           <Input
-            placeholder="Search names..."
+            placeholder="Search Name/ID/Area..."
             value={globalFilter ?? ""}
             onChange={(event) => setGlobalFilter(event.target.value)}
             className="max-w-sm"
