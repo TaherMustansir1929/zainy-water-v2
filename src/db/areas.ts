@@ -18,6 +18,7 @@ export const areas_list:
   "DHA",
   "Drigh Colony",
   "Essa Nagri",
+  "Essa Mohalla",
   "FB Area (Blocks 1–22)",
   "Garden East",
   "Garden West",
