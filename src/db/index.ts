@@ -33,6 +33,8 @@ if (!db_env || db_env === "neon") {
   });
 
   db = drizzlePG({ client: pool, schema });
+} else {
+  throw new Error(`Unsupported DB_ENV "${db_env}". Use "neon" or "local".`);
 }
 
 export { db };

@@ -47,14 +47,16 @@ export function OtherExpenseForm() {
       onSuccess: async () => {
         await Promise.all([
           queryClient.invalidateQueries({
-            queryKey: ["bottle_usage", moderator?.id],
+            queryKey: orpc.moderator.bottleUsage.getBottleUsage.queryKey({
+              input: { id: moderator?.id },
+            }),
           }),
           queryClient.invalidateQueries({
-            queryKey: ["total_bottles"],
+            queryKey: orpc.util.getTotalBottles.queryKey(),
           }),
         ]);
       },
-    }),
+    })
   );
   const submitting = createOtherExpenseMutation.isPending;
 

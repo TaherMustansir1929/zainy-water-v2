@@ -16,7 +16,7 @@ export const getTotalBottles = os
         success: z.literal(false),
         error: z.string(),
       }),
-    ]),
+    ])
   )
   .handler(async () => {
     // Fetch from database directly
@@ -27,6 +27,9 @@ export const getTotalBottles = os
         .orderBy(desc(TotalBottles.createdAt))
         .limit(1);
 
+      if (!totalBottles) {
+        return { success: false, error: "Total bottles record not found" };
+      }
       return { success: true, totalBottles };
     } catch (error) {
       console.error("error fetching total bottles record", { error });
