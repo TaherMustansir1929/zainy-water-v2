@@ -23,11 +23,12 @@ export async function updateCustomerInfo(data: UpdateCustomerInfoDataProp) {
       .limit(1);
 
     const bottle_difference = data.data.bottles - customer_info.bottles;
-    const new_available_bottles =
-      total_bottles.available_bottles - bottle_difference;
-    const new_used_bottles = total_bottles.used_bottles + bottle_difference;
-
     const deposit_difference = data.data.deposit - customer_info.deposit;
+
+    const new_available_bottles =
+      total_bottles.available_bottles - bottle_difference - deposit_difference;
+    const new_used_bottles =
+      total_bottles.used_bottles + bottle_difference + deposit_difference;
 
     await Promise.all([
       await db

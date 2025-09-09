@@ -26,6 +26,8 @@ export async function createNewCustomer(data: CreateNewCustomerDataProp) {
       .update(TotalBottles)
       .set({
         total_bottles: total_bottles.total_bottles - data.data.deposit,
+        available_bottles: total_bottles.available_bottles - data.data.deposit,
+        used_bottles: total_bottles.used_bottles + data.data.deposit,
       })
       .where(eq(TotalBottles.id, total_bottles.id));
 
