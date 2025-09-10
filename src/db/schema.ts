@@ -203,6 +203,7 @@ export const TotalBottles = pgTable("TotalBottles", {
   available_bottles: integer("available_bottles").notNull(),
   used_bottles: integer("used_bottles").notNull().default(0),
   damaged_bottles: integer("damaged_bottles").notNull().default(0),
+  deposit_bottles: integer("deposit_bottles").notNull().default(0),
   createdAt: timestamp("createdAt", { withTimezone: true })
     .notNull()
     .defaultNow(),

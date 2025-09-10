@@ -90,10 +90,10 @@ export function BottleInventorySectionCards({ total_bottles }: Props) {
   useEffect(() => {
     if (total_bottles) {
       setTotalBottlesData({
-        total_bottles: total_bottles.total_bottles || 0,
-        available_bottles: total_bottles.available_bottles || 0,
-        used_bottles: total_bottles.used_bottles || 0,
-        damaged_bottles: total_bottles.damaged_bottles || 0,
+        total_bottles: total_bottles.total_bottles,
+        available_bottles: total_bottles.available_bottles,
+        used_bottles: total_bottles.used_bottles,
+        damaged_bottles: total_bottles.damaged_bottles,
       });
     }
   }, [total_bottles]);
@@ -139,7 +139,9 @@ export function BottleInventorySectionCards({ total_bottles }: Props) {
                 />
               ) : (
                 <>
-                  <SlidingNumber number={Number(card.value)} />
+                  <SlidingNumber
+                    number={typeof card.value === "number" ? card.value : 0}
+                  />
                 </>
               )}
             </CardTitle>

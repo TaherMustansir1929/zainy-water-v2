@@ -27,8 +27,18 @@ export async function updateCustomerInfo(data: UpdateCustomerInfoDataProp) {
 
     const new_available_bottles =
       total_bottles.available_bottles - bottle_difference - deposit_difference;
-    const new_used_bottles =
-      total_bottles.used_bottles + bottle_difference + deposit_difference;
+    const new_used_bottles = total_bottles.used_bottles + bottle_difference;
+    const new_deposit_bottles =
+      total_bottles.deposit_bottles + deposit_difference;
+
+    if (
+      new_deposit_bottles > new_available_bottles ||
+      total_bottles.total_bottles >= new_available_bottles + new_used_bottles ||
+      new_available_bottles < 0 ||
+      new_used_bottles < 0
+    ) {
+      throw new Error("Cannot update customer: Not enough available bottles.");
+    }
 
     await Promise.all([
       await db
@@ -42,6 +52,7 @@ export async function updateCustomerInfo(data: UpdateCustomerInfoDataProp) {
           total_bottles: total_bottles.total_bottles - deposit_difference,
           available_bottles: new_available_bottles,
           used_bottles: new_used_bottles,
+          deposit_bottles: new_deposit_bottles,
         })
         .where(eq(TotalBottles.id, total_bottles.id)),
     ]);
