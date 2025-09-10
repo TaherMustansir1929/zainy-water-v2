@@ -60,11 +60,6 @@ const admin_features = [
     url: "/admin/add-moderator",
     icon: PlusCircle,
   },
-  {
-    title: "Whatsapp Code",
-    url: "/admin/whatsapp-code",
-    icon: MessageCircleCode,
-  },
 ];
 
 type Props = {

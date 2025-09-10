@@ -1,3 +1,5 @@
+import { DashboardAnalytics } from "@/actions/admin/dashboard/admin-dashboard-analytics.action";
+import { SlidingNumber } from "@/components/animate-ui/text/sliding-number";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -7,22 +9,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { SlidingNumber } from "@/components/animate-ui/text/sliding-number";
-import Link from "next/link";
+import { cn } from "@/lib/utils";
 import {
+  BookCheck,
   ChartSpline,
+  CircleDollarSign,
+  Milk,
   ShieldCheck,
   SquareArrowOutUpRight,
   UserCheck,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 type Props = {
-  data: {
-    totalRevenue: number;
-    customerCount: number;
-    moderatorCount: number;
-  };
+  data: DashboardAnalytics;
 };
 
 export function MainSectionCards({ data }: Props) {
@@ -54,6 +54,33 @@ export function MainSectionCards({ data }: Props) {
       footer: "All time record",
       icon: <ShieldCheck className="size-4" />,
     },
+    {
+      id: "available_bottles",
+      title: "Available Bottles",
+      value: data.availableBottles,
+      href: "/admin/bottle-inventory",
+      description: "Bottles available in inventory",
+      footer: "Updated regularly",
+      icon: <Milk className="size-4" />,
+    },
+    {
+      id: "deposit",
+      title: "Deposit Bottles",
+      value: data.depositCount,
+      href: "/admin/bottle-inventory",
+      description: "Total bottles given as deposit",
+      footer: "All time record",
+      icon: <BookCheck className="size-4" />,
+    },
+    {
+      id: "expenses",
+      title: "Expenses (PKR)",
+      value: data.expenses,
+      href: "/admin/other-expenses",
+      description: "Expenses for the last 30 days",
+      footer: "Account for this month",
+      icon: <CircleDollarSign className="size-4" />,
+    },
   ];
   return (
     <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
@@ -63,6 +90,7 @@ export function MainSectionCards({ data }: Props) {
             "@container/card",
             card.id === "total_revenue" &&
               (card.value < 0 ? "border-red-600/50" : "border-green-600/50"),
+            card.id === "expenses" && "border-yellow-600/50"
           )}
           key={card.id}
         >
@@ -73,7 +101,7 @@ export function MainSectionCards({ data }: Props) {
                 <SlidingNumber
                   number={card.value}
                   className={cn(
-                    card.value < 0 ? "text-red-500" : "text-emerald-500",
+                    card.value < 0 ? "text-red-500" : "text-emerald-500"
                   )}
                 />
               ) : (
