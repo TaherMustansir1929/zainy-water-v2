@@ -20,7 +20,12 @@ export const CustomerInformationMainSection = () => {
                   className="font-semibold"
                   text={`${customersData?.filter((customer) => customer.Customer.isActive).length ?? "_"}`}
                 />{" "}
-                active customers.
+                active customers with{" "}
+                <HighlightText
+                  className="font-semibold"
+                  text={`${customersData?.map((customer) => Number(customer.Customer.deposit) || 0).reduce((a, b) => a + b, 0) ?? "_"}`}
+                />{" "}
+                deposit bottles.
               </span>
             </div>
             <CustomerInfoTabs data={customersData} />

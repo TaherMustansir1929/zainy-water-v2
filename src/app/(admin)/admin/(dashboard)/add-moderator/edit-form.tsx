@@ -11,31 +11,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 import { LoadingDotsPulse } from "@/components/loading-dots";
-import { Area, Customer } from "@/db/schema";
-import { useAddModDrawer } from "@/lib/ui-states/add-moderator-drawer";
-import { useCreateModerator } from "@/queries/admin/useCreateModerator";
-import { useUpdateModerator } from "@/queries/admin/useUpdateModerator";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { CheckIcon, ChevronsUpDownIcon, Plus, X } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { Moderator } from "./columns";
-import { useState } from "react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
 import {
   Command,
   CommandEmpty,
@@ -44,6 +21,22 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Area } from "@/db/schema";
+import { useAddModDrawer } from "@/lib/ui-states/add-moderator-drawer";
+import { cn } from "@/lib/utils";
+import { useCreateModerator } from "@/queries/admin/useCreateModerator";
+import { useUpdateModerator } from "@/queries/admin/useUpdateModerator";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { CheckIcon, ChevronsUpDownIcon, Plus, X } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Moderator } from "./columns";
 
 const formSchema = z
   .object({
