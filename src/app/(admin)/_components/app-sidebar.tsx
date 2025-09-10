@@ -2,13 +2,15 @@
 import {
   Home,
   Inbox,
-  MessageCircleCode,
   PlusCircle,
   Search,
   ShoppingCart,
+  Sparkle,
   User,
 } from "lucide-react";
 
+import { ShinyButton } from "@/components/magicui/shiny-button";
+import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
   Sidebar,
@@ -122,6 +124,22 @@ export function AppSidebar({ className }: Props) {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+
+              <div className="w-full mt-2">
+                <Link href="/admin/chat-bot">
+                  <ShinyButton className="py-1 px-2 w-full">
+                    <div className="flex justify-between items-center w-full">
+                      <div className="flex items-center gap-2">
+                        <Sparkle className="size-4" />
+                        <span className="">GEKKO</span>
+                      </div>
+                      <Badge variant={"outline"} className="text-[10px]">
+                        new
+                      </Badge>
+                    </div>
+                  </ShinyButton>
+                </Link>
+              </div>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

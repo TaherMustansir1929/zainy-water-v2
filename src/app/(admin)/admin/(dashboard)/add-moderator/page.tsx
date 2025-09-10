@@ -1,6 +1,9 @@
 import { WelcomeSection } from "@/app/(admin)/_components/welcome-section";
 import { AddModMainSection } from "./add-mod-main-section";
 
+// Force dynamic rendering for this page
+export const dynamic = "force-dynamic";
+
 const AddModeratorPage = () => {
   return (
     <div className="w-full min-h-screen flex flex-col justify-start items-center">

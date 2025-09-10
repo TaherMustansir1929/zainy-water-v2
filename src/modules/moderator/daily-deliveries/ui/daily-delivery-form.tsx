@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { sendWhatsAppMessage } from "@/actions/moderator/deliveries/mod-whatsapp-automation";
 import { BottleInput } from "@/components/bottle-input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,16 +32,15 @@ import {
 } from "@/components/ui/popover";
 import { Customer } from "@/db/schema";
 import { useModeratorStore } from "@/lib/moderator-state";
+import { client } from "@/lib/orpc";
 import { cn } from "@/lib/utils";
+import { DeliveryRecordZod } from "@/modules/moderator/daily-deliveries/server/add-daily-delivery.orpc";
 import {
   CheckIcon,
   ChevronsUpDownIcon,
   Loader2,
   SendHorizonal,
 } from "lucide-react";
-import { toast } from "sonner";
-import { client } from "@/lib/orpc";
-import { DeliveryRecordZod } from "@/modules/moderator/daily-deliveries/server/add-daily-delivery.orpc";
 
 // FORM SCHEMA
 const formSchema = z

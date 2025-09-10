@@ -5,6 +5,9 @@ import { currentUser } from "@clerk/nextjs/server";
 import { UserButton } from "@clerk/nextjs";
 import { CallbackForm } from "./callback-form";
 
+// Force dynamic rendering for this page
+export const dynamic = "force-dynamic";
+
 export default async function LicenseApproval() {
   const response = await adminMiddleware();
   console.log(response);

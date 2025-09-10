@@ -8,21 +8,29 @@ import { db } from "@/db";
 import { Admin } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
+// Force dynamic rendering for this layout
+export const dynamic = "force-dynamic";
+
 type Props = { children: React.ReactNode };
 
 const DashboardLayout = async ({ children }: Props) => {
-  const user = await currentUser();
-  if (!user) {
-    return <></>;
-  }
+  try {
+    const user = await currentUser();
+    if (!user) {
+      return <></>;
+    }
 
-  await checkAuthorizationState(user.id);
+    await checkAuthorizationState(user.id);
 
-  const license_key = (await cookies()).get("license_key");
-  if (!license_key || license_key.value !== user.id) {
-    redirect("/callback");
+    const license_key = (await cookies()).get("license_key");
+    if (!license_key || license_key.value !== user.id) {
+      redirect("/callback");
+    }
+    console.log(license_key);
+  } catch (error) {
+    console.error("Authentication error:", error);
+    redirect("/sign-in");
   }
-  console.log(license_key);
 
   return (
     <SidebarProvider>

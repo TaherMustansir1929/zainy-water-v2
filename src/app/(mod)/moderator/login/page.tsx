@@ -10,6 +10,9 @@ import {
 import { redirect } from "next/navigation";
 import { modLoginStatus } from "@/actions/moderator/mod-login-status.action";
 
+// Force dynamic rendering for this page
+export const dynamic = "force-dynamic";
+
 const ModLoginPage = async () => {
   const isLoggedIn = await modLoginStatus();
   console.log(isLoggedIn.message);

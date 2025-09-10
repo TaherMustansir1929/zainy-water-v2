@@ -23,9 +23,5 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": [
-    "node_modules",
-    "src/components/ai-elements/**/*",
-    "src/app/(admin)/admin/(dashboard)/chat-bot/**/*"
-  ]
+  "exclude": ["node_modules"]
 }

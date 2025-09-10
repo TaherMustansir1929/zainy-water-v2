@@ -284,7 +284,7 @@ const ChatBotDemo = () => {
                   </div>
                   <div className="space-y-2">
                     <h3 className="text-lg font-semibold text-foreground">
-                      AI Assistant Ready
+                      GEKKO is Ready!
                     </h3>
                     <p className="text-sm text-muted-foreground">
                       Start a conversation by typing your question below. I can

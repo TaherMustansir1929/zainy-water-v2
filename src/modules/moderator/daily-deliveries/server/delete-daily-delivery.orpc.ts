@@ -1,11 +1,10 @@
-import { DeliveryTableData } from "@/modules/moderator/daily-deliveries/ui/daily-delivery-table";
-import { z } from "zod";
-import { os } from "@orpc/server";
 import { db } from "@/db";
 import { BottleUsage, Customer, Delivery, TotalBottles } from "@/db/schema";
+import { DeliveryTableData } from "@/modules/moderator/daily-deliveries/ui/daily-delivery-table";
+import { os } from "@orpc/server";
+import { startOfDay } from "date-fns";
 import { and, desc, eq, gte } from "drizzle-orm";
-import { format, startOfDay } from "date-fns";
-import { sendWhatsAppMessage } from "@/actions/moderator/deliveries/mod-whatsapp-automation";
+import { z } from "zod";
 
 export const DeleteDeliveryDataProp = z.object({
   data: z.custom<DeliveryTableData>(),

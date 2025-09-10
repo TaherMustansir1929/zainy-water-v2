@@ -1,16 +1,24 @@
 import AdminChatbot from "@/app/(admin)/admin/(dashboard)/chat-bot/admin-chatbot";
 import { Badge } from "@/components/ui/badge";
+import { Sparkle } from "lucide-react";
 
 function ChatBotMainSection() {
   return (
     <div className="min-h-screen w-full p-6 max-w-7xl mx-auto flex flex-col gap-4">
       <div className="flex items-center justify-between mb-2">
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            AI Assistant
-          </h1>
+          <div className="flex items-center gap-2">
+            <Sparkle className="size-6" />
+            <h1 className="text-2xl font-semibold tracking-tight">
+              GEKKO - AI Assistant
+            </h1>
+          </div>
           <p className="text-sm text-muted-foreground">
             Chat with your intelligent admin assistant
+          </p>
+          <p className="text-sm text-muted-foreground italic">
+            Note: GEKKO is experimental and may not always provide accurate
+            information.
           </p>
         </div>
         <div className="flex items-center gap-3">
