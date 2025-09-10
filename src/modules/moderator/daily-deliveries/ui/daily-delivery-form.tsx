@@ -235,54 +235,54 @@ export const DailyDeliveryForm = () => {
       const deliveryRecord =
         await client.moderator.deliveries.addDailyDelivery(data);
 
-      if (deliveryRecord.success) {
-        // Send WhatsApp message as a server action
-        const wa_customer_invoice = `*🧑‍💼 CUSTOMER DETAILS*
-ID: *${customerData.customer_id}*
-Name: *${customerData.name}*
-Phone: *${customerData.phone}*
-Bottle Price: *${customerData.bottle_price}/-*
-Empty Bottles Remaining: *${data.customer_bottles}*
+      //       if (deliveryRecord.success) {
+      //         // Send WhatsApp message as a server action
+      //         const wa_customer_invoice = `*🧑‍💼 CUSTOMER DETAILS*
+      // ID: *${customerData.customer_id}*
+      // Name: *${customerData.name}*
+      // Phone: *${customerData.phone}*
+      // Bottle Price: *${customerData.bottle_price}/-*
+      // Empty Bottles Remaining: *${data.customer_bottles}*
 
-*💧 BOTTLE DETAILS*
-Filled Bottles: *${data.filled_bottles}*
-Empty Bottles: *${data.empty_bottles}*
-${data.damaged_bottles ? `Damaged Bottles: *${data.damaged_bottles}*` : ""}
-${data.foc ? `FOC Bottles: *${data.foc}*` : ""}
+      // *💧 BOTTLE DETAILS*
+      // Filled Bottles: *${data.filled_bottles}*
+      // Empty Bottles: *${data.empty_bottles}*
+      // ${data.damaged_bottles ? `Damaged Bottles: *${data.damaged_bottles}*` : ""}
+      // ${data.foc ? `FOC Bottles: *${data.foc}*` : ""}
 
-*💰 BALANCE SUMMARY*
-${data.foc ? `FOC Discount: *${data.foc * customerData.bottle_price}/-*` : ""}
-Today's Bill: *${Math.max(0, data.filled_bottles * customerData.bottle_price - data.foc * customerData.bottle_price)}/-*
-Payment Received: *${payment}/-*
-Total Remaining Balance: *${previous_balance}/-*
-Advance Amount: *${advance_payment}/-*`;
+      // *💰 BALANCE SUMMARY*
+      // ${data.foc ? `FOC Discount: *${data.foc * customerData.bottle_price}/-*` : ""}
+      // Today's Bill: *${Math.max(0, data.filled_bottles * customerData.bottle_price - data.foc * customerData.bottle_price)}/-*
+      // Payment Received: *${payment}/-*
+      // Total Remaining Balance: *${previous_balance}/-*
+      // Advance Amount: *${advance_payment}/-*`;
 
-        try {
-          const whatsappResult = await sendWhatsAppMessage(
-            customerData.phone,
-            wa_customer_invoice,
-            false
-          );
-          if (!whatsappResult.success) {
-            console.warn("WhatsApp message failed:", whatsappResult.message);
-            toast.error(
-              "Delivery recorded but WhatsApp message failed to send"
-            );
-          } else {
-            toast.success("Delivery recorded and WhatsApp message sent!");
-          }
-        } catch (whatsappError) {
-          console.warn("WhatsApp message error:", whatsappError);
-          toast.error("Delivery recorded but WhatsApp message failed to send");
-        }
+      //         try {
+      //           const whatsappResult = await sendWhatsAppMessage(
+      //             customerData.phone,
+      //             wa_customer_invoice,
+      //             false
+      //           );
+      //           if (!whatsappResult.success) {
+      //             console.warn("WhatsApp message failed:", whatsappResult.message);
+      //             toast.error(
+      //               "Delivery recorded but WhatsApp message failed to send"
+      //             );
+      //           } else {
+      //             toast.success("Delivery recorded and WhatsApp message sent!");
+      //           }
+      //         } catch (whatsappError) {
+      //           console.warn("WhatsApp message error:", whatsappError);
+      //           toast.error("Delivery recorded but WhatsApp message failed to send");
+      //         }
 
-        form.reset();
-        setCustomerData(null);
-      } else {
-        console.error(deliveryRecord.error);
-        alert("Server Error: Failed to add delivery record. Please try again.");
-        toast.error(deliveryRecord.error);
-      }
+      //         form.reset();
+      //         setCustomerData(null);
+      //       } else {
+      //         console.error(deliveryRecord.error);
+      //         alert("Server Error: Failed to add delivery record. Please try again.");
+      //         toast.error(deliveryRecord.error);
+      //       }
     } catch (error) {
       console.error("Error adding delivery record:", error);
       alert("Failed to add delivery record. Please try again.");

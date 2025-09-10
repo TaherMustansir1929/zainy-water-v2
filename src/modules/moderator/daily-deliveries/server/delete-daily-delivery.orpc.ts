@@ -108,15 +108,15 @@ export const deleteDailyDelivery = os
       throw errors.TRANSACTION_FAIL();
     }
 
-    await sendWhatsAppMessage(
-      input.data.customer.phone,
-      `\`\`\`⚠️ NOTE: The delivery made at\`\`\` *_${format(input.data.delivery.createdAt, "hh:mm aaaa PPPP")}_* \`\`\`has been deleted due to invalid/wrong delivery entry.
-Short Delivery Details:
-- Customer: ${input.data.customer.name}
-- Filled Bottles: ${input.data.delivery.filled_bottles}
-- Empty Bottles: ${input.data.delivery.empty_bottles}
-- Payment: ${input.data.delivery.payment}
+    //     await sendWhatsAppMessage(
+    //       input.data.customer.phone,
+    //       `\`\`\`⚠️ NOTE: The delivery made at\`\`\` *_${format(input.data.delivery.createdAt, "hh:mm aaaa PPPP")}_* \`\`\`has been deleted due to invalid/wrong delivery entry.
+    // Short Delivery Details:
+    // - Customer: ${input.data.customer.name}
+    // - Filled Bottles: ${input.data.delivery.filled_bottles}
+    // - Empty Bottles: ${input.data.delivery.empty_bottles}
+    // - Payment: ${input.data.delivery.payment}
 
-Sorry for the inconvenience.\`\`\``
-    );
+    // Sorry for the inconvenience.\`\`\``
+    //     );
   });
