@@ -5,16 +5,18 @@ import {
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
-import { get30dOtherExpenseQueryConfig } from "@/queries/admin/useGet30dOtherExpense";
 import ErrorState from "@/components/hydration-states/error-state";
 import { ErrorBoundary } from "react-error-boundary";
 import { Suspense } from "react";
 import { Atom } from "react-loading-indicators";
+import { orpc } from "@/lib/orpc";
 
 export default async function OtherExpensePage() {
   const queryClient = new QueryClient();
 
-  await Promise.all([queryClient.prefetchQuery(get30dOtherExpenseQueryConfig)]);
+  await Promise.all([
+    queryClient.prefetchQuery(orpc.util.get30dOtherExpenses.queryOptions()),
+  ]);
 
   return (
     <div className="w-full min-h-screen flex flex-col justify-start items-center">

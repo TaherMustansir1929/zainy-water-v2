@@ -1,11 +1,14 @@
 "use client";
 
 import { MainSectionCards } from "@/modules/admin/main/ui/main-page-section-cards";
-import { useGetDashboardAnalytics } from "@/queries/admin/dashboard/useGetDashboardAnalytics";
 import { Loader2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { orpc } from "@/lib/orpc";
 
 function AdminMainSection() {
-  const dashboardAnalyticsQuery = useGetDashboardAnalytics();
+  const dashboardAnalyticsQuery = useQuery(
+    orpc.admin.main.dashboardAnalytics.queryOptions(),
+  );
   const dashboardAnalyticsData = dashboardAnalyticsQuery.data;
 
   if (!dashboardAnalyticsData) {

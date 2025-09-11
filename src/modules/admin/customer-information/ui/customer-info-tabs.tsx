@@ -1,11 +1,12 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DataTable6CustomerInformation } from "./data-table-6-customer-info";
-import { GetAllCustomersRecords } from "@/actions/fetch-all-customers.action";
 import { CustomerAddForm } from "./customer-add-form";
 import LoadingSpinner from "@/components/hydration-states/loading-state";
+import { z } from "zod";
+import { GetAllCustomersRecords } from "@/modules/admin/customer-information/server/getAllCustomers.orpc";
 
 type Props = {
-  data: GetAllCustomersRecords[] | undefined;
+  data: z.infer<typeof GetAllCustomersRecords>[] | undefined;
 };
 
 export const CustomerInfoTabs = ({ data: customersData }: Props) => {
@@ -18,10 +19,10 @@ export const CustomerInfoTabs = ({ data: customersData }: Props) => {
   }
 
   const activeCustomers = customersData.filter(
-    (data) => data.Customer.isActive
+    (data) => data.Customer.isActive,
   );
   const inactiveCustomers = customersData.filter(
-    (data) => !data.Customer.isActive
+    (data) => !data.Customer.isActive,
   );
 
   return (

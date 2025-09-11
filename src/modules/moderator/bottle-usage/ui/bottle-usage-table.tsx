@@ -6,7 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { BottleUsage, TotalBottles } from "@/db/schema";
+import { BottleUsage } from "@/db/schema";
 import { UseQueryResult } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 

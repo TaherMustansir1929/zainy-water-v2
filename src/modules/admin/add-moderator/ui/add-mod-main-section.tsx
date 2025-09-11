@@ -9,27 +9,26 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { useAddModDrawer } from "@/lib/ui-states/add-moderator-drawer";
-import { useGetModeratorList } from "@/queries/admin/useGetModeratorList";
 import { PenSquare, Plus, UserPlus } from "lucide-react";
 import { columns, Moderator } from "./columns";
 import { EditForm } from "./edit-form";
+import { useQuery } from "@tanstack/react-query";
+import { orpc } from "@/lib/orpc";
 
 export const AddModMainSection = () => {
   const { mod_data, isEditOpen, isAddOpen, closeDrawer, openAddDrawer } =
     useAddModDrawer();
   const moderator = mod_data;
 
-  const modListQuery = useGetModeratorList();
+  const modListQuery = useQuery(
+    orpc.admin.crudModerator.getModList.queryOptions(),
+  );
   const all_mod_list: Moderator[] = Array.isArray(modListQuery.data)
     ? modListQuery.data
     : [];
 
-  const working_mod_list = all_mod_list.filter(
-    (mod) => mod.isWorking !== false
-  );
-  const removed_mod_list = all_mod_list.filter(
-    (mod) => mod.isWorking === false
-  );
+  const working_mod_list = all_mod_list.filter((mod) => mod.isWorking);
+  const removed_mod_list = all_mod_list.filter((mod) => !mod.isWorking);
   const isLoading = modListQuery.isLoading;
 
   return (

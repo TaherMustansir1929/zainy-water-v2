@@ -10,13 +10,17 @@ import {
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { Atom } from "react-loading-indicators";
-import { CustomerInformationMainSection } from "../../../../../modules/admin/customer-information/ui/customer-info-main-section";
-import { GetAllCustomersQueryConfig } from "@/queries/admin/customer-information/useGetAllCustomers";
+import { CustomerInformationMainSection } from "@/modules/admin/customer-information/ui/customer-info-main-section";
+import { orpc } from "@/lib/orpc";
 
 export default async function CustomerInformationPage() {
   const queryClient = new QueryClient();
 
-  await Promise.all([queryClient.prefetchQuery(GetAllCustomersQueryConfig)]);
+  await Promise.all([
+    queryClient.prefetchQuery(
+      orpc.admin.customerInfo.getAllCustomers.queryOptions(),
+    ),
+  ]);
 
   return (
     <div className="w-full min-h-screen flex flex-col justify-start items-center">

@@ -2,12 +2,14 @@
 
 import { HighlightText } from "@/components/animate-ui/text/highlight";
 import { DataTable5OtherExpense } from "./data-table-5-other-exp";
-import { useGet30dOtherExpense } from "@/queries/admin/useGet30dOtherExpense";
-import { OtherExpense30dRecords } from "@/actions/fetch-30d-other-expense.action";
 import { ChartAreaInteractive } from "@/modules/admin/components/chart-area-interactive";
+import { useQuery } from "@tanstack/react-query";
+import { orpc } from "@/lib/orpc";
+import z from "zod";
+import { OtherExpense30dRecords } from "@/modules/util/server/get30dOtherExpenses.orpc";
 
 export const OtherExpenseMainSection = () => {
-  const otherExpQuery = useGet30dOtherExpense();
+  const otherExpQuery = useQuery(orpc.util.get30dOtherExpenses.queryOptions());
   const otherExpData = otherExpQuery.data;
 
   let rawChartData: {
@@ -63,7 +65,7 @@ export const OtherExpenseMainSection = () => {
   );
 };
 
-function transformData(data: OtherExpense30dRecords[]) {
+function transformData(data: z.infer<typeof OtherExpense30dRecords>[]) {
   const grouped: Record<string, Record<string, number>> = {};
 
   data.forEach((item) => {

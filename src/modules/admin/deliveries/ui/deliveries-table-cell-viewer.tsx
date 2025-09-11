@@ -28,9 +28,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useUpdateDailyDeliveryRecord } from "@/queries/admin/useUpdateDailyDeliveryRecord";
 import { Loader2 } from "lucide-react";
 import { GeneratedAvatar } from "@/lib/avatar";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { orpc } from "@/lib/orpc";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   payment: z.number().min(0),
@@ -55,7 +58,27 @@ export function DeliveriesTableCellViewer({ item }: { item: columnSchema }) {
     },
   });
 
-  const updateMutation = useUpdateDailyDeliveryRecord();
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  const updateMutation = useMutation(
+    orpc.admin.deliveries.updateDailyDelivery.mutationOptions({
+      onSuccess: async () => {
+        toast.success("Delivery updated successfully");
+        // Invalidate and refetch
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: orpc.util.get30dDeliveries.queryKey(),
+          }),
+        ]);
+        router.refresh();
+      },
+      onError: (error) => {
+        console.error("Error updating delivery:", error);
+        toast.error("Failed to update delivery. Please try again.");
+      },
+    })
+  );
 
   const button_disabled =
     form.watch("filled_bottles") === item.Delivery.filled_bottles &&
@@ -84,7 +107,7 @@ export function DeliveriesTableCellViewer({ item }: { item: columnSchema }) {
           variant="link"
           className={cn(
             "text-foreground w-fit px-0 text-left cursor-pointer",
-            isMobile && "underline underline-offset-4 font-bold",
+            isMobile && "underline underline-offset-4 font-bold"
           )}
         >
           <GeneratedAvatar seed={item.Customer.name} />
@@ -169,7 +192,7 @@ export function DeliveriesTableCellViewer({ item }: { item: columnSchema }) {
                                           const value = e.target.value;
                                           // Convert to number or 0 if empty
                                           field.onChange(
-                                            value ? parseFloat(value) : 0,
+                                            value ? parseFloat(value) : 0
                                           );
                                         }}
                                         className={"max-w-[100px]"}
@@ -182,7 +205,7 @@ export function DeliveriesTableCellViewer({ item }: { item: columnSchema }) {
                             )}
                           </li>
                         );
-                      },
+                      }
                     )}
                   </ul>
                   {startOfDay(item.Delivery.createdAt) >=

@@ -3,19 +3,19 @@
 import { BottleInventorySectionCards } from "@/modules/admin/bottle-inventory/ui/bottle-inventory-section-cards";
 import { DataTable2BottleInventory } from "@/modules/admin/bottle-inventory/ui/data-table-2-bottle-inventory";
 
-import { BottleUsage30dDataProps } from "@/actions/fetch-30d-bottle-usage.action";
-import { useGet30dBottleUsage } from "@/queries/admin/useGet30dBottleUsage";
 import { ChartLineInteractive } from "@/modules/admin/components/line-chart-interactive";
 import { orpc } from "@/lib/orpc";
 import { useQuery } from "@tanstack/react-query";
+import { z } from "zod";
+import { BottleUsage30dDataSchema } from "@/modules/util/server/get30dBottleUsage.orpc";
 
 export function BottleInventoryMainSection() {
   const totalBottlesQuery = useQuery(
-    orpc.util.getTotalBottles.queryOptions({}),
+    orpc.util.getTotalBottles.queryOptions({})
   );
 
-  const bottleUsageQuery = useGet30dBottleUsage();
-  const bottleUsageData = bottleUsageQuery.data;
+  const bottleUsageQuery = useQuery(orpc.util.get30dBottleUsage.queryOptions());
+  const bottleUsageData = bottleUsageQuery.data?.data;
 
   const totalBottles = totalBottlesQuery.data?.success
     ? totalBottlesQuery.data.totalBottles
@@ -57,7 +57,9 @@ export function BottleInventoryMainSection() {
   );
 }
 
-export function transformData(data: BottleUsage30dDataProps[]) {
+export function transformData(
+  data: z.infer<typeof BottleUsage30dDataSchema>[]
+) {
   const grouped: Record<string, { label: string; value: number }[]> = {};
 
   data.forEach((item) => {

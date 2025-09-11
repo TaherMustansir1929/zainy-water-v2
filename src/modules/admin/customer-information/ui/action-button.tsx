@@ -5,10 +5,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useConfirm } from "@/hooks/use-confirm";
-import { useDeleteCustomer } from "@/queries/admin/customer-information/useDeleteCustomer";
 import { Row } from "@tanstack/react-table";
 import { Ellipsis, Trash2 } from "lucide-react";
 import { columnSchema } from "./data-table-6-customer-info";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { orpc } from "@/lib/orpc";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type Props = {
   row: Row<columnSchema>;
@@ -20,7 +23,25 @@ export const ActionButton = ({ row }: Props) => {
     "This customer and all the deliveries associated will be removed permanently",
   );
 
-  const deleteMutation = useDeleteCustomer();
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  const deleteMutation = useMutation(
+    orpc.admin.customerInfo.deleteCustomer.mutationOptions({
+      onSuccess: async () => {
+        toast.success("Customer deleted successfully");
+        console.log("Customer deleted successfully");
+        await queryClient.invalidateQueries({
+          queryKey: orpc.admin.customerInfo.getAllCustomers.queryKey(),
+        });
+        router.refresh();
+      },
+      onError: (error) => {
+        console.error(error);
+        toast.error("Error deleting customer");
+      },
+    }),
+  );
 
   const handleDelete = async (id: string) => {
     const ok = await comfirm();

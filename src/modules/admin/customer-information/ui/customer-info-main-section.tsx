@@ -2,10 +2,13 @@
 
 import { HighlightText } from "@/components/animate-ui/text/highlight";
 import { CustomerInfoTabs } from "./customer-info-tabs";
-import { useGetAllCustomers } from "@/queries/admin/customer-information/useGetAllCustomers";
+import { useQuery } from "@tanstack/react-query";
+import { orpc } from "@/lib/orpc";
 
 export const CustomerInformationMainSection = () => {
-  const customersQuery = useGetAllCustomers();
+  const customersQuery = useQuery(
+    orpc.admin.customerInfo.getAllCustomers.queryOptions(),
+  );
   const customersData = customersQuery.data;
 
   return (

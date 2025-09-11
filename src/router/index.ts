@@ -27,6 +27,25 @@ import {
   requestLicense,
 } from "@/modules/auth/license-key/server/licenseKey.orpc";
 import { updateTotalBottles } from "@/modules/admin/bottle-inventory/server/updateTotalBottles.orpc";
+import { dashboardAnalyticsOrpc } from "@/modules/admin/main/server/dashboardAnalytics.orpc";
+import { updateOtherExpense } from "@/modules/admin/other-expenses/server/updateOtherExpense.orpc";
+import {
+  createModerator,
+  deleteModerator,
+  getModList,
+  updateModerator,
+  updateModStatus,
+} from "@/modules/admin/add-moderator/server/crudModerator.orpc";
+import { updateMiscDelivery } from "@/modules/admin/deliveries/server/updateMiscDelivery.orpc";
+import { updateDailyDelivery } from "@/modules/admin/deliveries/server/updateDailyDelivey.orpc";
+import { createCustomer } from "@/modules/admin/customer-information/server/createCustomer.orpc";
+import { deleteCustomer } from "@/modules/admin/customer-information/server/deleteCustomer.orpc";
+import { updateCustomer } from "@/modules/admin/customer-information/server/updateCustomer.orpc";
+import { getAllCustomers } from "@/modules/admin/customer-information/server/getAllCustomers.orpc";
+import { get30dBottleUsage } from "@/modules/util/server/get30dBottleUsage.orpc";
+import { get30dDeliveries } from "@/modules/util/server/get30dDeliveries.orpc";
+import { get30dMiscDeliveries } from "@/modules/util/server/get30dMiscDeliveries.orpc";
+import { get30dOtherExpenses } from "@/modules/util/server/get30dOtherExpenses.orpc";
 
 export const router = {
   moderator: {
@@ -61,6 +80,29 @@ export const router = {
     bottleInventory: {
       updateTotalBottles,
     },
+    main: {
+      dashboardAnalytics: dashboardAnalyticsOrpc,
+    },
+    otherExpenses: {
+      updateOtherExpense,
+    },
+    crudModerator: {
+      getModList,
+      createModerator,
+      deleteModerator,
+      updateModerator,
+      updateModStatus,
+    },
+    deliveries: {
+      updateDailyDelivery,
+      updateMiscDelivery,
+    },
+    customerInfo: {
+      createCustomer,
+      deleteCustomer,
+      updateCustomer,
+      getAllCustomers,
+    },
   },
   auth: {
     adminMiddleware,
@@ -69,5 +111,9 @@ export const router = {
   },
   util: {
     getTotalBottles,
+    get30dBottleUsage,
+    get30dDeliveries,
+    get30dMiscDeliveries,
+    get30dOtherExpenses,
   },
 };

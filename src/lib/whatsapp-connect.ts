@@ -3,7 +3,7 @@
 // Simple WhatsApp QR Code Connection Script
 // Run this with: bun whatsapp-connect.ts
 
-import { connectWhatsAppViaQR } from "../actions/moderator/deliveries/mod-whatsapp-automation";
+import { connectWhatsAppViaQR } from "../modules/moderator/daily-deliveries/server/mod-whatsapp-automation";
 
 console.log("🔌 WhatsApp QR Code Connection Tool");
 console.log("═══════════════════════════════════════");
@@ -16,7 +16,7 @@ console.log("Make sure you have your phone ready to scan the QR code!\n");
     console.log("\n🎉 SUCCESS!");
     console.log("Your WhatsApp is now connected and ready to use.");
     console.log(
-      "You can now run your application and send messages automatically."
+      "You can now run your application and send messages automatically.",
     );
     process.exit(0);
   } catch (error) {

@@ -1,4 +1,3 @@
-import { DashboardAnalytics } from "@/actions/admin/dashboard/admin-dashboard-analytics.action";
 import { SlidingNumber } from "@/components/animate-ui/text/sliding-number";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -20,9 +19,11 @@ import {
   UserCheck,
 } from "lucide-react";
 import Link from "next/link";
+import { z } from "zod";
+import { DashboardAnalyticsSchema } from "@/modules/admin/main/server/dashboardAnalytics.orpc";
 
 type Props = {
-  data: DashboardAnalytics;
+  data: z.infer<typeof DashboardAnalyticsSchema>;
 };
 
 export function MainSectionCards({ data }: Props) {
@@ -90,7 +91,7 @@ export function MainSectionCards({ data }: Props) {
             "@container/card",
             card.id === "total_revenue" &&
               (card.value < 0 ? "border-red-600/50" : "border-green-600/50"),
-            card.id === "expenses" && "border-yellow-600/50"
+            card.id === "expenses" && "border-yellow-600/50",
           )}
           key={card.id}
         >
@@ -101,7 +102,7 @@ export function MainSectionCards({ data }: Props) {
                 <SlidingNumber
                   number={card.value}
                   className={cn(
-                    card.value < 0 ? "text-red-500" : "text-emerald-500"
+                    card.value < 0 ? "text-red-500" : "text-emerald-500",
                   )}
                 />
               ) : (

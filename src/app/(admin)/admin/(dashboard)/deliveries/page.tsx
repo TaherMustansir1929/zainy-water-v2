@@ -7,19 +7,18 @@ import {
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
-import { get30dDeliveriesQueryConfig } from "@/queries/admin/useGet30dDeliveries";
 import { Atom } from "react-loading-indicators";
 import ErrorState from "@/components/hydration-states/error-state";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { get30dMiscDeliveriesQueryConfig } from "@/queries/admin/useGet30dMiscDeliveries";
+import { orpc } from "@/lib/orpc";
 
 export default async function DeliveriesPage() {
   const queryClient = new QueryClient();
 
   await Promise.all([
-    queryClient.prefetchQuery(get30dDeliveriesQueryConfig),
-    queryClient.prefetchQuery(get30dMiscDeliveriesQueryConfig),
+    queryClient.prefetchQuery(orpc.util.get30dDeliveries.queryOptions()),
+    queryClient.prefetchQuery(orpc.util.get30dMiscDeliveries.queryOptions()),
   ]);
 
   return (

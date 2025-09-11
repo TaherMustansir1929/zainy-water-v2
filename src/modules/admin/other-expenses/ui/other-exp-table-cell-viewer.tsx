@@ -28,9 +28,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
-import { useUpdateOtherExpense } from "@/queries/admin/useUpdateOtherExpense";
 import { Textarea } from "@/components/ui/textarea";
 import { GeneratedAvatar } from "@/lib/avatar";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { orpc } from "@/lib/orpc";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   amount: z.number().min(1),
@@ -50,7 +53,20 @@ export const OtherExpTableCellViewer = ({ item }: { item: columnSchema }) => {
     },
   });
 
-  const updateMutation = useUpdateOtherExpense();
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  const updateMutation = useMutation(
+    orpc.admin.otherExpenses.updateOtherExpense.mutationOptions({
+      onSuccess: async () => {
+        toast.success("Expense updated successfully");
+        await queryClient.invalidateQueries({
+          queryKey: orpc.util.get30dOtherExpenses.queryKey(),
+        });
+        router.refresh();
+      },
+    })
+  );
 
   const button_disabled =
     form.watch("amount") === item.OtherExpense.amount &&
@@ -73,7 +89,7 @@ export const OtherExpTableCellViewer = ({ item }: { item: columnSchema }) => {
           variant="link"
           className={cn(
             "text-foreground w-fit px-0 text-left cursor-pointer capitalize",
-            isMobile && "underline underline-offset-4 font-bold",
+            isMobile && "underline underline-offset-4 font-bold"
           )}
         >
           <GeneratedAvatar seed={item.Moderator.name} />
@@ -132,7 +148,7 @@ export const OtherExpTableCellViewer = ({ item }: { item: columnSchema }) => {
                                 </span>
                               </li>
                             );
-                          },
+                          }
                         )}
                       </>
                     ) : (
@@ -157,7 +173,7 @@ export const OtherExpTableCellViewer = ({ item }: { item: columnSchema }) => {
                                       const value = e.target.value;
                                       // Convert to number or 0 if empty
                                       field.onChange(
-                                        value ? parseFloat(value) : 0,
+                                        value ? parseFloat(value) : 0
                                       );
                                     }}
                                     className={"max-w-[100px]"}
@@ -212,7 +228,7 @@ export const OtherExpTableCellViewer = ({ item }: { item: columnSchema }) => {
                                       const value = e.target.value;
                                       // Convert to number or 0 if empty
                                       field.onChange(
-                                        value ? parseFloat(value) : 0,
+                                        value ? parseFloat(value) : 0
                                       );
                                     }}
                                     className={"max-w-[100px]"}

@@ -45,7 +45,6 @@ import { Area, Customer } from "@/db/schema";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { GeneratedAvatar } from "@/lib/avatar";
 import { cn } from "@/lib/utils";
-import { useUpdateCustomerInfo } from "@/queries/admin/customer-information/useUpdateCustomerInfo";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import {
@@ -58,6 +57,10 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { columnSchema } from "./data-table-6-customer-info";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { orpc } from "@/lib/orpc";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(2),
@@ -99,7 +102,24 @@ export const CustomerInfoTableCellViewer = ({
     },
   });
 
-  const updateMutation = useUpdateCustomerInfo();
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  const updateMutation = useMutation(
+    orpc.admin.customerInfo.updateCustomer.mutationOptions({
+      onSuccess: async () => {
+        toast.success("Customer information updated successfully.");
+        await queryClient.invalidateQueries({
+          queryKey: orpc.admin.customerInfo.getAllCustomers.queryKey(),
+        });
+        router.refresh();
+      },
+      onError: (error) => {
+        console.error(error);
+        toast.error("Error updating customer information");
+      },
+    }),
+  );
   const [open, setOpen] = useState(false);
   const [customerArea, setCustomerArea] = useState<
     (typeof Customer.$inferSelect)["area"] | null
@@ -136,7 +156,7 @@ export const CustomerInfoTableCellViewer = ({
           variant="link"
           className={cn(
             "text-foreground w-fit px-0 text-left cursor-pointer",
-            isMobile && "underline underline-offset-4 font-bold"
+            isMobile && "underline underline-offset-4 font-bold",
           )}
         >
           <GeneratedAvatar seed={item.Customer.name} />
@@ -296,7 +316,7 @@ export const CustomerInfoTableCellViewer = ({
                                                   "mr-2 h-4 w-4",
                                                   area === customerArea
                                                     ? "opacity-100"
-                                                    : "opacity-0"
+                                                    : "opacity-0",
                                                 )}
                                               />
                                               <span>{area}</span>
@@ -332,7 +352,7 @@ export const CustomerInfoTableCellViewer = ({
                                     onChange={(e) => {
                                       const value = e.target.value;
                                       field.onChange(
-                                        value ? parseInt(value) : 0
+                                        value ? parseInt(value) : 0,
                                       );
                                     }}
                                     className="max-w-[100px]"

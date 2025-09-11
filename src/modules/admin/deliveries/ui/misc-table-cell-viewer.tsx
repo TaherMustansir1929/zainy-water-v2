@@ -31,8 +31,10 @@ import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { useUpdateMiscDeliveryRecord } from "@/queries/admin/useUpdateMiscDeliveryRecord";
 import { toast } from "sonner";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { orpc } from "@/lib/orpc";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   customer_name: z.string().min(2),
@@ -61,7 +63,23 @@ export function MiscellaneousTableCellViewer({ item }: { item: columnSchema }) {
     },
   });
 
-  const updateMutation = useUpdateMiscDeliveryRecord();
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  const updateMutation = useMutation(
+    orpc.admin.deliveries.updateMiscDelivery.mutationOptions({
+      onSuccess: async () => {
+        toast.success("Delivery updated successfully");
+        // Invalidate and refetch
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: orpc.util.get30dMiscDeliveries.queryKey(),
+          }),
+        ]);
+        router.refresh();
+      },
+    })
+  );
 
   const button_disabled =
     form.watch("filled_bottles") === item.Miscellaneous.filled_bottles &&
@@ -76,12 +94,12 @@ export function MiscellaneousTableCellViewer({ item }: { item: columnSchema }) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!values.isPaid && values.payment > 0) {
       toast.error(
-        "Please set isPaid to true if the customer paid for the delivery",
+        "Please set isPaid to true if the customer paid for the delivery"
       );
       return;
     } else if (values.isPaid && values.payment === 0) {
       toast.error(
-        "Please set isPaid to false if the customer did not pay for the delivery",
+        "Please set isPaid to false if the customer did not pay for the delivery"
       );
       return;
     }
@@ -102,7 +120,7 @@ export function MiscellaneousTableCellViewer({ item }: { item: columnSchema }) {
           variant="link"
           className={cn(
             "text-foreground w-fit px-0 text-left cursor-pointer",
-            isMobile && "underline underline-offset-4 font-bold",
+            isMobile && "underline underline-offset-4 font-bold"
           )}
         >
           {item.Miscellaneous.customer_name}
@@ -162,7 +180,7 @@ export function MiscellaneousTableCellViewer({ item }: { item: columnSchema }) {
                                 </span>
                               </li>
                             );
-                          },
+                          }
                         )}
                       </>
                     ) : (
@@ -263,7 +281,7 @@ export function MiscellaneousTableCellViewer({ item }: { item: columnSchema }) {
                                           const value = e.target.value;
                                           // Convert to number or 0 if empty
                                           field.onChange(
-                                            value ? parseFloat(value) : 0,
+                                            value ? parseFloat(value) : 0
                                           );
                                         }}
                                         className={"max-w-[100px]"}

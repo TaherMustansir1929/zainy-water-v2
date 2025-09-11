@@ -2,15 +2,16 @@
 
 import { HighlightText } from "@/components/animate-ui/text/highlight";
 import { ChartAreaInteractive } from "@/modules/admin/components/chart-area-interactive";
-import { useGet30dDeliveries } from "@/queries/admin/useGet30dDeliveries";
-import { Delivery30dRow } from "@/actions/fetch-30d-deliveries.action";
 import { DataTable3DailyDeliveries } from "@/modules/admin/deliveries/ui/data-table-3-daily-deliveries";
 import { DataTable4MiscDeliveries } from "@/modules/admin/deliveries/ui/data-table-4-misc-deliveries";
-import { useGet30dMiscDeliveries } from "@/queries/admin/useGet30dMiscDeliveries";
 import { Separator } from "@/components/ui/separator";
+import { useQuery } from "@tanstack/react-query";
+import { orpc } from "@/lib/orpc";
+import z from "zod";
+import { Delivery30dRow } from "@/modules/util/server/get30dDeliveries.orpc";
 
 export const DeliveriesMainSection = () => {
-  const deliveryQuery = useGet30dDeliveries();
+  const deliveryQuery = useQuery(orpc.util.get30dDeliveries.queryOptions());
   const deliveryData = deliveryQuery.data;
 
   let rawChartData: {
@@ -25,7 +26,9 @@ export const DeliveriesMainSection = () => {
     rawChartData = transformData(deliveryData);
   }
 
-  const miscDeliveriesQuery = useGet30dMiscDeliveries();
+  const miscDeliveriesQuery = useQuery(
+    orpc.util.get30dMiscDeliveries.queryOptions()
+  );
   const miscDeliveriesData = miscDeliveriesQuery.data;
 
   return (
@@ -78,7 +81,7 @@ export const DeliveriesMainSection = () => {
   );
 };
 
-function transformData(data: Delivery30dRow[]) {
+function transformData(data: z.infer<typeof Delivery30dRow>[]) {
   const grouped: Record<string, Record<string, number>> = {};
 
   data.forEach((item) => {

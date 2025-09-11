@@ -28,12 +28,15 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Area, Customer } from "@/db/schema";
 import { cn } from "@/lib/utils";
-import { useCreateNewCustomer } from "@/queries/admin/useCreateNewCustomer";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckIcon, ChevronsUpDownIcon, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { orpc } from "@/lib/orpc";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(2),
@@ -69,7 +72,24 @@ export const CustomerAddForm = () => {
     },
   });
 
-  const createMutation = useCreateNewCustomer();
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  const createMutation = useMutation(
+    orpc.admin.customerInfo.createCustomer.mutationOptions({
+      onSuccess: async () => {
+        toast.success("Customer created successfully!");
+        await queryClient.invalidateQueries({
+          queryKey: orpc.admin.customerInfo.getAllCustomers.queryKey(),
+        });
+        router.refresh();
+      },
+      onError: (error) => {
+        toast.error("Error creating customer: " + error.message);
+        console.error(error);
+      },
+    }),
+  );
   const [open, setOpen] = useState(false);
   const [customerArea, setCustomerArea] = useState<
     (typeof Customer.$inferSelect)["area"] | null
@@ -201,7 +221,7 @@ export const CustomerAddForm = () => {
                                           "mr-2 h-4 w-4",
                                           area === customerArea
                                             ? "opacity-100"
-                                            : "opacity-0"
+                                            : "opacity-0",
                                         )}
                                       />
                                       <span>{area}</span>
