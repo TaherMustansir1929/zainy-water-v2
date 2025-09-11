@@ -1,4 +1,4 @@
-import { Moderator } from "@/app/(admin)/admin/(dashboard)/add-moderator/columns";
+import { Moderator } from "@/modules/admin/add-moderator/ui/columns";
 import { create } from "zustand";
 
 export type AddModDrawerState = {

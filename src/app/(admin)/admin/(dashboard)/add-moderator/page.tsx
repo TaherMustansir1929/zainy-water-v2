@@ -1,5 +1,5 @@
-import { WelcomeSection } from "@/app/(admin)/_components/welcome-section";
-import { AddModMainSection } from "./add-mod-main-section";
+import { WelcomeSection } from "@/modules/admin/components/welcome-section";
+import { AddModMainSection } from "../../../../../modules/admin/add-moderator/ui/add-mod-main-section";
 
 // Force dynamic rendering for this page
 export const dynamic = "force-dynamic";

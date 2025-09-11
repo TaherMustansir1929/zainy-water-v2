@@ -1,5 +1,5 @@
-import ChatBotMainSection from "@/app/(admin)/admin/(dashboard)/chat-bot/chat-bot-main-section";
-import { WelcomeSection } from "@/app/(admin)/_components/welcome-section";
+import ChatBotMainSection from "@/modules/admin/chat-bot/ui/chat-bot-main-section";
+import { WelcomeSection } from "@/modules/admin/components/welcome-section";
 
 const AdminPage = async () => {
   // if (!(process.env.NODE_ENV === "development")) {

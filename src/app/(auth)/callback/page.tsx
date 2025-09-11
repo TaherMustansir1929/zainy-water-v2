@@ -1,15 +1,16 @@
 import { redirect } from "next/navigation";
-import { adminMiddleware } from "@/actions/admin/adminMiddleware";
 import { cookies } from "next/headers";
 import { currentUser } from "@clerk/nextjs/server";
 import { UserButton } from "@clerk/nextjs";
 import { CallbackForm } from "./callback-form";
+import "@/lib/orpc.server";
+import { client } from "@/lib/orpc";
 
 // Force dynamic rendering for this page
 export const dynamic = "force-dynamic";
 
 export default async function LicenseApproval() {
-  const response = await adminMiddleware();
+  const response = await client.auth.adminMiddleware();
   console.log(response);
 
   const license_key = (await cookies()).get("license_key")?.value;

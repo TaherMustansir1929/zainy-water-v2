@@ -8,21 +8,29 @@ declare global {
   var $client: RouterClient<typeof router> | undefined;
 }
 
-const link = new RPCLink({
-  url: () => {
-    if (typeof window === "undefined") {
-      throw new Error("RPCLink is not allowed on the server side.");
-    }
-
-    return `${window.location.origin}/rpc`;
-  },
-});
-
 /**
- * Fallback to client-side client if server-side client is not available.
+ * Create the appropriate client based on the environment
  */
 export const client: RouterClient<typeof router> =
-  globalThis.$client ?? createORPCClient(link);
+  globalThis.$client ??
+  (() => {
+    if (typeof window === "undefined") {
+      // Server-side: globalThis.$client should be set by orpc.server.ts
+      if (!globalThis.$client) {
+        throw new Error(
+          "Server client not initialized. Make sure to import '@/lib/orpc.server' before using the client."
+        );
+      }
+      return globalThis.$client;
+    }
+
+    // Client-side: use RPCLink
+    const link = new RPCLink({
+      url: () => `${window.location.origin}/rpc`,
+    });
+
+    return createORPCClient(link);
+  })();
 
 //just add this line and you have tanstack query integrated
 export const orpc = createTanstackQueryUtils(client);

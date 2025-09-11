@@ -1,7 +1,7 @@
 "use server";
 
-import { WelcomeSection } from "@/app/(admin)/_components/welcome-section";
-import { DeliveriesMainSection } from "@/app/(admin)/admin/(dashboard)/deliveries/deliveries-main-section";
+import { WelcomeSection } from "@/modules/admin/components/welcome-section";
+import { DeliveriesMainSection } from "@/modules/admin/deliveries/ui/deliveries-main-section";
 import {
   dehydrate,
   HydrationBoundary,

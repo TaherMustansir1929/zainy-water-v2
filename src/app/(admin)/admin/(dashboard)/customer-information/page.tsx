@@ -1,6 +1,6 @@
 "use server";
 
-import { WelcomeSection } from "@/app/(admin)/_components/welcome-section";
+import { WelcomeSection } from "@/modules/admin/components/welcome-section";
 import ErrorState from "@/components/hydration-states/error-state";
 import {
   dehydrate,
@@ -10,7 +10,7 @@ import {
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { Atom } from "react-loading-indicators";
-import { CustomerInformationMainSection } from "./customer-info-main-section";
+import { CustomerInformationMainSection } from "../../../../../modules/admin/customer-information/ui/customer-info-main-section";
 import { GetAllCustomersQueryConfig } from "@/queries/admin/customer-information/useGetAllCustomers";
 
 export default async function CustomerInformationPage() {

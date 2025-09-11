@@ -15,6 +15,18 @@ import { addMiscDelivery } from "@/modules/moderator/miscellaneous-deliveries/se
 import { addMiscBottleUsage } from "@/modules/moderator/miscellaneous-deliveries/server/addMiscBottleUsage.orpc";
 import { getMiscDeliveriesByMod } from "@/modules/moderator/miscellaneous-deliveries/server/getMiscDeliveriesByMod.orpc";
 import { getTotalBottles } from "@/modules/util/server/get-total-bottles.orpc";
+import {
+  modLogin,
+  modLoginStatus,
+  modLogout,
+  modMiddleware,
+} from "@/modules/moderator/login/server/mod-login.orpc";
+import { adminMiddleware } from "@/modules/auth/admin-middleware/server/adminMiddleware.orpc";
+import {
+  checkLicenseKey,
+  requestLicense,
+} from "@/modules/auth/license-key/server/licenseKey.orpc";
+import { updateTotalBottles } from "@/modules/admin/bottle-inventory/server/updateTotalBottles.orpc";
 
 export const router = {
   moderator: {
@@ -38,6 +50,22 @@ export const router = {
       addMiscBottleUsage,
       getMiscDeliveriesByMod,
     },
+    auth: {
+      modMiddleware,
+      modLogin,
+      modLoginStatus,
+      modLogout,
+    },
+  },
+  admin: {
+    bottleInventory: {
+      updateTotalBottles,
+    },
+  },
+  auth: {
+    adminMiddleware,
+    requestLicense,
+    checkLicenseKey,
   },
   util: {
     getTotalBottles,

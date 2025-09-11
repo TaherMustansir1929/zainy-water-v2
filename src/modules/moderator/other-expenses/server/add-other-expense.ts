@@ -73,6 +73,7 @@ export const addOtherExpense = os
         moderator_id: input.moderator_id,
         amount: input.amount,
         description: input.description,
+        refilled_bottles: input.refilled_bottles,
         date: input.date,
       });
 

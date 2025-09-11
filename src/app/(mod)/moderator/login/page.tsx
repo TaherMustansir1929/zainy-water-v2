@@ -1,5 +1,5 @@
 import { UserCheck } from "lucide-react";
-import { ModLoginForm } from "./login-form";
+import { ModLoginForm } from "../../../../modules/moderator/login/ui/login-form";
 import {
   Card,
   CardContent,
@@ -8,13 +8,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { redirect } from "next/navigation";
-import { modLoginStatus } from "@/actions/moderator/mod-login-status.action";
+import "@/lib/orpc.server"; // Initialize server client
+import { client } from "@/lib/orpc";
 
 // Force dynamic rendering for this page
 export const dynamic = "force-dynamic";
 
 const ModLoginPage = async () => {
-  const isLoggedIn = await modLoginStatus();
+  const isLoggedIn = await client.moderator.auth.modLoginStatus();
   console.log(isLoggedIn.message);
 
   if (isLoggedIn.success) {

@@ -20,7 +20,7 @@ const eslintConfig = [
       "build/**/*",
       "dist/**/*",
       "src/components/ai-elements/**/*",
-      "src/app/(admin)/admin/(dashboard)/chat-bot/**/*",
+      "src/modules/admin/chat-bot/ui/**/*",
     ],
   },
 ];

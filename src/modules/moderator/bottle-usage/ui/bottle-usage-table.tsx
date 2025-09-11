@@ -14,9 +14,21 @@ type Props = {
   totalBottlesQuery: UseQueryResult<
     | {
         success: true;
-        totalBottles: typeof TotalBottles.$inferSelect;
+        totalBottles: {
+          damaged_bottles: number;
+          id: string;
+          createdAt: Date;
+          updatedAt: Date;
+          total_bottles: number;
+          available_bottles: number;
+          used_bottles: number;
+          deposit_bottles: number;
+        };
       }
-    | undefined,
+    | {
+        success: false;
+        error: string;
+      },
     Error
   >;
   bottleUsageQuery: UseQueryResult<
@@ -57,7 +69,9 @@ export const BottleUsageTable = ({
           ) : (
             <TableRow>
               <TableCell className="font-medium">
-                {totalBottlesQuery.data?.totalBottles.available_bottles}
+                {totalBottlesQuery?.data?.success
+                  ? totalBottlesQuery.data?.totalBottles.available_bottles
+                  : 0}
               </TableCell>
               <TableCell>
                 {bottleUsageQuery.data?.filled_bottles || 0}

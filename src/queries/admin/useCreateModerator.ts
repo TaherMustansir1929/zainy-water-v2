@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Moderator as ModeratorData } from "@/app/(admin)/admin/(dashboard)/add-moderator/columns";
+import { Moderator as ModeratorData } from "@/modules/admin/add-moderator/ui/columns";
 import { createModerator } from "@/actions/admin/add-moderator-actions/admin-create-mod.action";
 import { toast } from "sonner";
 import { Moderator } from "@/db/schema";

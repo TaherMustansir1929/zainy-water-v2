@@ -1,6 +1,6 @@
 "use server";
 
-import { Moderator as ModeratorData } from "@/app/(admin)/admin/(dashboard)/add-moderator/columns";
+import { Moderator as ModeratorData } from "@/modules/admin/add-moderator/ui/columns";
 import { Moderator } from "@/db/schema";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
@@ -8,7 +8,7 @@ import { redis } from "@/lib/redis/storage";
 
 export async function updateModeratorByName(
   name: string,
-  data: ModeratorData
+  data: ModeratorData,
 ): Promise<typeof Moderator.$inferSelect> {
   try {
     const [updatedModerator] = await db

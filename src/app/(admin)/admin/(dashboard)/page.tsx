@@ -1,5 +1,5 @@
-import { WelcomeSection } from "@/app/(admin)/_components/welcome-section";
-import AdminMainSection from "@/app/(admin)/admin/(dashboard)/admin-main-section";
+import { WelcomeSection } from "@/modules/admin/components/welcome-section";
+import AdminMainSection from "@/modules/admin/main/ui/admin-main-section";
 import {
   dehydrate,
   HydrationBoundary,

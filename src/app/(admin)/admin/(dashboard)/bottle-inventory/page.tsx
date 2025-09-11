@@ -1,4 +1,4 @@
-import { WelcomeSection } from "@/app/(admin)/_components/welcome-section";
+import { WelcomeSection } from "@/modules/admin/components/welcome-section";
 import {
   HydrationBoundary,
   QueryClient,
@@ -9,7 +9,7 @@ import { Suspense } from "react";
 import { Atom } from "react-loading-indicators";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorState from "@/components/hydration-states/error-state";
-import { BottleInventoryMainSection } from "./bottle-inventory-main-section";
+import { BottleInventoryMainSection } from "../../../../../modules/admin/bottle-inventory/ui/bottle-inventory-main-section";
 import { getModeratorListQueryConfig } from "@/queries/admin/useGetModeratorList";
 import { orpc } from "@/lib/orpc";
 

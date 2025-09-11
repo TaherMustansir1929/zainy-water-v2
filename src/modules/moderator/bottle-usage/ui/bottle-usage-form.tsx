@@ -19,11 +19,11 @@ import { Input } from "@/components/ui/input";
 import { Loader2, SendHorizonal } from "lucide-react";
 import { useModeratorStore } from "@/lib/moderator-state";
 import { toast } from "sonner";
-import { useFetchTotalBottles } from "@/modules/util/server/queries/useFetchTotalBottles";
 import { BottleUsageTable } from "./bottle-usage-table";
 import { BottleReturnForm } from "./bottle-return-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { orpc } from "@/lib/orpc";
+import { TotalBottles } from "@/db/schema";
 
 const formSchema = z.object({
   filled_bottles: z.number().min(0),
@@ -42,7 +42,13 @@ export const BottleUsageForm = () => {
 
   const moderator_id = useModeratorStore((state) => state.moderator?.id);
 
-  const totalBottlesQuery = useFetchTotalBottles();
+  const totalBottlesQuery = useQuery(
+    orpc.util.getTotalBottles.queryOptions({}),
+  );
+  const totalBottlesData = totalBottlesQuery?.data?.success
+    ? totalBottlesQuery.data.totalBottles
+    : ({} as typeof TotalBottles.$inferSelect);
+
   const bottleUsageQuery = useQuery(
     orpc.moderator.bottleUsage.getBottleUsage.queryOptions({
       input: { id: moderator_id },
@@ -79,10 +85,7 @@ export const BottleUsageForm = () => {
       return;
     }
 
-    if (
-      values.filled_bottles >
-      totalBottlesQuery.data.totalBottles.available_bottles
-    ) {
+    if (values.filled_bottles > totalBottlesData.available_bottles) {
       toast.error("Filled bottles cannot exceed available bottles");
       return;
     }

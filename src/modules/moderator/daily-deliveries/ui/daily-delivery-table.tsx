@@ -142,7 +142,7 @@ export const DailyDeliveryTable = () => {
                 </TableCell>
                 <TableCell className="py-2 min-w-[150px]">
                   <div
-                    className="truncate max-w-[150px]"
+                    className="truncate max-w-[200px]"
                     title={customer.address}
                   >
                     {customer.address}

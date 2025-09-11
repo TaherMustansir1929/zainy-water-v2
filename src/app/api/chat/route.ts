@@ -9,7 +9,7 @@ import {
 } from "ai";
 import { groq } from "@ai-sdk/groq";
 import { google } from "@ai-sdk/google";
-import { tools, tools_with_webSearch } from "./tools";
+import { tools, tools_with_webSearch } from "@/app/api/chat/tools";
 import { getSchemaDescription } from "@/lib/schemaContext";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { currentUser } from "@clerk/nextjs/server";

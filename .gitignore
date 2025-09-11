@@ -42,3 +42,6 @@ next-env.d.ts
 
 # Baileys
 /auth_info_baileys/
+
+# Qodo AI
+/.qodo/

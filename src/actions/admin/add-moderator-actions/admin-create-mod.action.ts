@@ -1,5 +1,5 @@
 "use server";
-import { Moderator as ModeratorData } from "@/app/(admin)/admin/(dashboard)/add-moderator/columns";
+import { Moderator as ModeratorData } from "@/modules/admin/add-moderator/ui/columns";
 import { db } from "@/db";
 import { Moderator } from "@/db/schema";
 

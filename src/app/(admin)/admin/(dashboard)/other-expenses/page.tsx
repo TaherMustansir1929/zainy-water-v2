@@ -1,5 +1,5 @@
-import { WelcomeSection } from "@/app/(admin)/_components/welcome-section";
-import { OtherExpenseMainSection } from "./other-exp-main-section";
+import { WelcomeSection } from "@/modules/admin/components/welcome-section";
+import { OtherExpenseMainSection } from "../../../../../modules/admin/other-expenses/ui/other-exp-main-section";
 import {
   dehydrate,
   HydrationBoundary,

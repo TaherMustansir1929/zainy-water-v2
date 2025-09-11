@@ -1,6 +1,6 @@
-import { AppSidebar } from "../../_components/app-sidebar";
+import { AppSidebar } from "@/modules/admin/components/app-sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { AdminHeader } from "./admin-header";
+import { AdminHeader } from "@/modules/admin/components/admin-header";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { currentUser } from "@clerk/nextjs/server";

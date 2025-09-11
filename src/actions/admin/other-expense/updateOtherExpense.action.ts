@@ -9,16 +9,20 @@ export type UpdateOtherExpenseDataProps = {
   data: {
     amount: number;
     description: string;
-  }
-}
+    refilled_bottles: number;
+  };
+};
 
 export async function updateOtherExpense(data: UpdateOtherExpenseDataProps) {
   try {
-    await db.update(OtherExpense).set({
-      ...data.data,
-    }).where(eq(OtherExpense.id, data.other_exp_id))
+    await db
+      .update(OtherExpense)
+      .set({
+        ...data.data,
+      })
+      .where(eq(OtherExpense.id, data.other_exp_id));
   } catch (error) {
-    console.error("Error updating other expense record", { error })
+    console.error("Error updating other expense record", { error });
     throw error;
   }
 }

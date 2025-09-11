@@ -22,15 +22,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { checkLicenseKey } from "./license.action";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { useState } from "react";
 import { ArrowUpFromDot, Loader2 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
-import { requestLicense } from "./request-license.action";
 import { dev_emails } from "@/lib/utils";
+import { client, orpc } from "@/lib/orpc";
 
 const formSchema = z.object({
   license_key: z.string().min(2, {
@@ -55,7 +54,9 @@ export function CallbackForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setSubmitting(true);
     try {
-      const licenseResponse = await checkLicenseKey(values.license_key);
+      const licenseResponse = await client.auth.checkLicenseKey({
+        licenseKey: values.license_key,
+      });
       if (licenseResponse.success) {
         console.log(licenseResponse.message);
         toast.success("Request successful. Please wait...");
@@ -72,27 +73,21 @@ export function CallbackForm() {
     }
   }
 
-  const licenseMutation = useMutation<
-    { success: boolean; message: string; redirect: boolean },
-    Error,
-    void
-  >({
-    mutationKey: ["request_license_mutation"],
-    mutationFn: async () => {
-      return await requestLicense();
-    },
-    onSuccess: (res) => {
-      toast.success(res.message);
-      if (res.redirect) {
-        router.push("/admin");
-      }
-      setRequested(true);
-    },
-    onError: (error) => {
-      toast.error(error.message || "Failed to request license.");
-      console.error("Failed to request license:", error);
-    },
-  });
+  const licenseMutation = useMutation(
+    orpc.auth.requestLicense.mutationOptions({
+      onSuccess: (res) => {
+        toast.success(res.message);
+        if (res.redirect) {
+          router.push("/admin");
+        }
+        setRequested(true);
+      },
+      onError: (error) => {
+        toast.error(error.message || "Failed to request license.");
+        console.error("Failed to request license:", error);
+      },
+    }),
+  );
 
   const { isSignedIn, isLoaded } = useAuth();
   if (!isLoaded) {
