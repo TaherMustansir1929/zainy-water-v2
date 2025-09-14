@@ -44,8 +44,10 @@ import {
 import { Area, Customer } from "@/db/schema";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { GeneratedAvatar } from "@/lib/avatar";
+import { orpc } from "@/lib/orpc";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import {
   CheckIcon,
@@ -55,12 +57,9 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 import { columnSchema } from "./data-table-6-customer-info";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { orpc } from "@/lib/orpc";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(2),
