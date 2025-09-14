@@ -41,6 +41,7 @@ import {
   Loader2,
   SendHorizonal,
 } from "lucide-react";
+import { toast } from "sonner";
 
 // FORM SCHEMA
 const formSchema = z
@@ -232,6 +233,9 @@ export const DailyDeliveryForm = () => {
       // const deliveryRecord = await addDailyDeliveryRecord(data);
       const deliveryRecord =
         await client.moderator.deliveries.addDailyDelivery(data);
+      toast.success("Delivery record added successfully!");
+      form.reset();
+      setCustomerData(null);
 
       //       if (deliveryRecord.success) {
       //         // Send WhatsApp message as a server action
