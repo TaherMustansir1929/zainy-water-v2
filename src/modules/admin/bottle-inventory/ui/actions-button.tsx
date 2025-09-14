@@ -29,9 +29,14 @@ export const ActionButton = ({ row }: Props) => {
       onSuccess: async () => {
         toast.success("Bottle usage reset successfully");
         console.log("Bottle usage reset successfully");
-        await queryClient.invalidateQueries({
-          queryKey: orpc.util.get30dBottleUsage.queryKey(),
-        });
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: orpc.util.getTotalBottles.queryKey(),
+          }),
+          queryClient.invalidateQueries({
+            queryKey: orpc.util.get30dBottleUsage.queryKey(),
+          }),
+        ]);
       },
       onError: (error) => {
         console.error(error);
