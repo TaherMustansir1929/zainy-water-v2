@@ -4,7 +4,7 @@ import { ActionButton } from "@/modules/admin/add-moderator/ui/action-button";
 import { Button } from "@/components/ui/button";
 import { Area } from "@/db/schema";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, SquareArrowOutUpRight } from "lucide-react";
 import { GeneratedAvatar } from "@/lib/avatar";
 import {
   Accordion,
@@ -14,10 +14,13 @@ import {
 } from "@/components/ui/accordion";
 import { useQuery } from "@tanstack/react-query";
 import { orpc } from "@/lib/orpc";
+import { useModeratorStore } from "@/lib/moderator-state";
+import { useRouter } from "next/navigation";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Moderator = {
+  id: string;
   name: string;
   password: string;
   areas: (typeof Area.enumValues)[number][];
@@ -47,10 +50,23 @@ export const columns: ColumnDef<Moderator>[] = [
       );
     },
     cell: ({ row }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const setMod = useModeratorStore((state) => state.setModerator);
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const router = useRouter();
       return (
         <div className={"flex flex-row items-center gap-2 capitalize"}>
           <GeneratedAvatar seed={row.original.name} />
-          {row.original.name}
+          <Button
+            variant={"link"}
+            className="text-black decoration-black cursor-pointer"
+            onClick={() => {
+              setMod(row.original);
+              router.push("/moderator");
+            }}
+          >
+            {row.original.name} <SquareArrowOutUpRight className="size-3" />
+          </Button>
         </div>
       );
     },

@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { useConfirm } from "@/hooks/use-confirm";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { GeneratedAvatar } from "@/lib/avatar";
 import { orpc } from "@/lib/orpc";
@@ -71,7 +72,11 @@ export function DeliveriesTableCellViewer({ item }: { item: columnSchema }) {
       },
       onError: (error) => {
         console.error("Error updating delivery:", error);
-        toast.error("Failed to update delivery. Please try again.");
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Failed to update delivery. Please try again."
+        );
       },
     })
   );
@@ -84,8 +89,17 @@ export function DeliveriesTableCellViewer({ item }: { item: columnSchema }) {
     form.watch("damaged_bottles") === item.Delivery.damaged_bottles &&
     updateMutation.isPending;
 
+  const [ConfirmDialog, confirm] = useConfirm(
+    "This is an untracked change. Are you sure you want to proceed?",
+    "Changing deliveries created before 14th September 2025 will not update bottle usage or total bottles count. You might have to adjust them manually."
+  );
+
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (item.Delivery.createdAt < new Date("September 14, 2025")) {
+      const ok = await confirm();
+      if (!ok) return;
+    }
     const result = await updateMutation.mutateAsync({
       Delivery: item.Delivery,
       Customer: item.Customer,
@@ -97,48 +111,49 @@ export function DeliveriesTableCellViewer({ item }: { item: columnSchema }) {
   }
 
   return (
-    <Drawer direction={isMobile ? "bottom" : "right"}>
-      <DrawerTrigger asChild>
-        <Button
-          variant="link"
-          className={cn(
-            "text-foreground w-fit px-0 text-left cursor-pointer",
-            isMobile && "underline underline-offset-4 font-bold"
-          )}
-        >
-          <GeneratedAvatar seed={item.Customer.name} />
-          {item.Customer.name}
-        </Button>
-      </DrawerTrigger>
-      <DrawerContent>
-        <DrawerHeader className="gap-1">
-          <DrawerTitle className={"flex items-center gap-2"}>
-            <GeneratedAvatar seed={item.Moderator.name} />
-            {item.Moderator.name} {" -> "}{" "}
+    <>
+      <ConfirmDialog />
+      <Drawer direction={isMobile ? "bottom" : "right"}>
+        <DrawerTrigger asChild>
+          <Button
+            variant="link"
+            className={cn(
+              "text-foreground w-fit px-0 text-left cursor-pointer",
+              isMobile && "underline underline-offset-4 font-bold"
+            )}
+          >
             <GeneratedAvatar seed={item.Customer.name} />
             {item.Customer.name}
-          </DrawerTitle>
-          <DrawerDescription>
-            <div>Showing details of delivery for {item.Customer.name}</div>
-            <div>By: {item.Moderator.name}</div>
-            <div>Date: {format(item.Delivery.createdAt, "PPP")}</div>
-          </DrawerDescription>
-        </DrawerHeader>
-        <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
-          <Separator />
-          <Card className="w-full">
-            <CardHeader>
-              <h2 className="text-lg font-semibold">Delivery Details</h2>
-            </CardHeader>
-            <CardContent className="p-0">
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-8"
-                >
-                  <ul className="divide-y divide-border">
-                    {Object.entries(item.Delivery).map(
-                      ([key, value], index) => {
+          </Button>
+        </DrawerTrigger>
+        <DrawerContent>
+          <DrawerHeader className="gap-1">
+            <DrawerTitle className={"flex items-center gap-2"}>
+              <GeneratedAvatar seed={item.Moderator.name} />
+              {item.Moderator.name} {" -> "}{" "}
+              <GeneratedAvatar seed={item.Customer.name} />
+              {item.Customer.name}
+            </DrawerTitle>
+            <DrawerDescription>
+              <div>Showing details of delivery for {item.Customer.name}</div>
+              <div>By: {item.Moderator.name}</div>
+              <div>Date: {format(item.Delivery.createdAt, "PPP")}</div>
+            </DrawerDescription>
+          </DrawerHeader>
+          <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
+            <Separator />
+            <Card className="w-full">
+              <CardHeader>
+                <h2 className="text-lg font-semibold">Delivery Details</h2>
+              </CardHeader>
+              <CardContent className="p-0">
+                <Form {...form}>
+                  <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="space-y-8"
+                  >
+                    <ul className="divide-y divide-border">
+                      {Object.entries(item.Delivery).map(([key], index) => {
                         if (
                           [
                             "id",
@@ -156,56 +171,41 @@ export function DeliveriesTableCellViewer({ item }: { item: columnSchema }) {
                             key={index}
                             className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 hover:bg-muted/50 transition-colors"
                           >
-                            {startOfDay(item.Delivery.createdAt) <
-                            startOfDay(new Date()) ? (
-                              <>
-                                <span className="text-sm font-medium text-muted-foreground capitalize">
-                                  {key.replace(/_/g, " ")}
-                                </span>
-                                <span className="text-sm font-semibold">
-                                  {value.toString()}
-                                </span>
-                              </>
-                            ) : (
-                              <FormField
-                                control={form.control}
-                                name={key as keyof z.infer<typeof formSchema>}
-                                render={({ field }) => (
-                                  <FormItem
-                                    className={
-                                      "w-full flex flex-row items-center justify-between"
-                                    }
-                                  >
-                                    <FormLabel className={"capitalize"}>
-                                      {key.replace(/_/g, " ")}
-                                    </FormLabel>
-                                    <FormControl>
-                                      <Input
-                                        {...field}
-                                        type={"number"}
-                                        value={field.value}
-                                        onChange={(e) => {
-                                          const value = e.target.value;
-                                          // Convert to number or 0 if empty
-                                          field.onChange(
-                                            value ? parseFloat(value) : 0
-                                          );
-                                        }}
-                                        className={"max-w-[100px]"}
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                            )}
+                            <FormField
+                              control={form.control}
+                              name={key as keyof z.infer<typeof formSchema>}
+                              render={({ field }) => (
+                                <FormItem
+                                  className={
+                                    "w-full flex flex-row items-center justify-between"
+                                  }
+                                >
+                                  <FormLabel className={"capitalize"}>
+                                    {key.replace(/_/g, " ")}
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      {...field}
+                                      type={"number"}
+                                      value={field.value}
+                                      onChange={(e) => {
+                                        const value = e.target.value;
+                                        // Convert to number or 0 if empty
+                                        field.onChange(
+                                          value ? parseFloat(value) : 0
+                                        );
+                                      }}
+                                      className={"max-w-[100px]"}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
                           </li>
                         );
-                      }
-                    )}
-                  </ul>
-                  {startOfDay(item.Delivery.createdAt) >=
-                    startOfDay(new Date()) && (
+                      })}
+                    </ul>
                     <div
                       className={"w-full flex justify-center items-start px-4"}
                     >
@@ -224,50 +224,50 @@ export function DeliveriesTableCellViewer({ item }: { item: columnSchema }) {
                         )}
                       </Button>
                     </div>
-                  )}
-                </form>
-              </Form>
-            </CardContent>
-          </Card>
+                  </form>
+                </Form>
+              </CardContent>
+            </Card>
 
-          <Card className="w-full">
-            <CardHeader>
-              <h2 className="text-lg font-semibold">Customer Details</h2>
-            </CardHeader>
-            <CardContent className="p-0">
-              <ul className="divide-y divide-border">
-                {Object.entries(item.Customer).map(([key, value], index) => {
-                  if (["id", "createdAt", "updatedAt"].includes(key)) {
-                    return null;
-                  }
-                  return (
-                    <li
-                      key={index}
-                      className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 hover:bg-muted/50 transition-colors"
-                    >
-                      <span className="text-sm font-medium text-muted-foreground capitalize">
-                        {key === "balance" && Number(value) < 0
-                          ? "advance"
-                          : key.replace(/_/g, " ")}
-                      </span>
-                      <span className="text-sm font-semibold ">
-                        {key === "balance" && Number(value) < 0
-                          ? Math.abs(Number(value)).toString()
-                          : value.toString()}
-                      </span>
-                    </li>
-                  );
-                })}
-              </ul>
-            </CardContent>
-          </Card>
-        </div>
-        <DrawerFooter>
-          <DrawerClose asChild>
-            <Button variant="outline">Close</Button>
-          </DrawerClose>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
+            <Card className="w-full">
+              <CardHeader>
+                <h2 className="text-lg font-semibold">Customer Details</h2>
+              </CardHeader>
+              <CardContent className="p-0">
+                <ul className="divide-y divide-border">
+                  {Object.entries(item.Customer).map(([key, value], index) => {
+                    if (["id", "createdAt", "updatedAt"].includes(key)) {
+                      return null;
+                    }
+                    return (
+                      <li
+                        key={index}
+                        className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 hover:bg-muted/50 transition-colors"
+                      >
+                        <span className="text-sm font-medium text-muted-foreground capitalize">
+                          {key === "balance" && Number(value) < 0
+                            ? "advance"
+                            : key.replace(/_/g, " ")}
+                        </span>
+                        <span className="text-sm font-semibold text-right">
+                          {key === "balance" && Number(value) < 0
+                            ? Math.abs(Number(value)).toString()
+                            : value.toString()}
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+          <DrawerFooter>
+            <DrawerClose asChild>
+              <Button variant="outline">Close</Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+    </>
   );
 }

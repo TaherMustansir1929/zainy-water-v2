@@ -8,7 +8,9 @@ import {
 } from "@/db/schema";
 import { adminProcedure } from "@/middlewares/admin-clerk";
 import { db } from "@/db";
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq, gte, lte } from "drizzle-orm";
+import { ORPCError } from "@orpc/client";
+import { endOfDay, startOfDay } from "date-fns";
 
 export const UpdateDailyDeliveryDataSchema = z.object({
   Delivery: z.custom<typeof Delivery.$inferSelect>(),
@@ -29,19 +31,28 @@ export const updateDailyDelivery = adminProcedure
     z.object({
       success: z.boolean(),
       message: z.string(),
-    }),
+    })
   )
   .handler(async ({ input: data }) => {
+    const from = startOfDay(data.Delivery.createdAt);
+    const to = endOfDay(data.Delivery.createdAt);
+
     try {
       const [bottleUsage] = await db
         .select()
         .from(BottleUsage)
-        .where(eq(BottleUsage.moderator_id, data.Moderator.id))
+        .where(
+          and(
+            eq(BottleUsage.moderator_id, data.Moderator.id),
+            gte(BottleUsage.createdAt, from),
+            lte(BottleUsage.createdAt, to)
+          )
+        )
         .orderBy(desc(BottleUsage.createdAt))
         .limit(1);
 
       if (!bottleUsage) {
-        throw new Error("Bottle usage not found");
+        throw new ORPCError("Bottle usage not found");
       }
 
       const [totalBottles] = await db
@@ -51,7 +62,7 @@ export const updateDailyDelivery = adminProcedure
         .limit(1);
 
       if (!totalBottles) {
-        throw new Error("Total bottles not found");
+        throw new ORPCError("Total bottles not found");
       }
 
       const valueDiffs = {
@@ -75,15 +86,17 @@ export const updateDailyDelivery = adminProcedure
         payment: data.Delivery.payment + valueDiffs.payment,
         customer_balance:
           data.Customer.balance -
-          valueDiffs.foc * data.Customer.bottle_price -
+          valueDiffs.foc * data.Customer.bottle_price +
+          valueDiffs.filledBottles * data.Customer.bottle_price -
           valueDiffs.payment,
         customer_bottles: data.Customer.bottles - valueDiffs.emptyBottles,
       };
 
+      // Validation checks
       Object.entries(updatedData).forEach(([key, value]) => {
         if (key === "customer_balance") return;
         if (value < 0) {
-          throw new Error(`Invalid ${key} value: ${value}`);
+          throw new ORPCError(`Invalid ${key} value: ${value}`);
         }
       });
 
