@@ -12,7 +12,12 @@ export const UpdateCustomerInfoDataSchema = z.object({
 export const updateCustomer = adminProcedure
   .input(UpdateCustomerInfoDataSchema)
   .output(z.void())
-  .handler(async ({ input: data }) => {
+  .errors({
+    BAD_REQUEST: {
+      message: "Cannot update customer: Not enough available bottles.",
+    },
+  })
+  .handler(async ({ input: data, errors }) => {
     try {
       const [customer_info] = await db
         .select()
@@ -35,17 +40,25 @@ export const updateCustomer = adminProcedure
       const new_used_bottles = total_bottles.used_bottles + bottle_difference;
       const new_deposit_bottles =
         total_bottles.deposit_bottles + deposit_difference;
+      const new_total_bottles =
+        total_bottles.total_bottles - deposit_difference;
+
+      console.log({
+        bottle_difference,
+        deposit_difference,
+        new_available_bottles,
+        new_used_bottles,
+        new_deposit_bottles,
+        new_total_bottles,
+      });
 
       if (
-        new_deposit_bottles > new_available_bottles ||
-        total_bottles.total_bottles >=
-          new_available_bottles + new_used_bottles ||
+        deposit_difference > new_available_bottles ||
+        new_total_bottles < new_available_bottles + new_used_bottles ||
         new_available_bottles < 0 ||
         new_used_bottles < 0
       ) {
-        throw new Error(
-          "Cannot update customer: Not enough available bottles.",
-        );
+        throw errors.BAD_REQUEST();
       }
 
       await db.transaction(async (tx) => {
@@ -61,7 +74,7 @@ export const updateCustomer = adminProcedure
           tx
             .update(TotalBottles)
             .set({
-              total_bottles: total_bottles.total_bottles - deposit_difference,
+              total_bottles: new_total_bottles,
               available_bottles: new_available_bottles,
               used_bottles: new_used_bottles,
               deposit_bottles: new_deposit_bottles,

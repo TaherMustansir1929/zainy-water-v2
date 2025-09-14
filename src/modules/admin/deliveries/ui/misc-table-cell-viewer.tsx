@@ -1,4 +1,5 @@
-import { useIsMobile } from "@/hooks/use-mobile";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Drawer,
   DrawerClose,
@@ -9,16 +10,6 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { format, startOfDay } from "date-fns";
-import { Separator } from "@/components/ui/separator";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import * as React from "react";
-import { columnSchema } from "@/modules/admin/deliveries/ui/data-table-4-misc-deliveries";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -28,13 +19,20 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Loader2 } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { orpc } from "@/lib/orpc";
-import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { columnSchema } from "@/modules/admin/deliveries/ui/data-table-4-misc-deliveries";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { format, startOfDay } from "date-fns";
+import { Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 
 const formSchema = z.object({
   customer_name: z.string().min(2),
@@ -64,7 +62,6 @@ export function MiscellaneousTableCellViewer({ item }: { item: columnSchema }) {
   });
 
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   const updateMutation = useMutation(
     orpc.admin.deliveries.updateMiscDelivery.mutationOptions({
@@ -76,7 +73,6 @@ export function MiscellaneousTableCellViewer({ item }: { item: columnSchema }) {
             queryKey: orpc.util.get30dMiscDeliveries.queryKey(),
           }),
         ]);
-        router.refresh();
       },
     })
   );

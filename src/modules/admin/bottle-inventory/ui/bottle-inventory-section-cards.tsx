@@ -1,5 +1,6 @@
 import { IconTrendingUp } from "@tabler/icons-react";
 
+import { SlidingNumber } from "@/components/animate-ui/text/sliding-number";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -9,7 +10,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { TotalBottles } from "@/db/schema";
+import { orpc } from "@/lib/orpc";
+import { TotalBottlesDataSchema } from "@/modules/admin/bottle-inventory/server/updateTotalBottles.orpc";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   ChartLine,
   Check,
@@ -19,15 +24,9 @@ import {
   Wallet,
   X,
 } from "lucide-react";
-import { useState, useEffect } from "react";
-import { Input } from "@/components/ui/input";
-import { SlidingNumber } from "@/components/animate-ui/text/sliding-number";
-import { TotalBottlesDataSchema } from "@/modules/admin/bottle-inventory/server/updateTotalBottles.orpc";
-import { z } from "zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { orpc } from "@/lib/orpc";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { z } from "zod";
 
 type Props = {
   total_bottles?: typeof TotalBottles.$inferSelect;
@@ -103,7 +102,6 @@ export function BottleInventorySectionCards({ total_bottles }: Props) {
     }
   }, [total_bottles]);
 
-  const router = useRouter();
   const queryClient = useQueryClient();
   const editMutation = useMutation(
     orpc.admin.bottleInventory.updateTotalBottles.mutationOptions({
@@ -113,13 +111,12 @@ export function BottleInventorySectionCards({ total_bottles }: Props) {
           await queryClient.invalidateQueries({
             queryKey: orpc.util.getTotalBottles.queryKey(),
           });
-          router.refresh();
         } else {
           toast.error(response.message);
           console.error({ response });
         }
       },
-    }),
+    })
   );
   const submitting = editMutation.isPending;
 

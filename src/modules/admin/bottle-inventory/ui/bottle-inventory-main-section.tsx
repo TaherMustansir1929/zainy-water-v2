@@ -8,6 +8,12 @@ import { orpc } from "@/lib/orpc";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { BottleUsage30dDataSchema } from "@/modules/util/server/get30dBottleUsage.orpc";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 export function BottleInventoryMainSection() {
   const totalBottlesQuery = useQuery(
@@ -20,6 +26,14 @@ export function BottleInventoryMainSection() {
   const totalBottles = totalBottlesQuery.data?.success
     ? totalBottlesQuery.data.totalBottles
     : undefined;
+
+  const filteredInitialized = bottleUsageData?.filter(
+    (item) => item.bottleUsage.filled_bottles > 0
+  );
+
+  const filteredUninitialized = bottleUsageData?.filter(
+    (item) => item.bottleUsage.filled_bottles === 0
+  );
 
   let rawChartData: {
     date: string;
@@ -49,7 +63,21 @@ export function BottleInventoryMainSection() {
                 title={"Total Bottle Usage"}
               />
             </div>
-            <DataTable2BottleInventory data={bottleUsageData} />
+            <DataTable2BottleInventory data={filteredInitialized} />
+            <div className={"mt-4"}>
+              <Accordion type="single" collapsible>
+                <AccordionItem value="item-1">
+                  <AccordionTrigger className="cursor-pointer decoration-red-500">
+                    <h1 className="text-xl font-semibold font-mono text-destructive mb-2">
+                      Reseted or Uninitialized
+                    </h1>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <DataTable2BottleInventory data={filteredUninitialized} />
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </div>
           </div>
         </div>
       </div>

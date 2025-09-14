@@ -103,7 +103,6 @@ export const CustomerInfoTableCellViewer = ({
   });
 
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   const updateMutation = useMutation(
     orpc.admin.customerInfo.updateCustomer.mutationOptions({
@@ -112,13 +111,14 @@ export const CustomerInfoTableCellViewer = ({
         await queryClient.invalidateQueries({
           queryKey: orpc.admin.customerInfo.getAllCustomers.queryKey(),
         });
-        router.refresh();
       },
       onError: (error) => {
         console.error(error);
-        toast.error("Error updating customer information");
+        toast.error(
+          error instanceof Error ? error.message : "Error updating customer."
+        );
       },
-    }),
+    })
   );
   const [open, setOpen] = useState(false);
   const [customerArea, setCustomerArea] = useState<
@@ -153,10 +153,11 @@ export const CustomerInfoTableCellViewer = ({
     <Drawer direction={isMobile ? "bottom" : "right"}>
       <DrawerTrigger asChild>
         <Button
+          type="button"
           variant="link"
           className={cn(
             "text-foreground w-fit px-0 text-left cursor-pointer",
-            isMobile && "underline underline-offset-4 font-bold",
+            isMobile && "underline underline-offset-4 font-bold"
           )}
         >
           <GeneratedAvatar seed={item.Customer.name} />
@@ -316,7 +317,7 @@ export const CustomerInfoTableCellViewer = ({
                                                   "mr-2 h-4 w-4",
                                                   area === customerArea
                                                     ? "opacity-100"
-                                                    : "opacity-0",
+                                                    : "opacity-0"
                                                 )}
                                               />
                                               <span>{area}</span>
@@ -344,7 +345,7 @@ export const CustomerInfoTableCellViewer = ({
                             <FormLabel>Bottles</FormLabel>
                             <FormControl>
                               <Tooltip>
-                                <TooltipTrigger>
+                                <TooltipTrigger type="button">
                                   <Input
                                     {...field}
                                     type="number"
@@ -352,7 +353,7 @@ export const CustomerInfoTableCellViewer = ({
                                     onChange={(e) => {
                                       const value = e.target.value;
                                       field.onChange(
-                                        value ? parseInt(value) : 0,
+                                        value ? parseInt(value) : 0
                                       );
                                     }}
                                     className="max-w-[100px]"

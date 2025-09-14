@@ -58,7 +58,7 @@ const items = [
 
 const admin_features = [
   {
-    title: "Add Moderator",
+    title: "Moderators",
     url: "/admin/add-moderator",
     icon: PlusCircle,
   },

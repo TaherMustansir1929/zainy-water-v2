@@ -1,5 +1,5 @@
-import { columnSchema } from "./data-table-5-other-exp";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Drawer,
   DrawerClose,
@@ -10,14 +10,6 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { format, startOfDay } from "date-fns";
-import { Separator } from "@/components/ui/separator";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -27,13 +19,20 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Loader2 } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { GeneratedAvatar } from "@/lib/avatar";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { orpc } from "@/lib/orpc";
-import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { format, startOfDay } from "date-fns";
+import { Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { z } from "zod";
+import { columnSchema } from "./data-table-5-other-exp";
 
 const formSchema = z.object({
   amount: z.number().min(1),
@@ -54,7 +53,6 @@ export const OtherExpTableCellViewer = ({ item }: { item: columnSchema }) => {
   });
 
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   const updateMutation = useMutation(
     orpc.admin.otherExpenses.updateOtherExpense.mutationOptions({
@@ -63,7 +61,6 @@ export const OtherExpTableCellViewer = ({ item }: { item: columnSchema }) => {
         await queryClient.invalidateQueries({
           queryKey: orpc.util.get30dOtherExpenses.queryKey(),
         });
-        router.refresh();
       },
     })
   );

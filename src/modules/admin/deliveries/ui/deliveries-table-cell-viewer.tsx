@@ -1,4 +1,5 @@
-import { useIsMobile } from "@/hooks/use-mobile";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Drawer,
   DrawerClose,
@@ -9,16 +10,6 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { format, startOfDay } from "date-fns";
-import { Separator } from "@/components/ui/separator";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import * as React from "react";
-import { columnSchema } from "@/modules/admin/deliveries/ui/data-table-3-daily-deliveries";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -28,12 +19,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Loader2 } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { GeneratedAvatar } from "@/lib/avatar";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { orpc } from "@/lib/orpc";
+import { cn } from "@/lib/utils";
+import { columnSchema } from "@/modules/admin/deliveries/ui/data-table-3-daily-deliveries";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { format, startOfDay } from "date-fns";
+import { Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { z } from "zod";
 
 const formSchema = z.object({
   payment: z.number().min(0),
@@ -59,7 +57,6 @@ export function DeliveriesTableCellViewer({ item }: { item: columnSchema }) {
   });
 
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   const updateMutation = useMutation(
     orpc.admin.deliveries.updateDailyDelivery.mutationOptions({
@@ -71,7 +68,6 @@ export function DeliveriesTableCellViewer({ item }: { item: columnSchema }) {
             queryKey: orpc.util.get30dDeliveries.queryKey(),
           }),
         ]);
-        router.refresh();
       },
       onError: (error) => {
         console.error("Error updating delivery:", error);

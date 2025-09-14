@@ -5,22 +5,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useAddModDrawer } from "@/lib/ui-states/add-moderator-drawer";
-import { Ellipsis, SquarePen, Trash2, UserX } from "lucide-react";
-import { Moderator } from "./columns";
 import { useConfirm } from "@/hooks/use-confirm";
+import { orpc } from "@/lib/orpc";
+import { useAddModDrawer } from "@/lib/ui-states/add-moderator-drawer";
 import { cn } from "@/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { orpc } from "@/lib/orpc";
+import { Ellipsis, SquarePen, Trash2, UserX } from "lucide-react";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { Moderator } from "./columns";
 
 export const ActionButton = ({ row_data }: { row_data: Moderator }) => {
   const { openEditDrawer, setModData } = useAddModDrawer();
 
   const [DeleteConfirmDialog, delete_confirm] = useConfirm(
     "Are you sure you want to delete this moderator?",
-    "All the deliveries and expenses associated with this moderator will also be deleted.",
+    "All the deliveries and expenses associated with this moderator will also be deleted."
   );
 
   const [WorkStatusConfirmDialog, work_status_confirm] = useConfirm(
@@ -31,10 +30,9 @@ export const ActionButton = ({ row_data }: { row_data: Moderator }) => {
       row_data.isWorking
         ? "This moderator wont be able to work anymore, but their data will remain in the system."
         : "This moderator will be able to work again."
-    }`,
+    }`
   );
 
-  const router = useRouter();
   const queryClient = useQueryClient();
 
   const deleteMutation = useMutation(
@@ -44,13 +42,12 @@ export const ActionButton = ({ row_data }: { row_data: Moderator }) => {
         await queryClient.invalidateQueries({
           queryKey: orpc.admin.crudModerator.getModList.queryKey(),
         });
-        router.refresh();
       },
       onError: (error) => {
         toast.error(`Failed to delete moderator: ${error.message}`);
         console.error({ error });
       },
-    }),
+    })
   );
 
   const workStatusMutation = useMutation(
@@ -60,14 +57,13 @@ export const ActionButton = ({ row_data }: { row_data: Moderator }) => {
         await queryClient.invalidateQueries({
           queryKey: orpc.admin.crudModerator.getModList.queryKey(),
         });
-        router.refresh();
       },
       onError: (error) => {
         toast.error(`Failed to change moderator work status: ${error.message}`);
         console.error("Error changing moderator work status:", error);
         throw error;
       },
-    }),
+    })
   );
 
   const handleEdit = () => {
@@ -113,7 +109,7 @@ export const ActionButton = ({ row_data }: { row_data: Moderator }) => {
               className={cn(
                 row_data.isWorking
                   ? "size-4 text-yellow-600"
-                  : "size-4 text-green-600",
+                  : "size-4 text-green-600"
               )}
             />
             {row_data.isWorking ? (

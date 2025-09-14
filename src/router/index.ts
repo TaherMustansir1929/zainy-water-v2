@@ -46,6 +46,8 @@ import { get30dBottleUsage } from "@/modules/util/server/get30dBottleUsage.orpc"
 import { get30dDeliveries } from "@/modules/util/server/get30dDeliveries.orpc";
 import { get30dMiscDeliveries } from "@/modules/util/server/get30dMiscDeliveries.orpc";
 import { get30dOtherExpenses } from "@/modules/util/server/get30dOtherExpenses.orpc";
+import { getSalesAndExpenses } from "@/modules/admin/add-moderator/server/getSalesAndExpenses.orpc";
+import { resetBottleUsage } from "@/modules/admin/bottle-inventory/server/resetBottleUsage.orpc";
 
 export const router = {
   moderator: {
@@ -79,6 +81,7 @@ export const router = {
   admin: {
     bottleInventory: {
       updateTotalBottles,
+      resetBottleUsage,
     },
     main: {
       dashboardAnalytics: dashboardAnalyticsOrpc,
@@ -92,6 +95,7 @@ export const router = {
       deleteModerator,
       updateModerator,
       updateModStatus,
+      getSalesAndExpenses,
     },
     deliveries: {
       updateDailyDelivery,

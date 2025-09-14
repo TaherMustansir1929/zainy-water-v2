@@ -17,7 +17,6 @@ export const AdminHeader = () => {
 
     setIsSpinning(true);
     router.push(pathname);
-    router.refresh();
 
     // Reset animation after 600 ms (duration of the animation)
     setTimeout(() => setIsSpinning(false), 600);

@@ -6,6 +6,14 @@ import { Area } from "@/db/schema";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { GeneratedAvatar } from "@/lib/avatar";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { useQuery } from "@tanstack/react-query";
+import { orpc } from "@/lib/orpc";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -57,10 +65,45 @@ export const columns: ColumnDef<Moderator>[] = [
     cell: ({ row }) => {
       const areas = row.original.areas;
       return (
-        <div className="flex flex-row gap-1">
-          {areas.map((area, index) => (
-            <div key={index}>{area}, </div>
-          ))}
+        <Accordion type="single" collapsible>
+          <AccordionItem value="item-1">
+            <AccordionTrigger>Areas</AccordionTrigger>
+            <AccordionContent className="w-fit">
+              <ul>
+                {areas.map((area, index) => (
+                  <li key={index} className="list-disc list-inside">
+                    {area}
+                  </li>
+                ))}
+              </ul>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      );
+    },
+  },
+  {
+    accessorKey: "revenue",
+    header: "Sales/Expenses",
+    cell: ({ row }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const { data } = useQuery(
+        orpc.admin.crudModerator.getSalesAndExpenses.queryOptions({
+          input: row.original.name,
+        })
+      );
+      return (
+        <div>
+          {data ? (
+            <div className="grid grid-cols-2 gap-2">
+              <div className="font-mono">Sales:</div>
+              <div>{data.sales}</div>
+              <div className="font-mono">Expenses:</div>
+              <div>{data.expenses}</div>
+            </div>
+          ) : (
+            "Loading..."
+          )}
         </div>
       );
     },

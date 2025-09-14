@@ -92,6 +92,7 @@ import { GeneratedAvatar } from "@/lib/avatar";
 import { cn } from "@/lib/utils";
 import { format, startOfDay } from "date-fns";
 import { Atom } from "react-loading-indicators";
+import { ActionButton } from "./actions-button";
 
 // Create a separate component for the drag handle
 function DragHandle({
@@ -116,7 +117,7 @@ function DragHandle({
   );
 }
 
-type columnSchema = {
+export type columnSchema = {
   bottleUsage: typeof BottleUsage.$inferSelect;
   moderator: typeof Moderator.$inferSelect;
 };
@@ -221,6 +222,12 @@ const columns: ColumnDef<columnSchema>[] = [
     cell: ({ row }) => (
       <div className="text-right">{row.original.bottleUsage.caps}</div>
     ),
+  },
+  {
+    accessorKey: "actions",
+    header: "",
+    cell: ({ row }) => <ActionButton row={row} />,
+    enableHiding: false,
   },
 ];
 
@@ -347,7 +354,7 @@ export function DataTable2BottleInventory({
   }
 
   return (
-    <div className={"min-h-screen"}>
+    <div className={""}>
       <div className="w-full flex items-center justify-between gap-4 px-4 pb-4 lg:px-6">
         <div className="flex items-center">
           <Input

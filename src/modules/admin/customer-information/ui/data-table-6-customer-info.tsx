@@ -143,7 +143,7 @@ const columns: ColumnDef<columnSchema>[] = [
           "text-muted-foreground px-1.5",
           row.original.Customer.isActive
             ? "text-emerald-500 border-green-200"
-            : "text-rose-500 border-red-200",
+            : "text-rose-500 border-red-200"
         )}
       >
         {row.original.Customer.isActive ? "Active" : "Inactive"}
@@ -237,6 +237,8 @@ const columns: ColumnDef<columnSchema>[] = [
     accessorKey: "actions",
     header: "",
     cell: ({ row }) => <ActionButton row={row} />,
+    enableHiding: false,
+    enableSorting: false,
   },
 ];
 
@@ -282,13 +284,13 @@ export function DataTable6CustomerInformation({
   data?: columnSchema[];
 }) {
   const [data, setData] = React.useState<columnSchema[] | undefined>(
-    initialData,
+    initialData
   );
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
+    []
   );
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -306,12 +308,12 @@ export function DataTable6CustomerInformation({
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
     useSensor(TouchSensor, {}),
-    useSensor(KeyboardSensor, {}),
+    useSensor(KeyboardSensor, {})
   );
 
   const dataIds = React.useMemo<UniqueIdentifier[]>(
     () => data?.map(({ Customer }) => Customer.id) || [],
-    [data],
+    [data]
   );
 
   const table = useReactTable({
@@ -408,7 +410,7 @@ export function DataTable6CustomerInformation({
                 .filter(
                   (column) =>
                     typeof column.accessorFn !== "undefined" &&
-                    column.getCanHide(),
+                    column.getCanHide()
                 )
                 .map((column) => {
                   return (
@@ -447,7 +449,7 @@ export function DataTable6CustomerInformation({
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
-                              header.getContext(),
+                              header.getContext()
                             )}
                       </TableHead>
                     );

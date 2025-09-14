@@ -8,9 +8,9 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { orpc } from "@/lib/orpc";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Row } from "@tanstack/react-table";
-import { Ellipsis, Trash2 } from "lucide-react";
+import { Delete, Ellipsis } from "lucide-react";
 import { toast } from "sonner";
-import { columnSchema } from "./data-table-6-customer-info";
+import { columnSchema } from "./data-table-2-bottle-inventory";
 
 type Props = {
   row: Row<columnSchema>;
@@ -18,34 +18,34 @@ type Props = {
 
 export const ActionButton = ({ row }: Props) => {
   const [ConfirmDialog, comfirm] = useConfirm(
-    "Are you sure you want to delete this customer?",
-    "This customer and all the deliveries associated will be removed permanently"
+    "Are you sure you want to reset this bottle usage?",
+    "This action will reset all the fields associated with this bottle usage (may misbehave)"
   );
 
   const queryClient = useQueryClient();
 
-  const deleteMutation = useMutation(
-    orpc.admin.customerInfo.deleteCustomer.mutationOptions({
+  const resetMutation = useMutation(
+    orpc.admin.bottleInventory.resetBottleUsage.mutationOptions({
       onSuccess: async () => {
-        toast.success("Customer deleted successfully");
-        console.log("Customer deleted successfully");
+        toast.success("Bottle usage reset successfully");
+        console.log("Bottle usage reset successfully");
         await queryClient.invalidateQueries({
-          queryKey: orpc.admin.customerInfo.getAllCustomers.queryKey(),
+          queryKey: orpc.util.get30dBottleUsage.queryKey(),
         });
       },
       onError: (error) => {
         console.error(error);
-        toast.error("Error deleting customer");
+        toast.error("Error resetting bottle usage");
       },
     })
   );
 
-  const handleDelete = async (id: string) => {
+  const handleReset = async (id: string) => {
     const ok = await comfirm();
     if (!ok) return;
 
-    //call delete mutation
-    await deleteMutation.mutateAsync({ id });
+    //call reset mutation
+    await resetMutation.mutateAsync(id);
   };
 
   return (
@@ -57,10 +57,10 @@ export const ActionButton = ({ row }: Props) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem
-            onClick={() => handleDelete(row.original.Customer.id)}
+            onClick={() => handleReset(row.original.bottleUsage.id)}
           >
-            <Trash2 className="size-4 text-rose-500" />
-            <span className="text-rose-500">Delete</span>
+            <Delete className="size-4 text-rose-500" />
+            <span className="text-rose-500">Reset</span>
             <span className="text-xs font-mono text-muted-foreground">
               (Warning)
             </span>

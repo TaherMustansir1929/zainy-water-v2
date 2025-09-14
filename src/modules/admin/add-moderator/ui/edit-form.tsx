@@ -27,18 +27,17 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Area } from "@/db/schema";
+import { orpc } from "@/lib/orpc";
 import { useAddModDrawer } from "@/lib/ui-states/add-moderator-drawer";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CheckIcon, ChevronsUpDownIcon, Plus, X } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 import { Moderator } from "./columns";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { orpc } from "@/lib/orpc";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 const formSchema = z
   .object({
@@ -55,7 +54,7 @@ const formSchema = z
     {
       message: "At least one area is required",
       path: ["areas"],
-    },
+    }
   );
 
 type Props = {
@@ -80,7 +79,6 @@ export function EditForm({ mod_data }: Props) {
   const { closeDrawer } = useAddModDrawer();
 
   const queryClient = useQueryClient();
-  const router = useRouter();
 
   const updateMutation = useMutation(
     orpc.admin.crudModerator.updateModerator.mutationOptions({
@@ -89,13 +87,12 @@ export function EditForm({ mod_data }: Props) {
         await queryClient.invalidateQueries({
           queryKey: orpc.admin.crudModerator.getModList.queryKey(),
         });
-        router.refresh();
       },
       onError: (error) => {
         toast.error(`Failed to update moderator: ${error.message}`);
         console.error({ error });
       },
-    }),
+    })
   );
   const createMutation = useMutation(
     orpc.admin.crudModerator.createModerator.mutationOptions({
@@ -104,13 +101,12 @@ export function EditForm({ mod_data }: Props) {
         await queryClient.invalidateQueries({
           queryKey: orpc.admin.crudModerator.getModList.queryKey(),
         });
-        router.refresh();
       },
       onError: (error) => {
         toast.error(`Failed to create moderator: ${error.message}`);
         console.error({ error });
       },
-    }),
+    })
   );
   const isSubmitting = updateMutation.isPending || createMutation.isPending;
   const [openStates, setOpenStates] = useState<{ [key: number]: boolean }>({});
@@ -119,7 +115,7 @@ export function EditForm({ mod_data }: Props) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // Filter out empty areas
     const filteredAreas = values.areas.filter(
-      (area): area is (typeof Area.enumValues)[number] => area !== undefined,
+      (area): area is (typeof Area.enumValues)[number] => area !== undefined
     );
     const submissionData = {
       ...values,
@@ -257,7 +253,7 @@ export function EditForm({ mod_data }: Props) {
                                             "mr-2 h-4 w-4",
                                             areaOption === field.value[index]
                                               ? "opacity-100"
-                                              : "opacity-0",
+                                              : "opacity-0"
                                           )}
                                         />
                                         <span>{areaOption}</span>
@@ -275,7 +271,7 @@ export function EditForm({ mod_data }: Props) {
                               size="icon"
                               onClick={() => {
                                 const newAreas = field.value.filter(
-                                  (_, i) => i !== index,
+                                  (_, i) => i !== index
                                 );
                                 field.onChange(newAreas);
                               }}
