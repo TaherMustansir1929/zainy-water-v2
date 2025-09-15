@@ -67,7 +67,7 @@ export const addDailyDelivery = os
         .orderBy(desc(TotalBottles.createdAt))
         .limit(1);
 
-      if (!bottleUsage)
+      if (!bottleUsage || !bottleUsage.done)
         return { success: false, error: "Bottle usage record not found." };
 
       if (!totalBottles) {

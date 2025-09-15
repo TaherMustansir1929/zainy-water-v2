@@ -16,6 +16,11 @@ import { useQuery } from "@tanstack/react-query";
 import { orpc } from "@/lib/orpc";
 import { useModeratorStore } from "@/lib/moderator-state";
 import { useRouter } from "next/navigation";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -57,16 +62,23 @@ export const columns: ColumnDef<Moderator>[] = [
       return (
         <div className={"flex flex-row items-center gap-2 capitalize"}>
           <GeneratedAvatar seed={row.original.name} />
-          <Button
-            variant={"link"}
-            className="text-black decoration-black cursor-pointer"
-            onClick={() => {
-              setMod(row.original);
-              router.push("/moderator");
-            }}
-          >
-            {row.original.name} <SquareArrowOutUpRight className="size-3" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                variant={"link"}
+                className="text-black decoration-black cursor-pointer"
+                onClick={() => {
+                  setMod(row.original);
+                  router.push("/moderator");
+                }}
+              >
+                {row.original.name} <SquareArrowOutUpRight className="size-3" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Visit moderator&apos;s view</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       );
     },

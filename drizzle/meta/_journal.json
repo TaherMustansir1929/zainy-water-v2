@@ -127,6 +127,20 @@
       "when": 1757573945783,
       "tag": "0017_third_mach_iv",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1757953835081,
+      "tag": "0018_stiff_payback",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1757954327191,
+      "tag": "0019_solid_christian_walker",
+      "breakpoints": true
     }
   ]
 }

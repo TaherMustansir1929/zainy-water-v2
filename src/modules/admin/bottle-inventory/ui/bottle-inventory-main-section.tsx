@@ -3,17 +3,17 @@
 import { BottleInventorySectionCards } from "@/modules/admin/bottle-inventory/ui/bottle-inventory-section-cards";
 import { DataTable2BottleInventory } from "@/modules/admin/bottle-inventory/ui/data-table-2-bottle-inventory";
 
-import { ChartLineInteractive } from "@/modules/admin/components/line-chart-interactive";
-import { orpc } from "@/lib/orpc";
-import { useQuery } from "@tanstack/react-query";
-import { z } from "zod";
-import { BottleUsage30dDataSchema } from "@/modules/util/server/get30dBottleUsage.orpc";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { orpc } from "@/lib/orpc";
+import { ChartLineInteractive } from "@/modules/admin/components/line-chart-interactive";
+import { BottleUsage30dDataSchema } from "@/modules/util/server/get30dBottleUsage.orpc";
+import { useQuery } from "@tanstack/react-query";
+import { z } from "zod";
 
 export function BottleInventoryMainSection() {
   const totalBottlesQuery = useQuery(
@@ -27,14 +27,29 @@ export function BottleInventoryMainSection() {
     ? totalBottlesQuery.data.totalBottles
     : undefined;
 
+  // const revenueList = useQuery({
+  //   queryKey: ["getSalesAndExpenses"],
+  //   queryFn: async () => {
+  //     if (bottleUsageData) {
+  //       return await Promise.all(
+  //         bottleUsageData?.map((item) => {
+  //           return getSalesAndExpenses(
+  //             item.moderator.id,
+  //             item.bottleUsage.createdAt
+  //           );
+  //         })
+  //       );
+  //     }
+  //   },
+  // });
+  // const revenueData = revenueList.data;
+
   const filteredInitialized = bottleUsageData?.filter(
     (item) => item.bottleUsage.filled_bottles > 0
   );
-
   const filteredUninitialized = bottleUsageData?.filter(
     (item) => item.bottleUsage.filled_bottles === 0
   );
-
   let rawChartData: {
     date: string;
     targets: {

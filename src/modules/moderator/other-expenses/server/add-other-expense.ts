@@ -19,7 +19,7 @@ export const addOtherExpense = os
     z.discriminatedUnion("success", [
       z.object({ success: z.literal(true) }),
       z.object({ success: z.literal(false), error: z.string() }),
-    ]),
+    ])
   )
   .errors({
     BOTTLE_USAGE_404: {
@@ -42,8 +42,8 @@ export const addOtherExpense = os
             and(
               eq(BottleUsage.moderator_id, input.moderator_id),
               gte(BottleUsage.createdAt, startOfDay(input.date)),
-              lte(BottleUsage.createdAt, endOfDay(input.date)),
-            ),
+              lte(BottleUsage.createdAt, endOfDay(input.date))
+            )
           )
           .orderBy(desc(BottleUsage.createdAt))
           .limit(1);
@@ -65,6 +65,7 @@ export const addOtherExpense = os
             empty_bottles: bottleUsage.empty_bottles - input.refilled_bottles,
             remaining_bottles:
               bottleUsage.remaining_bottles + input.refilled_bottles,
+            caps: bottleUsage.caps - input.refilled_bottles,
           })
           .where(eq(BottleUsage.id, bottleUsage.id));
       }
@@ -91,10 +92,10 @@ export const getOtherExpensesByModeratorId = os
   .input(
     z.object({
       id: z.string(),
-    }),
+    })
   )
   .output(
-    z.union([z.array(z.custom<typeof OtherExpense.$inferSelect>()), z.null()]),
+    z.union([z.array(z.custom<typeof OtherExpense.$inferSelect>()), z.null()])
   )
   .handler(async ({ input }) => {
     try {
@@ -106,8 +107,8 @@ export const getOtherExpensesByModeratorId = os
           and(
             eq(OtherExpense.moderator_id, input.id),
             gte(OtherExpense.date, startOfDay(new Date())),
-            lte(OtherExpense.date, endOfDay(new Date())),
-          ),
+            lte(OtherExpense.date, endOfDay(new Date()))
+          )
         )
         .orderBy(desc(OtherExpense.date));
 
