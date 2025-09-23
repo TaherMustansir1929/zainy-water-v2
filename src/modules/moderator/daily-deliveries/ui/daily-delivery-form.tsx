@@ -231,8 +231,11 @@ export const DailyDeliveryForm = () => {
 
     try {
       // const deliveryRecord = await addDailyDeliveryRecord(data);
-      const deliveryRecord =
+      const result =
         await client.moderator.deliveries.addDailyDelivery(data);
+      if(!result.success) {
+        throw new Error(result.error);
+      }
       toast.success("Delivery record added successfully!");
       form.reset();
       setCustomerData(null);
@@ -287,7 +290,7 @@ export const DailyDeliveryForm = () => {
       //       }
     } catch (error) {
       console.error("Error adding delivery record:", error);
-      alert("Failed to add delivery record. Please try again.");
+      alert(`Failed to add delivery record. ${error instanceof Error? error.message : "Internal server error"}`);
     } finally {
       setSubmitting(false);
     }

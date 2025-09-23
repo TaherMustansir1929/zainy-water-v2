@@ -45,3 +45,5 @@ next-env.d.ts
 
 # Qodo AI
 /.qodo/
+# clerk configuration (can include secrets)
+/.clerk/
