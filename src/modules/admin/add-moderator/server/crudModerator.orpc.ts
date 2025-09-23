@@ -3,7 +3,6 @@ import { z } from "zod";
 import { Area, Moderator } from "@/db/schema";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
-import { redis } from "@/lib/redis";
 
 export const getModList = adminProcedure
   .input(z.void())
@@ -60,11 +59,6 @@ export const deleteModerator = adminProcedure
 
       await db.delete(Moderator).where(eq(Moderator.name, input.name));
 
-      // If the moderator had a session, invalidate that
-      if (moderatorToDelete?.id) {
-        await redis.deleteValue("session", "mod", moderatorToDelete.id);
-      }
-
       console.log(`Moderator: ${input.name} deleted successfully.`);
     } catch (error) {
       console.error(`Error deleting moderator: ${input.name}:`, error);
@@ -91,11 +85,6 @@ export const updateModerator = adminProcedure
         .set({ ...input })
         .where(eq(Moderator.name, input.name))
         .returning();
-
-      // If the moderator has a session, invalidate that
-      if (updatedModerator.id) {
-        await redis.deleteValue("session", "mod", updatedModerator.id);
-      }
 
       return updatedModerator;
     } catch (error) {
@@ -124,9 +113,6 @@ export const updateModStatus = adminProcedure
 
     if (updatedModerator) {
       console.log(`Moderator: ${name} status changed successfully.`);
-
-      // Invalidate the moderator's session since working status changed
-      await redis.deleteValue("session", "mod", updatedModerator.id);
 
       return updatedModerator;
     } else {
