@@ -55,6 +55,7 @@ export const BottleUsageTable = ({
             <TableHead>Remaining</TableHead>
             <TableHead>Returned</TableHead>
             <TableHead className="text-right">Caps</TableHead>
+            <TableHead>Done</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -86,6 +87,9 @@ export const BottleUsageTable = ({
               </TableCell>
               <TableCell className="text-right">
                 {bottleUsageQuery.data?.caps || 0}
+              </TableCell>
+              <TableCell className="text-center">
+                {bottleUsageQuery.data?.done ? "✅" : "❌"}
               </TableCell>
             </TableRow>
           )}

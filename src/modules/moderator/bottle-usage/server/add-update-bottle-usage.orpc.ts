@@ -1,4 +1,4 @@
-import { os } from "@orpc/server";
+import { ORPCError, os } from "@orpc/server";
 import { z } from "zod";
 import { db } from "@/db";
 import { BottleUsage, TotalBottles } from "@/db/schema";
@@ -51,6 +51,10 @@ export const addUpdateBottleUsage = os
         )
       )
       .limit(1);
+
+    if (bottleUsage?.done) {
+      throw new ORPCError("Bottle usage for today is already marked as done");
+    }
 
     if (!!bottleUsage) {
       await db.transaction(async (tx) => {

@@ -48,6 +48,7 @@ import { get30dMiscDeliveries } from "@/modules/util/server/get30dMiscDeliveries
 import { get30dOtherExpenses } from "@/modules/util/server/get30dOtherExpenses.orpc";
 import { getSalesAndExpenses } from "@/modules/admin/add-moderator/server/getSalesAndExpenses.orpc";
 import { resetBottleUsage } from "@/modules/admin/bottle-inventory/server/resetBottleUsage.orpc";
+import { markAsDone } from "@/modules/moderator/bottle-usage/server/mark-as-done.orpc";
 
 export const router = {
   moderator: {
@@ -65,6 +66,7 @@ export const router = {
       addUpdateBottleUsage,
       getBottleUsage,
       returnBottleUsage,
+      markAsDone,
     },
     miscellaneous: {
       addMiscDelivery,

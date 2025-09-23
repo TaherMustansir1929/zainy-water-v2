@@ -46,6 +46,10 @@ export const returnBottleUsage = os
       throw errors.BOTTLE_USAGE_404();
     }
 
+    if (bottleUsage.done) {
+      throw new Error("Bottle usage is already marked as done");
+    }
+
     // Check if moderator has enough bottles and caps to return
     if (
       bottleUsage.empty_bottles < input.empty_bottles ||

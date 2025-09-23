@@ -7,9 +7,15 @@ import { currentUser } from "@clerk/nextjs/server";
 import { db } from "@/db";
 import { Admin } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { Metadata } from "next";
 
 // Force dynamic rendering for this layout
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Admin - Zainy Water",
+  description: "Admin layout for Zainy Water",
+};
 
 type Props = { children: React.ReactNode };
 

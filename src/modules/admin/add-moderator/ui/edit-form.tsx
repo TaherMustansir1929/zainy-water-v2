@@ -71,7 +71,7 @@ export function EditForm({ mod_data }: Props) {
       areas:
         mod_data?.areas && mod_data.areas.length > 0
           ? mod_data.areas
-          : [undefined],
+          : [undefined], // Keep one undefined slot for new entries
       isWorking: mod_data?.isWorking ?? true,
     },
   });
@@ -237,11 +237,18 @@ export function EditForm({ mod_data }: Props) {
                                       <CommandItem
                                         key={areaOption}
                                         value={areaOption}
-                                        onSelect={() => {
+                                        onSelect={(selectedValue) => {
+                                          // The Command component sometimes lowercases values, so we need to find the original
+                                          const actualArea = Area.enumValues.find(
+                                            area => area.toLowerCase() === selectedValue.toLowerCase()
+                                          ) || areaOption;
+                                          
                                           const newAreas = [...field.value];
-                                          newAreas[index] =
-                                            areaOption as (typeof Area.enumValues)[number];
+                                          newAreas[index] = actualArea as (typeof Area.enumValues)[number];
                                           field.onChange(newAreas);
+                                          
+                                          console.log("Selected:", selectedValue, "Actual:", actualArea, "New areas:", newAreas);
+                                          
                                           setOpenStates((prev) => ({
                                             ...prev,
                                             [index]: false,

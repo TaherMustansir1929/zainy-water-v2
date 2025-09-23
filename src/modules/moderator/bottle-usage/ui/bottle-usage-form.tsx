@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Loader2, SendHorizonal } from "lucide-react";
+import { CheckCheckIcon, Loader2, SendHorizonal, Undo2 } from "lucide-react";
 import { useModeratorStore } from "@/lib/moderator-state";
 import { toast } from "sonner";
 import { BottleUsageTable } from "./bottle-usage-table";
@@ -24,6 +24,7 @@ import { BottleReturnForm } from "./bottle-return-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { orpc } from "@/lib/orpc";
 import { TotalBottles } from "@/db/schema";
+import { Separator } from "@/components/ui/separator";
 
 const formSchema = z.object({
   filled_bottles: z.number().min(0),
@@ -67,7 +68,7 @@ export const BottleUsageForm = () => {
       },
       onError: (err) => {
         console.error("Failed to add bottle usage", { err });
-        toast.error("Failed to add bottle usage");
+        toast.error(`Failed to add bottle usage: ${err.message}`);
       },
     }),
   );
@@ -105,6 +106,30 @@ export const BottleUsageForm = () => {
       console.error({ error });
     }
   }
+
+  const doneMutation = useMutation(orpc.moderator.bottleUsage.markAsDone.mutationOptions({
+    onSuccess: async () => {
+      toast.success("Marked successfully");
+      await queryClient.invalidateQueries({
+        queryKey: orpc.moderator.bottleUsage.getBottleUsage.queryKey({
+          input: { id: moderator_id },
+        }),
+      });
+    },
+    onError: (err) => {
+      console.error("Failed to mark done", { err });
+      toast.error(`Failed to update: ${err.message}`);
+    },
+  }));
+
+  const handleMarkAsDone = async (done: boolean) => {
+    if (!moderator_id) {
+      toast.error("Moderator ID is not available");
+      return;
+    }
+
+    await doneMutation.mutateAsync({ id: moderator_id, done });
+  };
 
   return (
     <div>
@@ -190,6 +215,19 @@ export const BottleUsageForm = () => {
           <h1 className="w-full text-center font-bold">Bottles Return</h1>
         </div>
         <BottleReturnForm />
+      </div>
+
+      <Separator className="my-6" />
+
+      <div className="w-full flex justify-end items-center gap-2">
+        <Button variant="outline" onClick={() => handleMarkAsDone(false)} className="text-gray-800">
+          <span>Revert done status</span>
+          {doneMutation.isPending ? <Loader2 className="animate-spin" /> : <Undo2 className="size-4" />}
+        </Button>
+        <Button variant="outline" onClick={() => handleMarkAsDone(true)}>
+          <span>Mark as done</span>
+          {doneMutation.isPending ? <Loader2 className="animate-spin" /> : <CheckCheckIcon className="size-4" />}
+        </Button>
       </div>
     </div>
   );

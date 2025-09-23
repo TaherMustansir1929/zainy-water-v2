@@ -65,7 +65,7 @@ export const deleteModerator = adminProcedure
       throw new Error(
         `Failed to delete moderator: ${
           error instanceof Error ? error.message : "Unknown error"
-        }`,
+        }`
       );
     }
   });
@@ -75,14 +75,14 @@ export const updateModerator = adminProcedure
     z.object({
       name: z.string(),
       data: ModeratorData,
-    }),
+    })
   )
   .output(z.custom<typeof Moderator.$inferSelect>())
   .handler(async ({ input }) => {
     try {
       const [updatedModerator] = await db
         .update(Moderator)
-        .set({ ...input })
+        .set({ ...input, areas: input.data.areas })
         .where(eq(Moderator.name, input.name))
         .returning();
 
@@ -98,7 +98,7 @@ export const updateModStatus = adminProcedure
     z.object({
       name: z.string(),
       currentStatus: z.boolean(),
-    }),
+    })
   )
   .output(z.custom<typeof Moderator.$inferSelect>())
   .handler(async ({ input }) => {
