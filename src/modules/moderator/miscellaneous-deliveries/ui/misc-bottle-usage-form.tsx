@@ -46,7 +46,7 @@ export function MiscBottleUsageForm() {
         await Promise.all([
           queryClient.invalidateQueries({
             queryKey: orpc.moderator.bottleUsage.getBottleUsage.queryKey({
-              input: { id: moderator_id },
+              input: { id: moderator_id || "", date: new Date() },
             }),
           }),
           queryClient.invalidateQueries({ queryKey: ["total_bottles"] }),
@@ -56,7 +56,7 @@ export function MiscBottleUsageForm() {
         console.error("Error adding misc bottle usage", error);
         toast.error("Error adding misc bottle usage");
       },
-    }),
+    })
   );
 
   // 2. Define a submit handler.
@@ -121,7 +121,7 @@ export function MiscBottleUsageForm() {
             />
           </div>
           <Button
-            disabled={false}
+            disabled={true}
             type="submit"
             className="w-full bg-primary disabled:opacity-100 disabled:hover:cursor-not-allowed shadow-lg shadow-blue-300/40 hover:shadow-xl hover:shadow-blue-400/50 font-bold"
           >

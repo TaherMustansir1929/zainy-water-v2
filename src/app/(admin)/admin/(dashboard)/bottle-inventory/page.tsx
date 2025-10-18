@@ -1,3 +1,9 @@
+"use server";
+
+import "@/lib/orpc.server";
+import ErrorState from "@/components/hydration-states/error-state";
+import { orpc } from "@/lib/orpc";
+import { BottleInventoryMainSection } from "@/modules/admin/bottle-inventory/ui/bottle-inventory-main-section";
 import { WelcomeSection } from "@/modules/admin/components/welcome-section";
 import {
   HydrationBoundary,
@@ -5,11 +11,8 @@ import {
   dehydrate,
 } from "@tanstack/react-query";
 import { Suspense } from "react";
-import { Atom } from "react-loading-indicators";
 import { ErrorBoundary } from "react-error-boundary";
-import ErrorState from "@/components/hydration-states/error-state";
-import { BottleInventoryMainSection } from "@/modules/admin/bottle-inventory/ui/bottle-inventory-main-section";
-import { orpc } from "@/lib/orpc";
+import { Atom } from "react-loading-indicators";
 
 const BottleInventoryPage = async () => {
   const queryClient = new QueryClient();
@@ -19,7 +22,7 @@ const BottleInventoryPage = async () => {
     queryClient.prefetchQuery(orpc.util.get30dBottleUsage.queryOptions()),
     queryClient.prefetchQuery(orpc.util.getTotalBottles.queryOptions()),
     queryClient.prefetchQuery(
-      orpc.admin.crudModerator.getModList.queryOptions(),
+      orpc.admin.crudModerator.getModList.queryOptions()
     ),
   ]);
 

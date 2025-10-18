@@ -13,7 +13,9 @@ import { orpc } from "@/lib/orpc";
 import { ChartLineInteractive } from "@/modules/admin/components/line-chart-interactive";
 import { BottleUsage30dDataSchema } from "@/modules/util/server/get30dBottleUsage.orpc";
 import { useQuery } from "@tanstack/react-query";
+import { ArrowDownWideNarrow } from "lucide-react";
 import { z } from "zod";
+import { DataTable2_1ResettedBottleUsage } from "./data-table-2_1-resetted-bottle-usage";
 
 export function BottleInventoryMainSection() {
   const totalBottlesQuery = useQuery(
@@ -48,7 +50,11 @@ export function BottleInventoryMainSection() {
     (item) => item.bottleUsage.filled_bottles > 0
   );
   const filteredUninitialized = bottleUsageData?.filter(
-    (item) => item.bottleUsage.filled_bottles === 0
+    (item) =>
+      item.bottleUsage.filled_bottles === 0 &&
+      item.bottleUsage.returned_bottles === 0 &&
+      item.bottleUsage.expense === 0 &&
+      item.bottleUsage.refilled_bottles === 0
   );
   let rawChartData: {
     date: string;
@@ -83,12 +89,15 @@ export function BottleInventoryMainSection() {
               <Accordion type="single" collapsible>
                 <AccordionItem value="item-1">
                   <AccordionTrigger className="cursor-pointer decoration-red-500">
-                    <h1 className="text-xl font-semibold font-mono text-destructive mb-2">
-                      Reseted or Uninitialized
+                    <h1 className="text-xl font-semibold font-mono text-destructive mb-2 flex items-center gap-2">
+                      <span>Reseted or Uninitialized</span>
+                      <ArrowDownWideNarrow className="size-6" />
                     </h1>
                   </AccordionTrigger>
                   <AccordionContent>
-                    <DataTable2BottleInventory data={filteredUninitialized} />
+                    <DataTable2_1ResettedBottleUsage
+                      data={filteredUninitialized}
+                    />
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>

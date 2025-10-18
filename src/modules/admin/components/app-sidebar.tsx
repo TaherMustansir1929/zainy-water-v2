@@ -26,6 +26,7 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { MainFooter } from "@/components/main-footer";
 
 // Menu items.
 const items = [
@@ -89,56 +90,62 @@ export function AppSidebar({ className }: Props) {
           <Separator />
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    className={cn(
-                      "hover:bg-gray-100",
-                      pathname === item.url && "bg-gray-300 hover:bg-gray-300"
-                    )}
-                  >
-                    <Link href={item.url} className="text-lg">
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              <div>
+                {items.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      className={cn(
+                        "hover:bg-gray-100",
+                        pathname === item.url && "bg-gray-300 hover:bg-gray-300"
+                      )}
+                    >
+                      <Link href={item.url} className="text-lg">
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
 
-              <Separator />
+                <Separator />
 
-              {admin_features.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    className={cn(
-                      "hover:bg-gray-100",
-                      pathname === item.url && "bg-gray-300 hover:bg-gray-300"
-                    )}
-                  >
-                    <Link href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+                {admin_features.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      className={cn(
+                        "hover:bg-gray-100",
+                        pathname === item.url && "bg-gray-300 hover:bg-gray-300"
+                      )}
+                    >
+                      <Link href={item.url}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
 
-              <div className="w-full mt-2">
-                <Link href="/admin/chat-bot">
-                  <ShinyButton className="py-1 px-2 w-full">
-                    <div className="flex justify-between items-center w-full">
-                      <div className="flex items-center gap-2">
-                        <Sparkle className="size-4" />
-                        <span className="">GEKKO</span>
+                <div className="w-full mt-2">
+                  <Link href="/admin/chat-bot">
+                    <ShinyButton className="py-1 px-2 w-full">
+                      <div className="flex justify-between items-center w-full">
+                        <div className="flex items-center gap-2">
+                          <Sparkle className="size-4" />
+                          <span className="">GEKKO</span>
+                        </div>
+                        <Badge variant={"outline"} className="text-[10px]">
+                          new
+                        </Badge>
                       </div>
-                      <Badge variant={"outline"} className="text-[10px]">
-                        new
-                      </Badge>
-                    </div>
-                  </ShinyButton>
-                </Link>
+                    </ShinyButton>
+                  </Link>
+                </div>
+
+                <div className="fixed bottom-0 space-y-2">
+                  <MainFooter className="text-xs text-center text-muted-foreground w-full p-2" />
+                </div>
               </div>
             </SidebarMenu>
           </SidebarGroupContent>

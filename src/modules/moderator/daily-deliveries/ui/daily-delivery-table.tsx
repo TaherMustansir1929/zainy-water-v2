@@ -28,6 +28,7 @@ export const DailyDeliveryTable = () => {
   const [ConfirmDialogue, confirm] = useConfirm(
     "Are you sure?",
     "WARNING: You are about to delete this delivery record. This action cannot be undone.",
+    true
   );
 
   const [listLoading, setListLoading] = useState(false);
@@ -55,7 +56,7 @@ export const DailyDeliveryTable = () => {
       delivery_data.map((entry) => ({
         delivery: entry.Delivery,
         customer: entry.Customer,
-      })),
+      }))
     );
   };
 
@@ -68,7 +69,7 @@ export const DailyDeliveryTable = () => {
         toast.error(`Failed to delete delivery: ${error.message}`);
         console.error("Failed to delete delivery", { error });
       },
-    }),
+    })
   );
 
   const handleDeleteDelivery = async (delivery: DeliveryTableData) => {

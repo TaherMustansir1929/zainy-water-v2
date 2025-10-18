@@ -3,12 +3,14 @@ import { z } from "zod";
 import { db } from "@/db";
 import { BottleUsage, TotalBottles } from "@/db/schema";
 import { and, desc, eq, gte, lte } from "drizzle-orm";
-import { startOfDay } from "date-fns";
+import { endOfDay, startOfDay } from "date-fns";
+import { format } from "date-fns";
 
 export const addUpdateBottleUsage = os
   .input(
     z.object({
       moderator_id: z.string(),
+      dob: z.date(),
       filled_bottles: z.number(),
       caps: z.number(),
     })
@@ -46,14 +48,16 @@ export const addUpdateBottleUsage = os
       .where(
         and(
           eq(BottleUsage.moderator_id, input.moderator_id),
-          lte(BottleUsage.createdAt, new Date()),
-          gte(BottleUsage.createdAt, startOfDay(new Date()))
+          lte(BottleUsage.createdAt, endOfDay(input.dob)),
+          gte(BottleUsage.createdAt, startOfDay(input.dob))
         )
       )
       .limit(1);
 
     if (bottleUsage?.done) {
-      throw new ORPCError("Bottle usage for today is already marked as done");
+      throw new ORPCError(
+        `Bottle usage for ${format(input.dob, "PPP")} is already marked as done`
+      );
     }
 
     if (!!bottleUsage) {

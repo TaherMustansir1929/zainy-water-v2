@@ -141,6 +141,34 @@
       "when": 1757954327191,
       "tag": "0019_solid_christian_walker",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1760774914190,
+      "tag": "0020_young_talon",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1760775996224,
+      "tag": "0021_gifted_chamber",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1760786032158,
+      "tag": "0022_smooth_sir_ram",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1760788546329,
+      "tag": "0023_strange_salo",
+      "breakpoints": true
     }
   ]
 }

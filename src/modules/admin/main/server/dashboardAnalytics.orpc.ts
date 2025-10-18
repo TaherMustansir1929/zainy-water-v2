@@ -2,7 +2,7 @@ import { adminProcedure } from "@/middlewares/admin-clerk";
 import { z } from "zod";
 import { subDays } from "date-fns";
 import { db } from "@/db";
-import { and, count, desc, gte, lte } from "drizzle-orm";
+import { and, count, desc, eq, gte, lte } from "drizzle-orm";
 import {
   Customer,
   Delivery,
@@ -39,7 +39,7 @@ export const dashboardAnalyticsOrpc = adminProcedure
             .select({ payment: Delivery.payment })
             .from(Delivery)
             .where(
-              and(lte(Delivery.createdAt, now), gte(Delivery.createdAt, from)),
+              and(lte(Delivery.createdAt, now), gte(Delivery.createdAt, from))
             ), // index [2] -> deliveries
 
           await tx
@@ -48,16 +48,14 @@ export const dashboardAnalyticsOrpc = adminProcedure
             .where(
               and(
                 lte(Miscellaneous.createdAt, now),
-                gte(Miscellaneous.createdAt, from), // index [3] -> miscellaneousDeliveries
-              ),
+                gte(Miscellaneous.createdAt, from) // index [3] -> miscellaneousDeliveries
+              )
             ),
 
           await tx
             .select({ deposit: Customer.deposit })
             .from(Customer)
-            .where(
-              and(lte(Customer.createdAt, now), gte(Customer.createdAt, from)),
-            ), // index [4] -> deposit bottles
+            .where(eq(Customer.isActive, true)), // index [4] -> deposit bottles
 
           await tx
             .select({ available_bottles: TotalBottles.available_bottles })
@@ -71,8 +69,8 @@ export const dashboardAnalyticsOrpc = adminProcedure
             .where(
               and(
                 lte(OtherExpense.createdAt, now),
-                gte(OtherExpense.createdAt, from),
-              ),
+                gte(OtherExpense.createdAt, from)
+              )
             ), // index [6] -> other expenses
         ]);
       });
@@ -98,7 +96,7 @@ export const dashboardAnalyticsOrpc = adminProcedure
       const totalRevenue = totalDelivery + totalMiscellaneous;
 
       const depositCount = result.deposit
-        .map((d) => d.deposit)
+        .map((d) => Number(d.deposit) || 0)
         .reduce((a, b) => a + b, 0);
 
       const expenses = result.expenses

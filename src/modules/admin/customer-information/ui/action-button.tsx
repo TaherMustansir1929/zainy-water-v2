@@ -19,7 +19,8 @@ type Props = {
 export const ActionButton = ({ row }: Props) => {
   const [ConfirmDialog, comfirm] = useConfirm(
     "Are you sure you want to delete this customer?",
-    "This customer and all the deliveries associated will be removed permanently"
+    "This customer and all the deliveries associated will be removed permanently",
+    true
   );
 
   const queryClient = useQueryClient();

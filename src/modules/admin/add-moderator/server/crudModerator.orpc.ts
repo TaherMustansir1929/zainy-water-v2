@@ -3,6 +3,7 @@ import { z } from "zod";
 import { Area, Moderator } from "@/db/schema";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
+import { ORPCError } from "@orpc/client";
 
 export const getModList = adminProcedure
   .input(z.void())
@@ -30,11 +31,24 @@ export const createModerator = adminProcedure
   .output(z.custom<typeof Moderator.$inferSelect>())
   .handler(async ({ input }) => {
     try {
+      const [checkMod] = await db
+        .select()
+        .from(Moderator)
+        .where(eq(Moderator.name, input.name.toLowerCase()))
+        .limit(1);
+      if (checkMod) {
+        throw new ORPCError(
+          `Moderator with name ${input.name} already exists.`
+        );
+      }
+
       const [newModerator] = await db
         .insert(Moderator)
         .values({
-          ...input,
           name: input.name.toLowerCase(),
+          password: input.password,
+          areas: input.areas,
+          isWorking: input.isWorking,
         })
         .returning();
 
@@ -57,7 +71,11 @@ export const deleteModerator = adminProcedure
         .where(eq(Moderator.name, input.name))
         .limit(1);
 
-      await db.delete(Moderator).where(eq(Moderator.name, input.name));
+      if (!moderatorToDelete) {
+        throw new ORPCError(`Moderator with name ${input.name} not found.`);
+      }
+
+      await db.delete(Moderator).where(eq(Moderator.id, moderatorToDelete.id));
 
       console.log(`Moderator: ${input.name} deleted successfully.`);
     } catch (error) {
@@ -77,12 +95,21 @@ export const updateModerator = adminProcedure
       data: ModeratorData,
     })
   )
-  .output(z.custom<typeof Moderator.$inferSelect>())
+  .output(
+    z.custom<typeof Moderator.$inferSelect>()
+    // z.void()
+  )
   .handler(async ({ input }) => {
+    console.log("Updating moderator with input:", input);
     try {
       const [updatedModerator] = await db
         .update(Moderator)
-        .set({ ...input, areas: input.data.areas })
+        .set({
+          name: input.data.name.toLowerCase(),
+          password: input.data.password,
+          areas: input.data.areas,
+          isWorking: input.data.isWorking,
+        })
         .where(eq(Moderator.name, input.name))
         .returning();
 

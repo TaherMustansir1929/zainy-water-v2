@@ -17,7 +17,7 @@ const ModLayout = ({ children }: Props) => {
     <div>
       <ModHeader />
       {children}
-      <MainFooter />
+      <MainFooter className="w-full bg-primary text-white py-2 text-center md:text-sm text-[10px]" />
     </div>
   );
 };

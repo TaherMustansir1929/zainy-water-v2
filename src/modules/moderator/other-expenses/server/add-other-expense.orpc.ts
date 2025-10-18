@@ -54,7 +54,8 @@ export const addOtherExpense = os
 
         if (
           bottleUsage.empty_bottles < input.refilled_bottles ||
-          bottleUsage.caps < input.refilled_bottles
+          bottleUsage.caps - bottleUsage.refilled_bottles <
+            input.refilled_bottles
         ) {
           throw errors.BAD_REQUEST();
         }
@@ -65,7 +66,7 @@ export const addOtherExpense = os
             empty_bottles: bottleUsage.empty_bottles - input.refilled_bottles,
             remaining_bottles:
               bottleUsage.remaining_bottles + input.refilled_bottles,
-            caps: bottleUsage.caps - input.refilled_bottles,
+            expense: bottleUsage.expense + input.amount,
           })
           .where(eq(BottleUsage.id, bottleUsage.id));
       }

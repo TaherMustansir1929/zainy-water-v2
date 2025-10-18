@@ -239,16 +239,27 @@ export function EditForm({ mod_data }: Props) {
                                         value={areaOption}
                                         onSelect={(selectedValue) => {
                                           // The Command component sometimes lowercases values, so we need to find the original
-                                          const actualArea = Area.enumValues.find(
-                                            area => area.toLowerCase() === selectedValue.toLowerCase()
-                                          ) || areaOption;
-                                          
+                                          const actualArea =
+                                            Area.enumValues.find(
+                                              (area) =>
+                                                area.toLowerCase() ===
+                                                selectedValue.toLowerCase()
+                                            ) || areaOption;
+
                                           const newAreas = [...field.value];
-                                          newAreas[index] = actualArea as (typeof Area.enumValues)[number];
+                                          newAreas[index] =
+                                            actualArea as (typeof Area.enumValues)[number];
                                           field.onChange(newAreas);
-                                          
-                                          console.log("Selected:", selectedValue, "Actual:", actualArea, "New areas:", newAreas);
-                                          
+
+                                          console.log(
+                                            "Selected:",
+                                            selectedValue,
+                                            "Actual:",
+                                            actualArea,
+                                            "New areas:",
+                                            newAreas
+                                          );
+
                                           setOpenStates((prev) => ({
                                             ...prev,
                                             [index]: false,
@@ -318,10 +329,11 @@ export function EditForm({ mod_data }: Props) {
                   <Checkbox
                     checked={field.value}
                     onCheckedChange={field.onChange}
+                    className="cursor-pointer"
                   />
                 </FormControl>
                 <div className="space-y-1 leading-none">
-                  <FormLabel>Is Working</FormLabel>
+                  <FormLabel className="cursor-pointer">Is Working</FormLabel>
                   <p className="text-sm text-muted-foreground">
                     Check this if the moderator is currently working
                   </p>
@@ -331,7 +343,11 @@ export function EditForm({ mod_data }: Props) {
           />
 
           <div className="w-full flex flex-row justify-around items-center gap-x-10">
-            <Button type="submit" className="w-1/2" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              className="w-1/2 cursor-pointer"
+              disabled={isSubmitting}
+            >
               {isSubmitting ? (
                 <>
                   {mod_data ? "Updating " : "Creating "}
@@ -343,7 +359,7 @@ export function EditForm({ mod_data }: Props) {
             </Button>
             <Button
               variant="outline"
-              className="w-1/2"
+              className="w-1/2 cursor-pointer"
               type="button"
               onClick={closeDrawer}
               disabled={isSubmitting}

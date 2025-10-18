@@ -6,9 +6,9 @@ import { useQuery } from "@tanstack/react-query";
 import { orpc } from "@/lib/orpc";
 
 function AdminMainSection() {
-  const dashboardAnalyticsQuery = useQuery(
-    orpc.admin.main.dashboardAnalytics.queryOptions(),
-  );
+  const dashboardAnalyticsQuery = useQuery({
+    ...orpc.admin.main.dashboardAnalytics.queryOptions(),
+  });
   const dashboardAnalyticsData = dashboardAnalyticsQuery.data;
 
   if (!dashboardAnalyticsData) {

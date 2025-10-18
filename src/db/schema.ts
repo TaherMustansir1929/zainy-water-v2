@@ -36,7 +36,7 @@ export const Admin = pgTable(
   (table) => [
     index("admin_id_idx").on(table.id),
     index("admin_clerk_id_idx").on(table.clerk_id),
-  ]
+  ],
 );
 
 // Customer table
@@ -67,7 +67,7 @@ export const Customer = pgTable(
   (table) => [
     index("customer_id_idx").on(table.id),
     index("customer_customer_id_idx").on(table.customer_id),
-  ]
+  ],
 );
 
 // Moderator table
@@ -88,7 +88,7 @@ export const Moderator = pgTable(
       .notNull()
       .defaultNow(),
   },
-  (table) => [index("moderator_id_idx").on(table.id)]
+  (table) => [index("moderator_id_idx").on(table.id)],
 );
 
 // Delivery table
@@ -127,7 +127,7 @@ export const Delivery = pgTable(
       foreignColumns: [Moderator.id],
       name: "delivery_moderator_fk",
     }).onDelete("cascade"),
-  ]
+  ],
 );
 
 // OtherExpense table
@@ -152,14 +152,14 @@ export const OtherExpense = pgTable(
   (table) => ({
     idIdx: index("other_expense_id_idx").on(table.id),
     moderatorIdIdx: index("other_expense_moderator_id_idx").on(
-      table.moderator_id
+      table.moderator_id,
     ),
     moderatorFk: foreignKey({
       columns: [table.moderator_id],
       foreignColumns: [Moderator.id],
       name: "other_expense_moderator_fk",
     }).onDelete("cascade"),
-  })
+  }),
 );
 
 // Miscellaneous table
@@ -192,7 +192,7 @@ export const Miscellaneous = pgTable(
       foreignColumns: [Moderator.id],
       name: "miscellaneous_moderator_fk",
     }).onDelete("cascade"),
-  })
+  }),
 );
 
 // TotalBottles table
@@ -224,6 +224,12 @@ export const BottleUsage = pgTable("BottleUsage", {
   empty_bottles: integer("empty_bottles").notNull().default(0),
   remaining_bottles: integer("remaining_bottles").notNull().default(0),
   returned_bottles: integer("returned_bottles").notNull().default(0),
+  empty_returned: integer("empty_returned").notNull().default(0),
+  remaining_returned: integer("remaining_returned").notNull().default(0),
+  damaged_bottles: integer("damaged_bottles").notNull().default(0),
+  refilled_bottles: integer("refilled_bottles").notNull().default(0),
+  revenue: integer("revenue").notNull().default(0),
+  expense: integer("expense").notNull().default(0),
   caps: integer("caps").notNull().default(0),
   done: boolean("done").notNull().default(false),
   createdAt: timestamp("createdAt", { withTimezone: true })

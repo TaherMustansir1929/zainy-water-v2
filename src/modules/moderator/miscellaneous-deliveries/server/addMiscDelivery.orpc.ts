@@ -79,6 +79,8 @@ export const addMiscDelivery = os
             remaining_bottles:
               bottleUsage.remaining_bottles - input.filled_bottles,
             empty_bottles: bottleUsage.empty_bottles + input.empty_bottles,
+            damaged_bottles:
+              bottleUsage.damaged_bottles + input.damaged_bottles,
           })
           .where(eq(BottleUsage.id, bottleUsage.id)),
       ]);

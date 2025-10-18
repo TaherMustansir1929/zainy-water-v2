@@ -76,7 +76,7 @@ export const columns: ColumnDef<Moderator>[] = [
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Visit moderator&apos;s view</p>
+              <p>Visit moderator&apos;s panel</p>
             </TooltipContent>
           </Tooltip>
         </div>

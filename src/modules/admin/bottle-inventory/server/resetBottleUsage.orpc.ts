@@ -47,6 +47,11 @@ export const resetBottleUsage = adminProcedure
             returned_bottles: 0,
             empty_bottles: 0,
             remaining_bottles: 0,
+            damaged_bottles: 0,
+            empty_returned: 0,
+            remaining_returned: 0,
+            revenue: 0,
+            expense: 0,
             caps: 0,
           })
           .where(eq(BottleUsage.id, id)),

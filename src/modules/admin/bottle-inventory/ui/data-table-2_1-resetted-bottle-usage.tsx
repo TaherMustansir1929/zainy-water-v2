@@ -287,7 +287,7 @@ const columns: ColumnDef<columnSchema>[] = [
   {
     accessorKey: "actions",
     header: "",
-    cell: ({ row }) => <ActionButton row={row} isDelete={false} />,
+    cell: ({ row }) => <ActionButton row={row} isDelete={true} />,
     enableHiding: false,
   },
 ];
@@ -328,7 +328,7 @@ function DraggableRow({ row }: { row: Row<columnSchema> }) {
   );
 }
 
-export function DataTable2BottleInventory({
+export function DataTable2_1ResettedBottleUsage({
   data: initialData,
 }: {
   data?: columnSchema[];

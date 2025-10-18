@@ -1,8 +1,13 @@
-export const MainFooter = () => {
+import { cn } from "@/lib/utils";
+
+type Props = {
+  className?: string;
+};
+
+export const MainFooter = ({ className }: Props) => {
   return (
-    <footer className="w-full bg-primary text-white py-2 text-center text-[10px] md:text-sm">
-      &copy; 2025 ALIASGHAR KERAI &bull; All Rights Reserved &bull; Licensed to
-      Zainy Waters
+    <footer className={cn("", className)}>
+      Neotech &trade; &bull; All Rights Reserved &copy; 2025
     </footer>
   );
 };

@@ -101,6 +101,9 @@ export const returnBottleUsage = os
               input.remaining_bottles +
               input.empty_bottles,
             caps: bottleUsage.caps - input.caps,
+            empty_returned: bottleUsage.empty_returned + input.empty_bottles,
+            remaining_returned:
+              bottleUsage.remaining_returned + input.remaining_bottles,
           })
           .where(eq(BottleUsage.id, bottleUsage.id)),
       ]);

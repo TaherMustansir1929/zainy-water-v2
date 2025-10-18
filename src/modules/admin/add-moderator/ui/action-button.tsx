@@ -19,7 +19,8 @@ export const ActionButton = ({ row_data }: { row_data: Moderator }) => {
 
   const [DeleteConfirmDialog, delete_confirm] = useConfirm(
     "Are you sure you want to delete this moderator?",
-    "All the deliveries and expenses associated with this moderator will also be deleted."
+    "All the deliveries and expenses associated with this moderator will also be deleted.",
+    true
   );
 
   const [WorkStatusConfirmDialog, work_status_confirm] = useConfirm(

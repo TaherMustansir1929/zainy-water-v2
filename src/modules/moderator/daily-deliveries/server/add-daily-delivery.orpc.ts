@@ -14,6 +14,7 @@ import { endOfDay, startOfDay } from "date-fns";
 export const DeliveryRecordZod = z.object({
   filled_bottles: z.number(),
   empty_bottles: z.number(),
+  deposit_bottles: z.number(),
   foc: z.number(),
   damaged_bottles: z.number(),
   customer_id: z.string(),
@@ -39,6 +40,7 @@ export const addDailyDelivery = os
   .output(DeliveryOutputZod)
   .handler(async ({ input }) => {
     try {
+      // get customer
       const [customer] = await db
         .select()
         .from(Customer)
@@ -48,6 +50,7 @@ export const addDailyDelivery = os
         return { success: false, error: "Customer is not active." };
       }
 
+      // get bottle usage for the day
       const [bottleUsage] = await db
         .select()
         .from(BottleUsage)
@@ -61,6 +64,7 @@ export const addDailyDelivery = os
         .orderBy(desc(BottleUsage.createdAt))
         .limit(1);
 
+      // get total bottles record
       const [totalBottles] = await db
         .select()
         .from(TotalBottles)
@@ -87,6 +91,7 @@ export const addDailyDelivery = os
             .set({
               balance: input.balance,
               bottles: input.customer_bottles,
+              deposit: customer.deposit + input.deposit_bottles,
             })
             .where(eq(Customer.customer_id, input.customer_id))
             .returning(),
@@ -98,6 +103,9 @@ export const addDailyDelivery = os
               empty_bottles: bottleUsage.empty_bottles + input.empty_bottles,
               remaining_bottles:
                 bottleUsage.remaining_bottles - input.filled_bottles,
+              damaged_bottles:
+                bottleUsage.damaged_bottles + input.damaged_bottles,
+              revenue: bottleUsage.revenue + input.payment,
             })
             .where(eq(BottleUsage.id, bottleUsage.id))
             .returning(),

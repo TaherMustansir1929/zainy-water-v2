@@ -9,10 +9,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 
 export const useConfirm = (
   title: string,
-  message: string
+  message: string,
+  destructive: boolean = false
 ): [() => JSX.Element, () => Promise<unknown>] => {
   const [promise, setPromise] = useState<{
     resolve: (value: boolean) => void;
@@ -48,7 +50,12 @@ export const useConfirm = (
           <Button variant={"outline"} onClick={handleCancel}>
             Cancel
           </Button>
-          <Button onClick={handleConfirm}>Confirm</Button>
+          <Button
+            onClick={handleConfirm}
+            variant={destructive ? "destructive" : "default"}
+          >
+            Confirm
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

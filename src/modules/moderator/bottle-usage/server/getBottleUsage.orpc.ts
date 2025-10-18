@@ -2,11 +2,11 @@ import { os } from "@orpc/server";
 import { z } from "zod";
 import { BottleUsage } from "@/db/schema";
 import { db } from "@/db";
-import { and, desc, eq, gte } from "drizzle-orm";
-import { startOfDay } from "date-fns";
+import { and, desc, eq, gte, lte } from "drizzle-orm";
+import { endOfDay, startOfDay, subDays } from "date-fns";
 
 export const getBottleUsage = os
-  .input(z.object({ id: z.string().optional() }))
+  .input(z.object({ id: z.string(), date: z.date() }))
   .output(z.union([z.custom<typeof BottleUsage.$inferSelect>(), z.null()]))
   .handler(async ({ input }) => {
     if (!input.id) {
@@ -20,8 +20,9 @@ export const getBottleUsage = os
         .where(
           and(
             eq(BottleUsage.moderator_id, input.id),
-            gte(BottleUsage.createdAt, startOfDay(new Date())),
-          ),
+            gte(BottleUsage.createdAt, startOfDay(input.date)),
+            lte(BottleUsage.createdAt, endOfDay(input.date))
+          )
         )
         .orderBy(desc(BottleUsage.createdAt))
         .limit(1);
@@ -35,8 +36,13 @@ export const getBottleUsage = os
       const [previousBottleUsage] = await db
         .select()
         .from(BottleUsage)
-        .where(eq(BottleUsage.moderator_id, input.id))
-        .orderBy(desc(BottleUsage.createdAt))
+        .where(
+          and(
+            eq(BottleUsage.moderator_id, input.id),
+            gte(BottleUsage.createdAt, startOfDay(subDays(input.date, 1))),
+            lte(BottleUsage.createdAt, endOfDay(subDays(input.date, 1)))
+          )
+        )
         .limit(1);
 
       // Attempt to create new bottle usage record
@@ -48,9 +54,7 @@ export const getBottleUsage = os
             filled_bottles: 0,
             empty_bottles: previousBottleUsage?.empty_bottles ?? 0,
             remaining_bottles: previousBottleUsage?.remaining_bottles ?? 0,
-            caps: 0,
-            sales: 0,
-            returned_bottles: 0,
+            createdAt: input.date,
           })
           .returning();
 
@@ -59,7 +63,7 @@ export const getBottleUsage = os
         // If insert fails (possibly due to race condition), try to fetch again
         console.warn(
           "Insert failed, attempting to fetch existing record:",
-          insertError,
+          insertError
         );
 
         const [existingUsage] = await db
@@ -68,8 +72,8 @@ export const getBottleUsage = os
           .where(
             and(
               eq(BottleUsage.moderator_id, input.id),
-              gte(BottleUsage.createdAt, startOfDay(new Date())),
-            ),
+              gte(BottleUsage.createdAt, startOfDay(new Date()))
+            )
           )
           .orderBy(desc(BottleUsage.createdAt))
           .limit(1);
@@ -88,7 +92,7 @@ export const getBottleUsage = os
       throw new Error(
         `Failed to fetch bottle usage for moderator ${input.id}: ${
           error instanceof Error ? error.message : "Unknown error"
-        }`,
+        }`
       );
     }
   });

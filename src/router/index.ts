@@ -7,7 +7,7 @@ import { deleteDailyDelivery } from "@/modules/moderator/daily-deliveries/server
 import {
   addOtherExpense,
   getOtherExpensesByModeratorId,
-} from "@/modules/moderator/other-expenses/server/add-other-expense";
+} from "@/modules/moderator/other-expenses/server/add-other-expense.orpc";
 import { addUpdateBottleUsage } from "@/modules/moderator/bottle-usage/server/add-update-bottle-usage.orpc";
 import { getBottleUsage } from "@/modules/moderator/bottle-usage/server/getBottleUsage.orpc";
 import { returnBottleUsage } from "@/modules/moderator/bottle-usage/server/return-bottle-usage.orpc";
@@ -49,6 +49,10 @@ import { get30dOtherExpenses } from "@/modules/util/server/get30dOtherExpenses.o
 import { getSalesAndExpenses } from "@/modules/admin/add-moderator/server/getSalesAndExpenses.orpc";
 import { resetBottleUsage } from "@/modules/admin/bottle-inventory/server/resetBottleUsage.orpc";
 import { markAsDone } from "@/modules/moderator/bottle-usage/server/mark-as-done.orpc";
+import { getSalesAndExpensesForMod } from "@/modules/moderator/bottle-usage/server/getSalesAndExpenses.orpc";
+import { deleteBottleUsage as adminDeleteBottleUsage } from "@/modules/admin/bottle-inventory/server/deleteBottleUsage.orpc";
+import { editBottleUsage } from "@/modules/admin/bottle-inventory/server/editBottleUsage.orpc.";
+import { deleteBottleUsage as modDeleteBottleUsage } from "@/modules/moderator/bottle-usage/server/deleteBottleUsage.orpc";
 
 export const router = {
   moderator: {
@@ -67,6 +71,8 @@ export const router = {
       getBottleUsage,
       returnBottleUsage,
       markAsDone,
+      getSalesAndExpensesForMod,
+      deleteBottleUsage: modDeleteBottleUsage,
     },
     miscellaneous: {
       addMiscDelivery,
@@ -84,6 +90,8 @@ export const router = {
     bottleInventory: {
       updateTotalBottles,
       resetBottleUsage,
+      deleteBottleUsage: adminDeleteBottleUsage,
+      editBottleUsage,
     },
     main: {
       dashboardAnalytics: dashboardAnalyticsOrpc,

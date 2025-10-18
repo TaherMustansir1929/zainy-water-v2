@@ -19,7 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useModeratorStore } from "@/lib/moderator-state";
 import { toast } from "sonner";
 import { Loader2, SendHorizonal } from "lucide-react";
-import { otherExpenseDataSchema } from "@/modules/moderator/other-expenses/server/add-other-expense";
+import { otherExpenseDataSchema } from "@/modules/moderator/other-expenses/server/add-other-expense.orpc";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { orpc } from "@/lib/orpc";
 

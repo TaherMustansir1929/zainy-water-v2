@@ -49,6 +49,8 @@ const formSchema = z
     customer_id: z.string().min(2).max(50),
     filled_bottles: z.number().min(0),
     empty_bottles: z.number().min(0),
+    deposit_bottles_given: z.number().min(0),
+    deposit_bottles_taken: z.number().min(0),
     foc: z.number().min(0),
     damaged_bottles: z.number().min(0),
     payment: z.number().min(0),
@@ -60,6 +62,10 @@ const formSchema = z
   .refine((data) => data.damaged_bottles <= data.empty_bottles, {
     message: "Damaged bottles cannot exceed empty bottles",
     path: ["damaged_bottles"],
+  })
+  .refine((data) => data.deposit_bottles_given <= data.filled_bottles, {
+    message: "Deposit bottles cannot exceed filled bottles",
+    path: ["deposit_bottles_given"],
   });
 
 // MAIN COMPONENT
@@ -70,6 +76,7 @@ export const DailyDeliveryForm = () => {
       customer_id: "",
       filled_bottles: 0,
       empty_bottles: 0,
+      deposit_bottles_given: 0,
       foc: 0,
       damaged_bottles: 0,
       payment: 0,
@@ -161,14 +168,28 @@ export const DailyDeliveryForm = () => {
 
     // Error Handling/Form Validation for empty_bottles
     if (
-      form.watch("empty_bottles") >
-      customerData.bottles + form.watch("filled_bottles")
+      form.getValues("empty_bottles") >
+      customerData.bottles + form.getValues("filled_bottles")
     ) {
       form.setError(
         "empty_bottles",
         {
           message:
             "Empty bottles cannot be more than customer's remaining bottles.",
+        },
+        { shouldFocus: true }
+      );
+      setSubmitting(false);
+      return;
+    }
+
+    // Error Handling/Form Validation for deposit_bottles_taken
+    if (form.getValues("deposit_bottles_taken") > customerData.deposit) {
+      form.setError(
+        "deposit_bottles_taken",
+        {
+          message:
+            "Deposit bottles taken cannot be more than customer's deposit.",
         },
         { shouldFocus: true }
       );
@@ -222,18 +243,24 @@ export const DailyDeliveryForm = () => {
       customer_id: customerData.customer_id,
       filled_bottles: values.filled_bottles,
       empty_bottles: values.empty_bottles,
+      deposit_bottles:
+        values.deposit_bottles_given - values.deposit_bottles_taken,
       foc: values.foc,
       damaged_bottles: values.damaged_bottles,
-      customer_bottles:
-        customerData.bottles + values.filled_bottles - values.empty_bottles,
+      customer_bottles: Math.max(
+        customerData.bottles +
+          values.filled_bottles -
+          values.empty_bottles -
+          values.deposit_bottles_given,
+        0
+      ),
     };
     console.log({ data });
 
     try {
       // const deliveryRecord = await addDailyDeliveryRecord(data);
-      const result =
-        await client.moderator.deliveries.addDailyDelivery(data);
-      if(!result.success) {
+      const result = await client.moderator.deliveries.addDailyDelivery(data);
+      if (!result.success) {
         throw new Error(result.error);
       }
       toast.success("Delivery record added successfully!");
@@ -290,7 +317,9 @@ export const DailyDeliveryForm = () => {
       //       }
     } catch (error) {
       console.error("Error adding delivery record:", error);
-      alert(`Failed to add delivery record. ${error instanceof Error? error.message : "Internal server error"}`);
+      alert(
+        `Failed to add delivery record. ${error instanceof Error ? error.message : "Internal server error"}`
+      );
     } finally {
       setSubmitting(false);
     }
@@ -570,7 +599,7 @@ export const DailyDeliveryForm = () => {
             </Card>
           )}
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4 gap-y-6">
             {/* FILLED BOTTLES */}
             <FormField
               control={form.control}
@@ -627,9 +656,7 @@ export const DailyDeliveryForm = () => {
                 </FormItem>
               )}
             />
-          </div>
 
-          <div className="grid grid-cols-2 gap-4">
             {/* FOC BOTTLES */}
             <FormField
               control={form.control}
@@ -653,13 +680,65 @@ export const DailyDeliveryForm = () => {
               )}
             />
 
-            {/* EMPTY BOTTLES */}
+            {/* DAMAGED BOTTLES */}
             <FormField
               control={form.control}
               name="damaged_bottles"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Damaged Bottles</FormLabel>
+                  <FormControl>
+                    <div className="*:not-first:mt-2">
+                      <div className="relative">
+                        <BottleInput
+                          field={field}
+                          onChange={field.onChange}
+                          defaultValue={0}
+                        />
+                      </div>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* DEPOSIT BOTTLES (GIVEN) */}
+            <FormField
+              control={form.control}
+              name="deposit_bottles_given"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Deposit Bottles{" "}
+                    <span className="text-muted-foreground">(Given)</span>
+                  </FormLabel>
+                  <FormControl>
+                    <div className="*:not-first:mt-2">
+                      <div className="relative">
+                        <BottleInput
+                          field={field}
+                          onChange={field.onChange}
+                          defaultValue={0}
+                        />
+                      </div>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* DEPOSIT BOTTLES (TAKEN) */}
+            <FormField
+              control={form.control}
+              name="deposit_bottles_taken"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Deposit Bottles{" "}
+                    <span className="text-muted-foreground">(Taken)</span>
+                  </FormLabel>
                   <FormControl>
                     <div className="*:not-first:mt-2">
                       <div className="relative">
@@ -760,7 +839,7 @@ export const DailyDeliveryForm = () => {
                     {customerData.balance > 0 ? (
                       <span className="text-red-500 font-normal">
                         {" "}
-                        (Customer Owes)
+                        (Customer Dues)
                       </span>
                     ) : customerData.balance < 0 ? (
                       <span className="text-green-500 font-normal">
