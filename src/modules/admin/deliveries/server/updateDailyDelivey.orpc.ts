@@ -117,6 +117,12 @@ export const updateDailyDelivery = adminProcedure
               sales: updatedData.sales,
               remaining_bottles: updatedData.remainingBottles,
               empty_bottles: updatedData.emptyBottles,
+              damaged_bottles:
+                bottleUsage.damaged_bottles -
+                data.Delivery.damaged_bottles +
+                data.data.damaged_bottles,
+              revenue:
+                bottleUsage.revenue - data.Delivery.payment + data.data.payment,
             })
             .where(eq(BottleUsage.id, bottleUsage.id)),
 

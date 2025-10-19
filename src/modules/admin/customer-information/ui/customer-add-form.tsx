@@ -1,5 +1,6 @@
 import { PhoneInputComponent } from "@/components/phone-input";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Command,
@@ -31,7 +32,13 @@ import { orpc } from "@/lib/orpc";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { CheckIcon, ChevronsUpDownIcon, Loader2 } from "lucide-react";
+import { format } from "date-fns";
+import {
+  CalendarIcon,
+  CheckIcon,
+  ChevronsUpDownIcon,
+  Loader2,
+} from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -40,7 +47,13 @@ import z from "zod";
 const formSchema = z.object({
   name: z.string().min(2),
   customer_id: z.string().min(2),
-  phone: z.string().min(12).max(14),
+  phone: z
+    .string()
+    .min(1, "Phone number is required")
+    .regex(
+      /^\+\d{1,4}\d{10}$/,
+      "Invalid phone number format. Use format: +92 333 6669999"
+    ),
   address: z.string().min(2),
   area: z.enum(Area.enumValues),
   bottles: z.number().min(0),
@@ -50,6 +63,9 @@ const formSchema = z.object({
   balance: z.number().min(0),
   advance: z.number().min(0),
   isActive: z.boolean(),
+  customerSince: z.date({
+    error: "A date of birth is required.",
+  }),
 });
 
 export const CustomerAddForm = () => {
@@ -68,6 +84,7 @@ export const CustomerAddForm = () => {
       balance: 0,
       advance: 0,
       isActive: true,
+      customerSince: new Date(),
     },
   });
 
@@ -140,23 +157,65 @@ export const CustomerAddForm = () => {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone</FormLabel>
-                    <FormControl>
-                      <PhoneInputComponent field={field} />
-                    </FormControl>
-                    <FormMessage />
-                    <FormDescription>
-                      Use format +92 333 6669999
-                    </FormDescription>
-                  </FormItem>
-                )}
-              />
-
+              <div className="grid md:grid-cols-2 grid-cols-1 gap-4">
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone</FormLabel>
+                      <FormControl>
+                        <PhoneInputComponent field={field} />
+                      </FormControl>
+                      <FormMessage />
+                      <FormDescription>
+                        Use format +92 333 6669999
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="customerSince"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col w-full">
+                      <FormLabel>Customer Since</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) =>
+                              date > new Date() || date < new Date("2000-01-01")
+                            }
+                            captionLayout="dropdown"
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               <FormField
                 control={form.control}
                 name="address"

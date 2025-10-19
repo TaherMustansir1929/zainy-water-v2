@@ -73,8 +73,11 @@ export const OtherExpTableCellViewer = ({ item }: { item: columnSchema }) => {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     await updateMutation.mutateAsync({
-      other_exp_id: item.OtherExpense.id,
-      data: { ...values },
+      data: {
+        ...values,
+      },
+      moderator: item.Moderator,
+      otherExpense: item.OtherExpense,
     });
     console.log(values);
   }

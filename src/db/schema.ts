@@ -36,7 +36,7 @@ export const Admin = pgTable(
   (table) => [
     index("admin_id_idx").on(table.id),
     index("admin_clerk_id_idx").on(table.clerk_id),
-  ],
+  ]
 );
 
 // Customer table
@@ -57,6 +57,9 @@ export const Customer = pgTable(
     deposit_price: integer("deposit_price").notNull().default(1000),
     balance: integer("balance").notNull(),
     isActive: boolean("isActive").notNull().default(true),
+    customerSince: timestamp("customerSince", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
     createdAt: timestamp("createdAt", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -67,7 +70,7 @@ export const Customer = pgTable(
   (table) => [
     index("customer_id_idx").on(table.id),
     index("customer_customer_id_idx").on(table.customer_id),
-  ],
+  ]
 );
 
 // Moderator table
@@ -88,7 +91,7 @@ export const Moderator = pgTable(
       .notNull()
       .defaultNow(),
   },
-  (table) => [index("moderator_id_idx").on(table.id)],
+  (table) => [index("moderator_id_idx").on(table.id)]
 );
 
 // Delivery table
@@ -127,7 +130,7 @@ export const Delivery = pgTable(
       foreignColumns: [Moderator.id],
       name: "delivery_moderator_fk",
     }).onDelete("cascade"),
-  ],
+  ]
 );
 
 // OtherExpense table
@@ -152,14 +155,14 @@ export const OtherExpense = pgTable(
   (table) => ({
     idIdx: index("other_expense_id_idx").on(table.id),
     moderatorIdIdx: index("other_expense_moderator_id_idx").on(
-      table.moderator_id,
+      table.moderator_id
     ),
     moderatorFk: foreignKey({
       columns: [table.moderator_id],
       foreignColumns: [Moderator.id],
       name: "other_expense_moderator_fk",
     }).onDelete("cascade"),
-  }),
+  })
 );
 
 // Miscellaneous table
@@ -192,7 +195,7 @@ export const Miscellaneous = pgTable(
       foreignColumns: [Moderator.id],
       name: "miscellaneous_moderator_fk",
     }).onDelete("cascade"),
-  }),
+  })
 );
 
 // TotalBottles table

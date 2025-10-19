@@ -38,15 +38,15 @@ const items = [
   {
     title: "Bottle Inventory",
     url: "/admin/bottle-inventory",
-    icon: ShoppingCart,
+    icon: Inbox,
   },
   {
     title: "Deliveries",
     url: "/admin/deliveries",
-    icon: Inbox,
+    icon: ShoppingCart,
   },
   {
-    title: "Customes",
+    title: "Customers",
     url: "/admin/customer-information",
     icon: User,
   },

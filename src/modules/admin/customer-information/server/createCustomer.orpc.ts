@@ -21,13 +21,13 @@ export const createCustomer = adminProcedure
 
       if (!total_bottles) {
         throw new Error(
-          "Cannot create customer: TotalBottles entry does not exist.",
+          "Cannot create customer: TotalBottles entry does not exist."
         );
       }
 
       if (data.data.deposit > total_bottles.available_bottles) {
         throw new Error(
-          "Cannot create customer: Not enough available bottles for the deposit.",
+          "Cannot create customer: Not enough available bottles for the deposit."
         );
       }
 

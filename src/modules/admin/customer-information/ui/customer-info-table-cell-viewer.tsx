@@ -50,6 +50,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import {
+  CalendarIcon,
   CheckIcon,
   ChevronsUpDownIcon,
   Loader2,
@@ -60,6 +61,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { columnSchema } from "./data-table-6-customer-info";
+import { Calendar } from "@/components/ui/calendar";
 
 const formSchema = z.object({
   name: z.string().min(2),
@@ -74,6 +76,7 @@ const formSchema = z.object({
   balance: z.number().min(0),
   advance: z.number().min(0),
   isActive: z.boolean(),
+  customerSince: z.date(),
 });
 
 export const CustomerInfoTableCellViewer = ({
@@ -98,6 +101,7 @@ export const CustomerInfoTableCellViewer = ({
       balance: item.Customer.balance > 0 ? item.Customer.balance : 0,
       advance: item.Customer.balance < 0 ? Math.abs(item.Customer.balance) : 0,
       isActive: item.Customer.isActive,
+      customerSince: item.Customer.createdAt,
     },
   });
 
@@ -143,6 +147,7 @@ export const CustomerInfoTableCellViewer = ({
       data: {
         ...values,
         balance: values.balance - values.advance,
+        customerSince: values.customerSince,
       },
     });
     console.log("Customer update values:", values);
@@ -238,6 +243,54 @@ export const CustomerInfoTableCellViewer = ({
                                 <PhoneInputComponent field={field} />
                               </div>
                             </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </li>
+
+                    <li className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 hover:bg-muted/50 transition-colors">
+                      <FormField
+                        control={form.control}
+                        name="customerSince"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-center justify-between w-full">
+                            <FormLabel>Customer Since</FormLabel>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <FormControl>
+                                  <Button
+                                    variant={"outline"}
+                                    className={cn(
+                                      "w-[200px] pl-3 text-left font-normal",
+                                      !field.value && "text-muted-foreground"
+                                    )}
+                                  >
+                                    {field.value ? (
+                                      format(field.value, "PPP")
+                                    ) : (
+                                      <span>Pick a date</span>
+                                    )}
+                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                  </Button>
+                                </FormControl>
+                              </PopoverTrigger>
+                              <PopoverContent
+                                className="w-auto p-0"
+                                align="start"
+                              >
+                                <Calendar
+                                  mode="single"
+                                  selected={field.value}
+                                  onSelect={field.onChange}
+                                  disabled={(date) =>
+                                    date > new Date() ||
+                                    date < new Date("2000-01-01")
+                                  }
+                                  captionLayout="dropdown"
+                                />
+                              </PopoverContent>
+                            </Popover>
                             <FormMessage />
                           </FormItem>
                         )}

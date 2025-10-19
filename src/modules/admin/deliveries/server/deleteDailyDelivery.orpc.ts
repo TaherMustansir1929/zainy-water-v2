@@ -72,6 +72,8 @@ export const deleteDailyDelivery = adminProcedure
                 bottleUsage.empty_bottles - data.Delivery.empty_bottles
               ),
               revenue: bottleUsage.revenue - data.Delivery.payment,
+              damaged_bottles:
+                bottleUsage.damaged_bottles - data.Delivery.damaged_bottles,
             })
             .where(eq(BottleUsage.id, bottleUsage.id)),
 

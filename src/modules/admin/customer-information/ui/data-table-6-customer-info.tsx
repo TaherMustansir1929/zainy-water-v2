@@ -223,12 +223,12 @@ const columns: ColumnDef<columnSchema>[] = [
     },
   },
   {
-    accessorKey: "createdAt",
+    accessorKey: "customerSince",
     header: () => <div className="w-full min-w-[110px]">Customer Since</div>,
     cell: ({ row }) => (
       <div className="w-32 flex justify-center">
         <Badge variant="outline" className="text-muted-foreground px-1.5">
-          {format(row.original.Customer.createdAt, "PPP")}
+          {format(row.original.Customer.customerSince, "PPP")}
         </Badge>
       </div>
     ),

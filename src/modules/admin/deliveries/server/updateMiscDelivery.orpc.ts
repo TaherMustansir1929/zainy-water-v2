@@ -30,7 +30,7 @@ export const updateMiscDelivery = adminProcedure
     z.object({
       success: z.boolean(),
       message: z.string(),
-    }),
+    })
   )
   .handler(async ({ input: data }) => {
     try {
@@ -51,8 +51,8 @@ export const updateMiscDelivery = adminProcedure
           and(
             eq(BottleUsage.moderator_id, data.Moderator.id),
             gte(BottleUsage.createdAt, startOfDay(new Date())),
-            lte(BottleUsage.createdAt, new Date()),
-          ),
+            lte(BottleUsage.createdAt, new Date())
+          )
         )
         .limit(1);
 
@@ -94,6 +94,14 @@ export const updateMiscDelivery = adminProcedure
               sales: updatedData.sales,
               remaining_bottles: updatedData.remainingBottles,
               empty_bottles: updatedData.emptyBottles,
+              damaged_bottles:
+                bottleUsage.damaged_bottles -
+                data.Miscellaneous.damaged_bottles +
+                data.data.damaged_bottles,
+              revenue:
+                bottleUsage.revenue -
+                data.Miscellaneous.payment +
+                data.data.payment,
             })
             .where(eq(BottleUsage.id, bottleUsage.id)),
 
