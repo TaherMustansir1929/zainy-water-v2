@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/accordion";
 import { useQuery } from "@tanstack/react-query";
 import { orpc } from "@/lib/orpc";
-import { useModeratorStore } from "@/lib/moderator-state";
+import { useModeratorStore } from "@/lib/ui-states/moderator-state";
 import { useRouter } from "next/navigation";
 import {
   Tooltip,

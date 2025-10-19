@@ -24,7 +24,7 @@ import {
   Trash,
   Undo2,
 } from "lucide-react";
-import { useModeratorStore } from "@/lib/moderator-state";
+import { useModeratorStore } from "@/lib/ui-states/moderator-state";
 import { toast } from "sonner";
 import { BottleUsageTable } from "./bottle-usage-table";
 import { BottleReturnForm } from "./bottle-return-form";
@@ -46,6 +46,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useConfirm } from "@/hooks/use-confirm";
+import { useDOBStore } from "@/lib/ui-states/date-of-bottle-usage";
+import { useEffect } from "react";
 
 const formSchema = z.object({
   dob: z.date(),
@@ -54,15 +56,36 @@ const formSchema = z.object({
 });
 
 export const BottleUsageForm = () => {
+  const { dob, setDOB } = useDOBStore();
+
+  // Initialize DOB only once if not set
+  useEffect(() => {
+    if (!dob) {
+      console.log(`Initializing DOB to ${new Date()}`);
+      setDOB(new Date());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty dependency array - run only once on mount
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      dob: new Date(),
+      dob: dob || new Date(),
       filled_bottles: 0,
       caps: 0,
     },
   });
+
+  // Sync form date changes to Zustand store
+  const form_dob = form.watch("dob");
+  useEffect(() => {
+    // Only update if there's an actual change and form_dob is valid
+    if (form_dob && dob && form_dob.getTime() !== dob.getTime()) {
+      setDOB(form_dob);
+      console.log(`Setting DOB to ${form_dob}`);
+    }
+  }, [form_dob, dob, setDOB]); // Now safe - uses getTime() comparison
 
   const moderator_id = useModeratorStore((state) => state.moderator?.id);
 
@@ -73,11 +96,15 @@ export const BottleUsageForm = () => {
     ? totalBottlesQuery.data.totalBottles
     : ({} as typeof TotalBottles.$inferSelect);
 
-  const bottleUsageQuery = useQuery(
-    orpc.moderator.bottleUsage.getBottleUsage.queryOptions({
-      input: { id: moderator_id || "", date: form.watch("dob") },
-    })
-  );
+  // Use dob from Zustand store instead of form.watch to prevent unnecessary re-renders
+  const currentDob = dob || new Date();
+
+  const bottleUsageQuery = useQuery({
+    ...orpc.moderator.bottleUsage.getBottleUsage.queryOptions({
+      input: { id: moderator_id || "", date: currentDob },
+    }),
+    enabled: !!moderator_id && !!currentDob, // Only run query when both values are valid
+  });
   const bottleUsageData = bottleUsageQuery.data;
 
   const queryClient = useQueryClient();
@@ -127,7 +154,12 @@ export const BottleUsageForm = () => {
     try {
       const response = await bottleUsageMutation.mutateAsync({ ...data });
       console.log({ response });
-      form.reset(); // Reset the form
+      // Reset only the filled_bottles and caps fields, keep the date
+      form.reset({
+        dob: form.getValues("dob"), // Keep the current date
+        filled_bottles: 0,
+        caps: 0,
+      });
     } catch (error) {
       alert("Failed to update bottle usage");
       console.error({ error });

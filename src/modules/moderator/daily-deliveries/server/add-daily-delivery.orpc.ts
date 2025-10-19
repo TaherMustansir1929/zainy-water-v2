@@ -152,7 +152,7 @@ export const addDailyDelivery = os
   });
 
 export const getDailyDeliveries = os
-  .input(z.object({ moderator_id: z.string() }))
+  .input(z.object({ moderator_id: z.string(), date: z.date() }))
   .output(
     z.union([
       z.array(
@@ -171,8 +171,8 @@ export const getDailyDeliveries = os
       .where(
         and(
           eq(Delivery.moderator_id, input.moderator_id),
-          gte(Delivery.delivery_date, startOfDay(new Date())),
-          lte(Delivery.delivery_date, endOfDay(new Date()))
+          gte(Delivery.delivery_date, startOfDay(input.date)),
+          lte(Delivery.delivery_date, endOfDay(input.date))
         )
       )
       .orderBy(desc(Delivery.createdAt))

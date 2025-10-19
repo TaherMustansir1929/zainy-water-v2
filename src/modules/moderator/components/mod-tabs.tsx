@@ -1,24 +1,38 @@
+"use client";
+
 import {
   CalendarCheck,
+  CalendarIcon,
   ChartPie,
   CircleDollarSign,
   Dice5,
   ShoppingCart,
 } from "lucide-react";
 
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { OtherExpenseForm } from "../other-expenses/ui/other-expense-form";
-import { OtherExpenseTable } from "../other-expenses/ui/other-expense-table";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useDOBStore } from "@/lib/ui-states/date-of-bottle-usage";
+import { cn } from "@/lib/utils";
+import { DailyDeliveryForm } from "@/modules/moderator/daily-deliveries/ui/daily-delivery-form";
+import { DailyDeliveryTable } from "@/modules/moderator/daily-deliveries/ui/daily-delivery-table";
+import { MiscBottleUsageForm } from "@/modules/moderator/miscellaneous-deliveries/ui/misc-bottle-usage-form";
+import { format } from "date-fns";
+import { useEffect } from "react";
 import { BottleUsageForm } from "../bottle-usage/ui/bottle-usage-form";
 import { MiscDeliveryForm } from "../miscellaneous-deliveries/ui/misc-form";
 import { MiscDeliveryTable } from "../miscellaneous-deliveries/ui/misc-table";
-import { MiscBottleUsageForm } from "@/modules/moderator/miscellaneous-deliveries/ui/misc-bottle-usage-form";
-import { Separator } from "@/components/ui/separator";
-import { DailyDeliveryForm } from "@/modules/moderator/daily-deliveries/ui/daily-delivery-form";
-import { DailyDeliveryTable } from "@/modules/moderator/daily-deliveries/ui/daily-delivery-table";
+import { OtherExpenseForm } from "../other-expenses/ui/other-expense-form";
+import { OtherExpenseTable } from "../other-expenses/ui/other-expense-table";
+import { DobSelector } from "./dob-selector";
 
 const mod_tabs = [
   {
@@ -68,6 +82,17 @@ const mod_tabs = [
 ];
 
 export function ModTabs() {
+  const { dob, setDOB } = useDOBStore();
+
+  // Initialize DOB only once if not set
+  useEffect(() => {
+    if (!dob) {
+      console.log(`Initializing DOB to ${new Date()}`);
+      setDOB(new Date());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty dependency array - run only once on mount
+
   return (
     <main className="w-full">
       <Tabs defaultValue="daily_deliveries">
@@ -79,7 +104,7 @@ export function ModTabs() {
                 value={tab.value}
                 className={cn(
                   "data-[state=active]:bg-muted data-[state=active]:after:bg-primary relative overflow-hidden rounded-none border py-2 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 first:rounded-s last:rounded-e",
-                  "flex-1 min-w-[150px]",
+                  "flex-1 min-w-[150px]"
                 )}
               >
                 {tab.icon}
@@ -93,9 +118,12 @@ export function ModTabs() {
           <section className="min-h-screen w-full flex flex-col md:items-center md:justify-center my-4 gap-y-4 p-2">
             <Card className="w-full max-w-2xl">
               <CardHeader>
-                <CardTitle className="text-primary font-bold text-xl text-center flex items-center justify-center gap-2">
-                  <CalendarCheck />
-                  Daily Delivery Entry
+                <CardTitle className="text-primary font-bold text-xl text-center flex flex-col items-center justify-center gap-2">
+                  <div className="flex flex-row gap-2 justify-center items-center">
+                    <CalendarCheck />
+                    Daily Delivery Entry
+                  </div>
+                  <DobSelector />
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -110,9 +138,12 @@ export function ModTabs() {
           <section className="w-full flex flex-col md:items-center md:justify-center gap-y-6 p-2">
             <Card className="w-full max-w-2xl">
               <CardHeader>
-                <CardTitle className="text-primary font-bold text-center flex items-center justify-center gap-2">
-                  <CircleDollarSign />
-                  Other/ Bottle Expenses
+                <CardTitle className="text-primary font-bold text-xl text-center flex flex-col items-center justify-center gap-2">
+                  <div className="flex flex-row gap-2 justify-center items-center">
+                    <CircleDollarSign />
+                    Other /Bottle Expenses
+                  </div>
+                  <DobSelector />
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -142,9 +173,12 @@ export function ModTabs() {
           <section className="w-full flex flex-col md:items-center md:justify-center gap-y-6 p-2">
             <Card className="w-full max-w-2xl">
               <CardHeader>
-                <CardTitle className="text-primary font-bold text-center flex items-center justify-center gap-2">
-                  <Dice5 />
-                  Miscellaneous Delivery
+                <CardTitle className="text-primary font-bold text-xl text-center flex flex-col items-center justify-center gap-2">
+                  <div className="flex flex-row gap-2 justify-center items-center">
+                    <Dice5 />
+                    Miscellaneous Delivery
+                  </div>
+                  <DobSelector />
                 </CardTitle>
               </CardHeader>
               <CardContent>

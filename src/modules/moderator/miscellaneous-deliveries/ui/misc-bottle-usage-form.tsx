@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Loader2, SendHorizonal } from "lucide-react";
 import { BottleInput } from "@/components/bottle-input";
-import { useModeratorStore } from "@/lib/moderator-state";
+import { useModeratorStore } from "@/lib/ui-states/moderator-state";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { orpc } from "@/lib/orpc";

@@ -180,6 +180,9 @@ export const Miscellaneous = pgTable(
     filled_bottles: integer("filled_bottles").notNull(),
     empty_bottles: integer("empty_bottles").notNull(),
     damaged_bottles: integer("damaged_bottles").notNull(),
+    delivery_date: timestamp("delivery_date", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
     createdAt: timestamp("createdAt", { withTimezone: true })
       .notNull()
       .defaultNow(),

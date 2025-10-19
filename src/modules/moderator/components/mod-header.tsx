@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useConfirm } from "@/hooks/use-confirm";
-import { useModeratorStore } from "@/lib/moderator-state";
+import { useModeratorStore } from "@/lib/ui-states/moderator-state";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect, usePathname } from "next/navigation";
@@ -14,7 +14,7 @@ export const ModHeader = () => {
 
   const [LogoutConfirmDialog, logout_confirm] = useConfirm(
     "Are you sure you want to log out?",
-    "You will be redirected to the login page.",
+    "You will be redirected to the login page."
   );
 
   const handleLogout = async () => {

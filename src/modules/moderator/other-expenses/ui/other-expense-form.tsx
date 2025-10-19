@@ -16,12 +16,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useModeratorStore } from "@/lib/moderator-state";
+import { useModeratorStore } from "@/lib/ui-states/moderator-state";
 import { toast } from "sonner";
 import { Loader2, SendHorizonal } from "lucide-react";
 import { otherExpenseDataSchema } from "@/modules/moderator/other-expenses/server/add-other-expense.orpc";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { orpc } from "@/lib/orpc";
+import { useDOBStore } from "@/lib/ui-states/date-of-bottle-usage";
 
 const formSchema = z.object({
   refilled_bottles: z.number().min(0),
@@ -41,14 +42,17 @@ export function OtherExpenseForm() {
 
   const moderator = useModeratorStore((state) => state.moderator);
 
+  const dob = useDOBStore((state) => state.dob);
+
   const queryClient = useQueryClient();
   const createOtherExpenseMutation = useMutation(
     orpc.moderator.otherExpenses.addOtherExpense.mutationOptions({
       onSuccess: async () => {
+        if (!moderator || !dob) return;
         await Promise.all([
           queryClient.invalidateQueries({
             queryKey: orpc.moderator.bottleUsage.getBottleUsage.queryKey({
-              input: { id: moderator?.id },
+              input: { id: moderator.id, date: dob },
             }),
           }),
           queryClient.invalidateQueries({
@@ -67,12 +71,17 @@ export function OtherExpenseForm() {
       return;
     }
 
+    if (!dob) {
+      toast.error("Date of Bottle Usage not set. Please select a date.");
+      return;
+    }
+
     const data: z.infer<typeof otherExpenseDataSchema> = {
       moderator_id: moderator.id,
       refilled_bottles: values.refilled_bottles,
       amount: values.amount,
       description: values.description,
-      date: new Date(),
+      date: dob,
     };
     console.log(data);
 

@@ -31,7 +31,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Customer } from "@/db/schema";
-import { useModeratorStore } from "@/lib/moderator-state";
+import { useModeratorStore } from "@/lib/ui-states/moderator-state";
 import { client } from "@/lib/orpc";
 import { cn } from "@/lib/utils";
 import { DeliveryRecordZod } from "@/modules/moderator/daily-deliveries/server/add-daily-delivery.orpc";
@@ -42,6 +42,7 @@ import {
   SendHorizonal,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useDOBStore } from "@/lib/ui-states/date-of-bottle-usage";
 
 // FORM SCHEMA
 const formSchema = z
@@ -77,6 +78,7 @@ export const DailyDeliveryForm = () => {
       filled_bottles: 0,
       empty_bottles: 0,
       deposit_bottles_given: 0,
+      deposit_bottles_taken: 0,
       foc: 0,
       damaged_bottles: 0,
       payment: 0,
@@ -88,6 +90,7 @@ export const DailyDeliveryForm = () => {
     typeof Customer.$inferSelect | null
   >(null);
   const moderator = useModeratorStore((state) => state.moderator);
+  const dob = useDOBStore((state) => state.dob);
 
   // Calculate balances based on payment flow
   const calculateBalances = () => {
@@ -165,6 +168,12 @@ export const DailyDeliveryForm = () => {
       setSubmitting(false);
       return;
     }
+    // Check if dob is available
+    if (!dob) {
+      alert("Please select a date of bottle usage first.");
+      setSubmitting(false);
+      return;
+    }
 
     // Error Handling/Form Validation for empty_bottles
     if (
@@ -238,7 +247,7 @@ export const DailyDeliveryForm = () => {
     const data: z.infer<typeof DeliveryRecordZod> = {
       payment: values.payment || 0,
       balance,
-      delivery_date: new Date(),
+      delivery_date: dob,
       moderator_id: moderator!.id,
       customer_id: customerData.customer_id,
       filled_bottles: values.filled_bottles,

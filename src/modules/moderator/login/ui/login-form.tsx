@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { redirect } from "next/navigation";
-import { useModeratorStore } from "@/lib/moderator-state";
+import { useModeratorStore } from "@/lib/ui-states/moderator-state";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { client } from "@/lib/orpc";
@@ -42,7 +42,7 @@ export const ModLoginForm = () => {
     setSubmitting(true);
 
     const { success, message, mod_data } = await client.moderator.auth.modLogin(
-      { name: values.name, password: values.password },
+      { name: values.name, password: values.password }
     );
 
     setSubmitting(false);

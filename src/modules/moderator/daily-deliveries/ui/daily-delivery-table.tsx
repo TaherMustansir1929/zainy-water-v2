@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table";
 import { useState } from "react";
 import { format } from "date-fns";
-import { useModeratorStore } from "@/lib/moderator-state";
+import { useModeratorStore } from "@/lib/ui-states/moderator-state";
 import { Button } from "@/components/ui/button";
 import { Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -18,6 +18,7 @@ import { Customer, Delivery } from "@/db/schema";
 import { useConfirm } from "@/hooks/use-confirm";
 import { client, orpc } from "@/lib/orpc";
 import { useMutation } from "@tanstack/react-query";
+import { useDOBStore } from "@/lib/ui-states/date-of-bottle-usage";
 
 export type DeliveryTableData = {
   delivery: typeof Delivery.$inferSelect;
@@ -36,9 +37,16 @@ export const DailyDeliveryTable = () => {
   const [deliveries, setDeliveries] = useState<DeliveryTableData[]>([]);
   const moderator = useModeratorStore((state) => state.moderator);
 
+  const dob = useDOBStore((state) => state.dob);
+
   const fetchDeliveries = async () => {
     if (!moderator?.id) {
       toast.error("Moderator not found");
+      return;
+    }
+
+    if (!dob) {
+      toast.error("Please select a date to fetch deliveries");
       return;
     }
 
@@ -46,6 +54,7 @@ export const DailyDeliveryTable = () => {
     // Fetch deliveries for the current moderator
     const delivery_data = await client.moderator.deliveries.getDailyDeliveries({
       moderator_id: moderator.id,
+      date: dob,
     });
 
     setListLoading(false);

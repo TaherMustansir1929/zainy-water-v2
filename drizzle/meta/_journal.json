@@ -176,6 +176,13 @@
       "when": 1760886506541,
       "tag": "0024_left_captain_britain",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1760895587733,
+      "tag": "0025_purple_dark_beast",
+      "breakpoints": true
     }
   ]
 }

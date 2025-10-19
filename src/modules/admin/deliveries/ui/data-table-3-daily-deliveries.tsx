@@ -127,7 +127,7 @@ const columns: ColumnDef<columnSchema>[] = [
     cell: ({ row }) => (
       <div className="w-full">
         <Badge variant="outline" className="text-muted-foreground px-1.5">
-          {format(row.original.Delivery.createdAt, "PPPP")}
+          {format(row.original.Delivery.delivery_date, "PPPP")}
         </Badge>
       </div>
     ),
@@ -138,7 +138,7 @@ const columns: ColumnDef<columnSchema>[] = [
     cell: ({ row }) => (
       <Badge variant="outline" className="text-muted-foreground px-1.5 w-full">
         {startOfDay(new Date()) >
-        startOfDay(row.original.Delivery.createdAt) ? (
+        startOfDay(row.original.Delivery.delivery_date) ? (
           <>
             <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />{" "}
             Done

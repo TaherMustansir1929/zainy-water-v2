@@ -16,6 +16,7 @@ export const addMiscDelivery = os
       damaged_bottles: z.number(),
       isPaid: z.boolean(),
       payment: z.number(),
+      delivery_date: z.date(),
     })
   )
   .output(z.void())
@@ -70,6 +71,7 @@ export const addMiscDelivery = os
       await Promise.all([
         tx.insert(Miscellaneous).values({
           ...input,
+          delivery_date: input.delivery_date,
         }),
 
         tx

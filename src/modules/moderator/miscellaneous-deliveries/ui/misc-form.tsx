@@ -17,10 +17,11 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, SendHorizonal } from "lucide-react";
 import { BottleInput } from "@/components/bottle-input";
-import { useModeratorStore } from "@/lib/moderator-state";
+import { useModeratorStore } from "@/lib/ui-states/moderator-state";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { orpc } from "@/lib/orpc";
+import { useDOBStore } from "@/lib/ui-states/date-of-bottle-usage";
 
 const formSchema = z
   .object({
@@ -56,16 +57,18 @@ export const MiscDeliveryForm = () => {
   });
 
   const moderator_id = useModeratorStore((state) => state.moderator?.id);
+  const dob = useDOBStore((state) => state.dob);
 
   const queryClient = useQueryClient();
   const createMutation = useMutation(
     orpc.moderator.miscellaneous.addMiscDelivery.mutationOptions({
       onSuccess: async () => {
         toast.success("Miscellaneous delivery added successfully");
+        if (!moderator_id || !dob) return;
         await Promise.all([
           queryClient.invalidateQueries({
             queryKey: orpc.moderator.bottleUsage.getBottleUsage.queryKey({
-              input: { id: moderator_id },
+              input: { id: moderator_id, date: dob },
             }),
           }),
           queryClient.invalidateQueries({
@@ -76,7 +79,7 @@ export const MiscDeliveryForm = () => {
       onError: (error) => {
         toast.error(`Error adding miscellaneous delivery: ${error.message}`);
       },
-    }),
+    })
   );
   const submitting = createMutation.isPending;
 
@@ -86,9 +89,15 @@ export const MiscDeliveryForm = () => {
       return;
     }
 
+    if (!dob) {
+      toast.error("Please select a date of bottle usage.");
+      return;
+    }
+
     await createMutation.mutateAsync({
       moderator_id,
       ...values,
+      delivery_date: dob,
     });
 
     form.reset();
@@ -236,7 +245,7 @@ export const MiscDeliveryForm = () => {
                       value={field.value}
                       onChange={(e) =>
                         field.onChange(
-                          e.target.value === "" ? 0 : Number(e.target.value),
+                          e.target.value === "" ? 0 : Number(e.target.value)
                         )
                       }
                     />
