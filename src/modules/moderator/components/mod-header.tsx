@@ -7,6 +7,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { redirect, usePathname } from "next/navigation";
 import { client } from "@/lib/orpc";
+import { Badge } from "@/components/ui/badge";
+import { format } from "date-fns";
 
 export const ModHeader = () => {
   const pathname = usePathname();
@@ -33,7 +35,13 @@ export const ModHeader = () => {
       <Link href={"/moderator"} className="text-lg font-semibold">
         <Image src={"/logo.jpg"} alt="Zainy Water" width={120} height={120} />
       </Link>
-      <h1 className="capitalize">Welcome, {moderator_name}</h1>
+      <h1 className="capitalize flex flex-col items-center justify-center">
+        Welcome, {moderator_name}{" "}
+        <Badge variant={"outline"}>
+          {format(new Date(), "PPPP hh:mm:ss:SSS aaa")}
+        </Badge>
+      </h1>
+
       {!(pathname === "/moderator/login") && (
         <Button variant="outline" size={"sm"} onClick={handleLogout}>
           Logout
