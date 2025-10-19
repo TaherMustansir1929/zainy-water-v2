@@ -46,12 +46,12 @@ const items = [
     icon: Inbox,
   },
   {
-    title: "Customer Information",
+    title: "Customes",
     url: "/admin/customer-information",
     icon: User,
   },
   {
-    title: "Other Expenses",
+    title: "Expenses",
     url: "/admin/other-expenses",
     icon: Search,
   },

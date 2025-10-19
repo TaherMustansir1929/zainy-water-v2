@@ -29,7 +29,7 @@ import { columnSchema } from "@/modules/admin/deliveries/ui/data-table-3-daily-d
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { Loader2 } from "lucide-react";
+import { Loader2, Trash } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -81,6 +81,43 @@ export function DeliveriesTableCellViewer({ item }: { item: columnSchema }) {
     })
   );
 
+  const deleteMutation = useMutation(
+    orpc.admin.deliveries.deleteDailyDelivery.mutationOptions({
+      onSuccess: async () => {
+        toast.success("Delivery deleted successfully");
+        // Invalidate and refetch
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: orpc.util.get30dDeliveries.queryKey(),
+          }),
+        ]);
+      },
+      onError: (error) => {
+        console.error("Error deleting delivery:", error);
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Failed to delete delivery. Please try again."
+        );
+      },
+    })
+  );
+
+  const [DeleteConfirmDialog, delete_confirm] = useConfirm(
+    "Are you sure?",
+    "WARNING: You are about to delete this delivery record. This action cannot be undone.",
+    true
+  );
+
+  const handleDelete = async () => {
+    const ok = await delete_confirm();
+    if (!ok) return;
+
+    await deleteMutation.mutateAsync({
+      data: item,
+    });
+  };
+
   const button_disabled =
     form.watch("filled_bottles") === item.Delivery.filled_bottles &&
     form.watch("empty_bottles") === item.Delivery.empty_bottles &&
@@ -113,6 +150,7 @@ export function DeliveriesTableCellViewer({ item }: { item: columnSchema }) {
   return (
     <>
       <ConfirmDialog />
+      <DeleteConfirmDialog />
       <Drawer direction={isMobile ? "bottom" : "right"}>
         <DrawerTrigger asChild>
           <Button
@@ -263,7 +301,28 @@ export function DeliveriesTableCellViewer({ item }: { item: columnSchema }) {
           </div>
           <DrawerFooter>
             <DrawerClose asChild>
-              <Button variant="outline">Close</Button>
+              <div className="grid grid-cols-1 gap-2">
+                <Button variant="outline" className="cursor-pointer">
+                  Close
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={handleDelete}
+                  className="cursor-pointer"
+                >
+                  {deleteMutation.isPending ? (
+                    <>
+                      Deleting
+                      <Loader2 className={"animate-spin"} />
+                    </>
+                  ) : (
+                    <>
+                      <Trash className="size-4" />
+                      Delete
+                    </>
+                  )}
+                </Button>
+              </div>
             </DrawerClose>
           </DrawerFooter>
         </DrawerContent>

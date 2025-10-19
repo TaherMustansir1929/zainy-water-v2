@@ -77,6 +77,11 @@ import {
 } from "@/components/ui/table";
 import { Miscellaneous, Moderator } from "@/db/schema";
 import { format, startOfDay } from "date-fns";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export type columnSchema = {
   Moderator: typeof Moderator.$inferSelect;
@@ -112,32 +117,32 @@ const columns: ColumnDef<columnSchema>[] = [
     header: () => null,
     cell: () => null,
   },
-  {
-    id: "select",
-    header: ({ table }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      </div>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
+  // {
+  //   id: "select",
+  //   header: ({ table }) => (
+  //     <div className="flex items-center justify-center">
+  //       <Checkbox
+  //         checked={
+  //           table.getIsAllPageRowsSelected() ||
+  //           (table.getIsSomePageRowsSelected() && "indeterminate")
+  //         }
+  //         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+  //         aria-label="Select all"
+  //       />
+  //     </div>
+  //   ),
+  //   cell: ({ row }) => (
+  //     <div className="flex items-center justify-center">
+  //       <Checkbox
+  //         checked={row.getIsSelected()}
+  //         onCheckedChange={(value) => row.toggleSelected(!!value)}
+  //         aria-label="Select row"
+  //       />
+  //     </div>
+  //   ),
+  //   enableSorting: false,
+  //   enableHiding: false,
+  // },
   {
     accessorKey: "customer",
     header: "Customer",
@@ -151,7 +156,7 @@ const columns: ColumnDef<columnSchema>[] = [
     accessorKey: "date",
     header: "Date",
     cell: ({ row }) => (
-      <div className="w-32">
+      <div className="w-full">
         <Badge variant="outline" className="text-muted-foreground px-1.5">
           {format(row.original.Miscellaneous.createdAt, "PPPP")}
         </Badge>
@@ -162,7 +167,7 @@ const columns: ColumnDef<columnSchema>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => (
-      <Badge variant="outline" className="text-muted-foreground px-1.5">
+      <Badge variant="outline" className="text-muted-foreground px-1.5 w-full">
         {startOfDay(new Date()) >
         startOfDay(row.original.Miscellaneous.createdAt) ? (
           <>
@@ -181,10 +186,29 @@ const columns: ColumnDef<columnSchema>[] = [
     accessorKey: "moderator",
     header: "Moderator",
     cell: ({ row }) => {
-      return <div className={"capitalize"}>{row.original.Moderator.name}</div>;
+      return (
+        <div className={"capitalize w-full"}>{row.original.Moderator.name}</div>
+      );
     },
     enableHiding: false,
     accessorFn: (row) => row.Moderator.name,
+  },
+  {
+    accessorKey: "isPaid",
+    header: "Paid",
+    cell: ({ row }) => (
+      <>
+        {row.original.Miscellaneous.isPaid ? (
+          <Badge variant={"outline"} className={"border-green-200"}>
+            Yes
+          </Badge>
+        ) : (
+          <Badge variant={"outline"} className={"border-red-200"}>
+            No
+          </Badge>
+        )}
+      </>
+    ),
   },
   {
     accessorKey: "payment",
@@ -221,27 +245,22 @@ const columns: ColumnDef<columnSchema>[] = [
     ),
   },
   {
-    accessorKey: "isPaid",
-    header: "Paid",
-    cell: ({ row }) => (
-      <>
-        {row.original.Miscellaneous.isPaid ? (
-          <Badge variant={"outline"} className={"border-green-200"}>
-            Yes
-          </Badge>
-        ) : (
-          <Badge variant={"outline"} className={"border-red-200"}>
-            No
-          </Badge>
-        )}
-      </>
-    ),
-  },
-  {
     accessorKey: "description",
     header: "Description",
     cell: ({ row }) => {
-      return <div>{row.original.Miscellaneous.description}</div>;
+      const desc = row.original.Miscellaneous.description;
+      return (
+        <div>
+          <Tooltip>
+            <TooltipTrigger>
+              {desc.length > 20 ? `${desc.slice(0, 20)}...` : desc}
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{desc}</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      );
     },
     enableHiding: false,
     accessorFn: (row) => row.Miscellaneous.description,

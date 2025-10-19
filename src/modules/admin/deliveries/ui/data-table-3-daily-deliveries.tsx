@@ -125,7 +125,7 @@ const columns: ColumnDef<columnSchema>[] = [
     accessorKey: "date",
     header: "Date",
     cell: ({ row }) => (
-      <div className="w-32">
+      <div className="w-full">
         <Badge variant="outline" className="text-muted-foreground px-1.5">
           {format(row.original.Delivery.createdAt, "PPPP")}
         </Badge>
@@ -136,7 +136,7 @@ const columns: ColumnDef<columnSchema>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => (
-      <Badge variant="outline" className="text-muted-foreground px-1.5">
+      <Badge variant="outline" className="text-muted-foreground px-1.5 w-full">
         {startOfDay(new Date()) >
         startOfDay(row.original.Delivery.createdAt) ? (
           <>
@@ -155,7 +155,9 @@ const columns: ColumnDef<columnSchema>[] = [
     accessorKey: "moderator",
     header: "Moderator",
     cell: ({ row }) => {
-      return <div className={"capitalize"}>{row.original.Moderator.name}</div>;
+      return (
+        <div className={"capitalize w-full"}>{row.original.Moderator.name}</div>
+      );
     },
     enableHiding: false,
     accessorFn: (row) => row.Moderator.name,

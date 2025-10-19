@@ -1,17 +1,16 @@
 import { db } from "@/db";
 import { BottleUsage, Customer, Delivery, TotalBottles } from "@/db/schema";
-import { DeliveryTableData } from "@/modules/moderator/daily-deliveries/ui/daily-delivery-table";
-import { os } from "@orpc/server";
+import { adminProcedure } from "@/middlewares/admin-clerk";
 import { startOfDay } from "date-fns";
 import { and, desc, eq, gte } from "drizzle-orm";
 import { z } from "zod";
+import { columnSchema } from "../ui/data-table-3-daily-deliveries";
 
 export const DeleteDeliveryDataProp = z.object({
-  data: z.custom<DeliveryTableData>(),
-  moderator_id: z.string(),
+  data: z.custom<columnSchema>(),
 });
 
-export const deleteDailyDelivery = os
+export const deleteDailyDelivery = adminProcedure
   .input(DeleteDeliveryDataProp)
   .output(z.void())
   .errors({
@@ -29,12 +28,13 @@ export const deleteDailyDelivery = os
     },
   })
   .handler(async ({ input, errors }) => {
+    const { data } = input;
     const [bottleUsage] = await db
       .select()
       .from(BottleUsage)
       .where(
         and(
-          eq(BottleUsage.moderator_id, input.moderator_id),
+          eq(BottleUsage.moderator_id, data.Moderator.id),
           gte(BottleUsage.createdAt, startOfDay(new Date()))
         )
       )
@@ -63,16 +63,15 @@ export const deleteDailyDelivery = os
             .set({
               sales: Math.max(
                 0,
-                bottleUsage.sales - input.data.delivery.filled_bottles
+                bottleUsage.sales - data.Delivery.filled_bottles
               ),
               remaining_bottles:
-                bottleUsage.remaining_bottles +
-                input.data.delivery.filled_bottles,
+                bottleUsage.remaining_bottles + data.Delivery.filled_bottles,
               empty_bottles: Math.max(
                 0,
-                bottleUsage.empty_bottles - input.data.delivery.empty_bottles
+                bottleUsage.empty_bottles - data.Delivery.empty_bottles
               ),
-              revenue: bottleUsage.revenue - input.data.delivery.payment,
+              revenue: bottleUsage.revenue - data.Delivery.payment,
             })
             .where(eq(BottleUsage.id, bottleUsage.id)),
 
@@ -80,8 +79,7 @@ export const deleteDailyDelivery = os
             .update(TotalBottles)
             .set({
               damaged_bottles:
-                totalBottles.damaged_bottles -
-                input.data.delivery.damaged_bottles,
+                totalBottles.damaged_bottles - data.Delivery.damaged_bottles,
             })
             .where(eq(TotalBottles.id, totalBottles.id)),
 
@@ -89,18 +87,18 @@ export const deleteDailyDelivery = os
             .update(Customer)
             .set({
               bottles:
-                input.data.customer.bottles +
-                input.data.delivery.empty_bottles -
-                input.data.delivery.filled_bottles,
+                data.Customer.bottles +
+                data.Delivery.empty_bottles -
+                data.Delivery.filled_bottles,
               balance:
-                input.data.customer.balance +
-                input.data.delivery.payment -
-                (input.data.delivery.filled_bottles - input.data.delivery.foc) *
-                  input.data.customer.bottle_price,
+                data.Customer.balance +
+                data.Delivery.payment -
+                (data.Delivery.filled_bottles - data.Delivery.foc) *
+                  data.Customer.bottle_price,
             })
-            .where(eq(Customer.id, input.data.customer.id)),
+            .where(eq(Customer.id, data.Customer.id)),
 
-          tx.delete(Delivery).where(eq(Delivery.id, input.data.delivery.id)),
+          tx.delete(Delivery).where(eq(Delivery.id, data.Delivery.id)),
         ]);
       });
     } catch (error) {
@@ -109,13 +107,13 @@ export const deleteDailyDelivery = os
     }
 
     //     await sendWhatsAppMessage(
-    //       input.data.customer.phone,
-    //       `\`\`\`⚠️ NOTE: The delivery made at\`\`\` *_${format(input.data.delivery.createdAt, "hh:mm aaaa PPPP")}_* \`\`\`has been deleted due to invalid/wrong delivery entry.
+    //       data.customer.phone,
+    //       `\`\`\`⚠️ NOTE: The delivery made at\`\`\` *_${format(data.delivery.createdAt, "hh:mm aaaa PPPP")}_* \`\`\`has been deleted due to invalid/wrong delivery entry.
     // Short Delivery Details:
-    // - Customer: ${input.data.customer.name}
-    // - Filled Bottles: ${input.data.delivery.filled_bottles}
-    // - Empty Bottles: ${input.data.delivery.empty_bottles}
-    // - Payment: ${input.data.delivery.payment}
+    // - Customer: ${data.customer.name}
+    // - Filled Bottles: ${data.delivery.filled_bottles}
+    // - Empty Bottles: ${data.delivery.empty_bottles}
+    // - Payment: ${data.delivery.payment}
 
     // Sorry for the inconvenience.\`\`\``
     //     );

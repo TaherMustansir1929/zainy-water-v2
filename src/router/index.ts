@@ -3,7 +3,7 @@ import {
   getCustomersByArea,
   getDailyDeliveries,
 } from "@/modules/moderator/daily-deliveries/server/add-daily-delivery.orpc";
-import { deleteDailyDelivery } from "@/modules/moderator/daily-deliveries/server/delete-daily-delivery.orpc";
+import { deleteDailyDelivery as modDeleteDailyDelivery } from "@/modules/moderator/daily-deliveries/server/delete-daily-delivery.orpc";
 import {
   addOtherExpense,
   getOtherExpensesByModeratorId,
@@ -53,6 +53,8 @@ import { getSalesAndExpensesForMod } from "@/modules/moderator/bottle-usage/serv
 import { deleteBottleUsage as adminDeleteBottleUsage } from "@/modules/admin/bottle-inventory/server/deleteBottleUsage.orpc";
 import { editBottleUsage } from "@/modules/admin/bottle-inventory/server/editBottleUsage.orpc.";
 import { deleteBottleUsage as modDeleteBottleUsage } from "@/modules/moderator/bottle-usage/server/deleteBottleUsage.orpc";
+import { deleteDailyDelivery as adminDeleteDailyDelivery } from "@/modules/admin/deliveries/server/deleteDailyDelivery.orpc";
+import { deleteMiscdelivery as adminDeleteMiscDelivery } from "@/modules/admin/deliveries/server/deleteMiscDelivery.orpc";
 
 export const router = {
   moderator: {
@@ -60,7 +62,7 @@ export const router = {
       addDailyDelivery,
       getDailyDeliveries,
       getCustomersByArea,
-      deleteDailyDelivery,
+      deleteDailyDelivery: modDeleteDailyDelivery,
     },
     otherExpenses: {
       addOtherExpense,
@@ -110,6 +112,8 @@ export const router = {
     deliveries: {
       updateDailyDelivery,
       updateMiscDelivery,
+      deleteDailyDelivery: adminDeleteDailyDelivery,
+      deleteMiscDelivery: adminDeleteMiscDelivery,
     },
     customerInfo: {
       createCustomer,
