@@ -9,7 +9,6 @@ import { Suspense } from "react";
 import { Atom } from "react-loading-indicators";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorState from "@/components/hydration-states/error-state";
-import "@/lib/orpc.server";
 import { orpc } from "@/lib/orpc";
 
 const AdminPage = async () => {

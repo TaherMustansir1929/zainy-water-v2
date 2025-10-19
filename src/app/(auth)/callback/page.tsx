@@ -3,7 +3,6 @@ import { cookies } from "next/headers";
 import { currentUser } from "@clerk/nextjs/server";
 import { UserButton } from "@clerk/nextjs";
 import { CallbackForm } from "./callback-form";
-import "@/lib/orpc.server";
 import { client } from "@/lib/orpc";
 
 // Force dynamic rendering for this page

@@ -1,6 +1,3 @@
-"use server";
-
-import "@/lib/orpc.server";
 import ErrorState from "@/components/hydration-states/error-state";
 import { orpc } from "@/lib/orpc";
 import { BottleInventoryMainSection } from "@/modules/admin/bottle-inventory/ui/bottle-inventory-main-section";

@@ -1,6 +1,5 @@
 import { MainFooter } from "@/components/main-footer";
 import { ModHeader } from "@/modules/moderator/components/mod-header";
-import "@/lib/orpc.server";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
