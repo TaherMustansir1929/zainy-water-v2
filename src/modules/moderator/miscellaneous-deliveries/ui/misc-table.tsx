@@ -16,6 +16,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Miscellaneous } from "@/db/schema";
 import { client } from "@/lib/orpc";
+import { useDOBStore } from "@/lib/ui-states/date-of-bottle-usage";
 
 export const MiscDeliveryTable = () => {
   const [miscDeliveries, setMiscDeliveries] = useState<
@@ -23,10 +24,16 @@ export const MiscDeliveryTable = () => {
   >([]);
   const [loading, setLoading] = useState(false);
   const moderator = useModeratorStore((state) => state.moderator);
+  const dob = useDOBStore((state) => state.dob);
 
   const fetchDeliveries = async () => {
     if (!moderator) {
       toast.error("Moderator not found");
+      return;
+    }
+
+    if (!dob) {
+      toast.error("Date of Bottle Usage not set");
       return;
     }
 
@@ -35,6 +42,7 @@ export const MiscDeliveryTable = () => {
     const miscData =
       await client.moderator.miscellaneous.getMiscDeliveriesByMod({
         id: moderator.id,
+        dob: dob,
       });
 
     setLoading(false);

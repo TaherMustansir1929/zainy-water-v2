@@ -93,6 +93,7 @@ export const getOtherExpensesByModeratorId = os
   .input(
     z.object({
       id: z.string(),
+      dob: z.date(),
     })
   )
   .output(
@@ -107,8 +108,8 @@ export const getOtherExpensesByModeratorId = os
         .where(
           and(
             eq(OtherExpense.moderator_id, input.id),
-            gte(OtherExpense.date, startOfDay(new Date())),
-            lte(OtherExpense.date, endOfDay(new Date()))
+            gte(OtherExpense.date, startOfDay(input.dob)),
+            lte(OtherExpense.date, endOfDay(input.dob))
           )
         )
         .orderBy(desc(OtherExpense.date));

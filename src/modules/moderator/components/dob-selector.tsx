@@ -14,30 +14,36 @@ export const DobSelector = () => {
   const { dob, setDOB } = useDOBStore();
 
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Badge
-          variant={"outline"}
-          className={cn(
-            !dob && "text-muted-foreground",
-            "flex justify-center items-center mt-2 cursor-pointer"
-          )}
-        >
-          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-          {dob ? format(dob, "PPP") : <span>Pick a date</span>}
-        </Badge>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
-        <Calendar
-          mode="single"
-          selected={dob || new Date()}
-          onSelect={(date) => setDOB(date || null)}
-          disabled={(date) =>
-            date > new Date() || date < new Date("1900-01-01")
-          }
-          captionLayout="dropdown"
-        />
-      </PopoverContent>
-    </Popover>
+    <div className="grid grid-cols-1 justify-center items-center">
+      <Popover>
+        <PopoverTrigger asChild>
+          <Badge
+            variant={"outline"}
+            className={cn(
+              !dob && "text-muted-foreground",
+              "flex justify-center items-center mt-2 cursor-pointer"
+            )}
+          >
+            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+            {dob ? format(dob, "PPP") : <span>Pick a date</span>}
+          </Badge>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar
+            mode="single"
+            selected={dob || new Date()}
+            onSelect={(date) => setDOB(date || null)}
+            disabled={(date) =>
+              date > new Date() || date < new Date("1900-01-01")
+            }
+            captionLayout="dropdown"
+          />
+        </PopoverContent>
+      </Popover>
+
+      <pre className="md:text-xs text-[10px] text-gray-400">
+        <code>{"</click>"}</code>
+      </pre>
+    </div>
   );
 };

@@ -63,7 +63,7 @@ export const columns: ColumnDef<Moderator>[] = [
         <div className={"flex flex-row items-center gap-2 capitalize"}>
           <GeneratedAvatar seed={row.original.name} />
           <Tooltip>
-            <TooltipTrigger>
+            <TooltipTrigger asChild>
               <Button
                 variant={"link"}
                 className="text-black decoration-black cursor-pointer"
@@ -95,7 +95,9 @@ export const columns: ColumnDef<Moderator>[] = [
       return (
         <Accordion type="single" collapsible>
           <AccordionItem value="item-1">
-            <AccordionTrigger>Areas</AccordionTrigger>
+            <AccordionTrigger className="cursor-pointer">
+              Areas
+            </AccordionTrigger>
             <AccordionContent className="w-fit">
               <ul>
                 {areas.map((area, index) => (

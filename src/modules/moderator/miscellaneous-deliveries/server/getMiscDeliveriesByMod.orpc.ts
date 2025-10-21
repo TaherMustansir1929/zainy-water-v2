@@ -6,9 +6,9 @@ import { and, desc, eq, gte, lte } from "drizzle-orm";
 import { endOfDay, startOfDay } from "date-fns";
 
 export const getMiscDeliveriesByMod = os
-  .input(z.object({ id: z.string() }))
+  .input(z.object({ id: z.string(), dob: z.date() }))
   .output(
-    z.union([z.array(z.custom<typeof Miscellaneous.$inferSelect>()), z.null()]),
+    z.union([z.array(z.custom<typeof Miscellaneous.$inferSelect>()), z.null()])
   )
   .handler(async ({ input }) => {
     // Fetch from database directly
@@ -18,9 +18,9 @@ export const getMiscDeliveriesByMod = os
       .where(
         and(
           eq(Miscellaneous.moderator_id, input.id),
-          gte(Miscellaneous.createdAt, startOfDay(new Date())),
-          lte(Miscellaneous.createdAt, endOfDay(new Date())),
-        ),
+          gte(Miscellaneous.createdAt, startOfDay(input.dob)),
+          lte(Miscellaneous.createdAt, endOfDay(input.dob))
+        )
       )
       .orderBy(desc(Miscellaneous.createdAt));
 

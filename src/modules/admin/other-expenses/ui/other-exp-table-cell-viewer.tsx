@@ -119,150 +119,107 @@ export const OtherExpTableCellViewer = ({ item }: { item: columnSchema }) => {
                   className="space-y-8"
                 >
                   <ul className="divide-y divide-border">
-                    {startOfDay(item.OtherExpense.createdAt) <
-                    startOfDay(new Date()) ? (
-                      <>
-                        {Object.entries(item.OtherExpense).map(
-                          ([key, value], index) => {
-                            if (
-                              [
-                                "id",
-                                "moderator_id",
-                                "createdAt",
-                                "updatedAt",
-                                "date",
-                              ].includes(key)
-                            ) {
-                              return null;
+                    <li className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 hover:bg-muted/50 transition-colors">
+                      <FormField
+                        control={form.control}
+                        name="amount"
+                        render={({ field }) => (
+                          <FormItem
+                            className={
+                              "w-full flex flex-row items-center justify-between"
                             }
-                            return (
-                              <li
-                                key={index}
-                                className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 hover:bg-muted/50 transition-colors"
-                              >
-                                <span className="text-sm font-medium text-muted-foreground capitalize">
-                                  {key.replace(/_/g, " ")}
-                                </span>
-                                <span className="text-sm font-semibold">
-                                  {value.toString()}
-                                </span>
-                              </li>
-                            );
-                          }
+                          >
+                            <FormLabel>Amount</FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                type={"number"}
+                                value={field.value}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  // Convert to number or 0 if empty
+                                  field.onChange(value ? parseFloat(value) : 0);
+                                }}
+                                className={"max-w-[100px]"}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
                         )}
-                      </>
-                    ) : (
-                      <>
-                        <li className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 hover:bg-muted/50 transition-colors">
-                          <FormField
-                            control={form.control}
-                            name="amount"
-                            render={({ field }) => (
-                              <FormItem
-                                className={
-                                  "w-full flex flex-row items-center justify-between"
-                                }
-                              >
-                                <FormLabel>Amount</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    {...field}
-                                    type={"number"}
-                                    value={field.value}
-                                    onChange={(e) => {
-                                      const value = e.target.value;
-                                      // Convert to number or 0 if empty
-                                      field.onChange(
-                                        value ? parseFloat(value) : 0
-                                      );
-                                    }}
-                                    className={"max-w-[100px]"}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </li>
+                      />
+                    </li>
 
-                        <li className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 hover:bg-muted/50 transition-colors">
-                          <FormField
-                            control={form.control}
-                            name="description"
-                            render={({ field }) => (
-                              <FormItem
-                                className={
-                                  "w-full flex flex-row items-center justify-between"
-                                }
-                              >
-                                <FormLabel>Description</FormLabel>
-                                <FormControl>
-                                  <Textarea
-                                    {...field}
-                                    className={"max-w-[150px]"}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </li>
+                    <li className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 hover:bg-muted/50 transition-colors">
+                      <FormField
+                        control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                          <FormItem
+                            className={
+                              "w-full flex flex-row items-center justify-between"
+                            }
+                          >
+                            <FormLabel>Description</FormLabel>
+                            <FormControl>
+                              <Textarea
+                                {...field}
+                                className={"max-w-[150px]"}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </li>
 
-                        <li className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 hover:bg-muted/50 transition-colors">
-                          <FormField
-                            control={form.control}
-                            name="refilled_bottles"
-                            render={({ field }) => (
-                              <FormItem
-                                className={
-                                  "w-full flex flex-row items-center justify-between"
-                                }
-                              >
-                                <FormLabel>Refilled Bottles</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    {...field}
-                                    type={"number"}
-                                    value={field.value}
-                                    onChange={(e) => {
-                                      const value = e.target.value;
-                                      // Convert to number or 0 if empty
-                                      field.onChange(
-                                        value ? parseFloat(value) : 0
-                                      );
-                                    }}
-                                    className={"max-w-[100px]"}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </li>
-                      </>
-                    )}
+                    <li className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 py-3 hover:bg-muted/50 transition-colors">
+                      <FormField
+                        control={form.control}
+                        name="refilled_bottles"
+                        render={({ field }) => (
+                          <FormItem
+                            className={
+                              "w-full flex flex-row items-center justify-between"
+                            }
+                          >
+                            <FormLabel>Refilled Bottles</FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                type={"number"}
+                                value={field.value}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  // Convert to number or 0 if empty
+                                  field.onChange(value ? parseFloat(value) : 0);
+                                }}
+                                className={"max-w-[100px]"}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </li>
                   </ul>
-                  {startOfDay(item.OtherExpense.createdAt) >=
-                    startOfDay(new Date()) && (
-                    <div
-                      className={"w-full flex justify-center items-start px-4"}
+                  <div
+                    className={"w-full flex justify-center items-start px-4"}
+                  >
+                    <Button
+                      type={"submit"}
+                      className={"min-w-[150px] cursor-pointer"}
+                      disabled={button_disabled}
                     >
-                      <Button
-                        type={"submit"}
-                        className={"min-w-[150px]"}
-                        disabled={button_disabled}
-                      >
-                        {updateMutation.isPending ? (
-                          <>
-                            Saving
-                            <Loader2 className={"animate-spin"} />
-                          </>
-                        ) : (
-                          <>Save</>
-                        )}
-                      </Button>
-                    </div>
-                  )}
+                      {updateMutation.isPending ? (
+                        <>
+                          Saving
+                          <Loader2 className={"animate-spin"} />
+                        </>
+                      ) : (
+                        <>Save</>
+                      )}
+                    </Button>
+                  </div>
                 </form>
               </Form>
             </CardContent>
@@ -270,7 +227,9 @@ export const OtherExpTableCellViewer = ({ item }: { item: columnSchema }) => {
         </div>
         <DrawerFooter>
           <DrawerClose asChild>
-            <Button variant="outline">Close</Button>
+            <Button variant="outline" className="cursor-pointer">
+              Close
+            </Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>

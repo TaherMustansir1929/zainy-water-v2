@@ -16,6 +16,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { OtherExpense } from "@/db/schema";
 import { client } from "@/lib/orpc";
+import { useDOBStore } from "@/lib/ui-states/date-of-bottle-usage";
 
 export const OtherExpenseTable = () => {
   const [expenses, setExpenses] = useState<
@@ -24,17 +25,27 @@ export const OtherExpenseTable = () => {
   const [loading, setLoading] = useState(false);
   const { moderator } = useModeratorStore();
 
+  const dob = useDOBStore((state) => state.dob);
+
   const fetchExpenses = async () => {
     setLoading(true);
 
     if (!moderator?.id) {
       toast.error("Moderator id missing. Please try again.");
+      setLoading(false);
+      return;
+    }
+
+    if (!dob) {
+      toast.error("Date of bottle usage missing. Please select a date.");
+      setLoading(false);
       return;
     }
 
     const expenseData =
       await client.moderator.otherExpenses.getOtherExpensesByModeratorId({
         id: moderator.id,
+        dob: dob,
       });
 
     setLoading(false);
