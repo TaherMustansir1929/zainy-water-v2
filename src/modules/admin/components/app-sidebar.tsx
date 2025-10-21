@@ -1,5 +1,6 @@
 "use client";
 import {
+  AtSign,
   Home,
   Inbox,
   PlusCircle,
@@ -144,6 +145,11 @@ export function AppSidebar({ className }: Props) {
                 </div>
 
                 <div className="fixed bottom-0 space-y-2">
+                  <Link href="/admin/changelog">
+                    <p className="text-xs text-muted-foreground flex items-center gap-1 underline">
+                      <AtSign className="size-3" /> Changelog
+                    </p>
+                  </Link>
                   <MainFooter className="text-xs text-center text-muted-foreground w-full p-2" />
                 </div>
               </div>

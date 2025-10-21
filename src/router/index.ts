@@ -55,6 +55,7 @@ import { editBottleUsage } from "@/modules/admin/bottle-inventory/server/editBot
 import { deleteBottleUsage as modDeleteBottleUsage } from "@/modules/moderator/bottle-usage/server/deleteBottleUsage.orpc";
 import { deleteDailyDelivery as adminDeleteDailyDelivery } from "@/modules/admin/deliveries/server/deleteDailyDelivery.orpc";
 import { deleteMiscdelivery as adminDeleteMiscDelivery } from "@/modules/admin/deliveries/server/deleteMiscDelivery.orpc";
+import { getGithubChanges } from "@/modules/admin/changelog/server/getGithubChanges.orpc";
 
 export const router = {
   moderator: {
@@ -120,6 +121,9 @@ export const router = {
       deleteCustomer,
       updateCustomer,
       getAllCustomers,
+    },
+    changelog: {
+      getGithubChanges,
     },
   },
   auth: {
