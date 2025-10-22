@@ -100,7 +100,6 @@ export const returnBottleUsage = os
               bottleUsage.returned_bottles +
               input.remaining_bottles +
               input.empty_bottles,
-            caps: bottleUsage.caps - input.caps,
             empty_returned: bottleUsage.empty_returned + input.empty_bottles,
             remaining_returned:
               bottleUsage.remaining_returned + input.remaining_bottles,
