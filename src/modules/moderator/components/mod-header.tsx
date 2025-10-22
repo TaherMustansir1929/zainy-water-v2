@@ -38,7 +38,7 @@ export const ModHeader = () => {
       <h1 className="capitalize flex flex-col items-center justify-center">
         Welcome, {moderator_name}{" "}
         <Badge variant={"outline"}>
-          {format(new Date(), "PPPP hh:mm:ss:SSS aaa")}
+          {format(new Date(), "do MMMM hh:mm:ss aaa")}
         </Badge>
       </h1>
 
