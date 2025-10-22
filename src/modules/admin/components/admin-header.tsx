@@ -6,6 +6,7 @@ import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export const AdminHeader = () => {
   const router = useRouter();
@@ -23,7 +24,7 @@ export const AdminHeader = () => {
   };
 
   return (
-    <header className="w-full border-b border-gray-200 p-2 flex justify-between items-center">
+    <header className="w-full border-b border-border p-2 flex justify-between items-center">
       <div className={"flex items-center gap-2"}>
         <SidebarToggleButton />
         <Button variant={"outline"} size={"sm"} onClick={handleRefresh}>
@@ -37,6 +38,7 @@ export const AdminHeader = () => {
       <h1 className="text-lg font-semibold font-mono">Admin Dashboard</h1>
       <div>
         <div className={"flex items-center gap-2 mr-2"}>
+          <ThemeToggle />
           <UserButton />
         </div>
       </div>

@@ -66,7 +66,7 @@ export const columns: ColumnDef<Moderator>[] = [
             <TooltipTrigger asChild>
               <Button
                 variant={"link"}
-                className="text-black decoration-black cursor-pointer"
+                className="text-primary decoration-black cursor-pointer"
                 onClick={() => {
                   setMod(row.original);
                   router.push("/moderator");

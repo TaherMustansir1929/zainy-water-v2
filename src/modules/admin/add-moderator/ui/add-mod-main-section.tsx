@@ -21,7 +21,7 @@ export const AddModMainSection = () => {
   const moderator = mod_data;
 
   const modListQuery = useQuery(
-    orpc.admin.crudModerator.getModList.queryOptions(),
+    orpc.admin.crudModerator.getModList.queryOptions()
   );
   const all_mod_list: Moderator[] = Array.isArray(modListQuery.data)
     ? modListQuery.data
@@ -37,7 +37,7 @@ export const AddModMainSection = () => {
         <h1 className="text-xl md:text-3xl font-bold text-primary">
           Working Moderators
         </h1>
-        <Button variant={"boxShadow"} onClick={() => openAddDrawer()}>
+        <Button variant={"default"} onClick={() => openAddDrawer()}>
           <Plus />
           Add Moderator
         </Button>

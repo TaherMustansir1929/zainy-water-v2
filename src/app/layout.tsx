@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { QueryProvider } from "@/providers/query-provider";
 import { ClerkProvider } from "@clerk/nextjs";
 import { shadcn } from "@clerk/themes";
+import { ThemeProvider as ShadCNThemeProvider } from "@/providers/theme-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,10 +41,17 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <QueryProvider>
-            <Toaster position="top-center" />
-            {children}
-          </QueryProvider>
+          <ShadCNThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <QueryProvider>
+              <Toaster position="top-center" />
+              {children}
+            </QueryProvider>
+          </ShadCNThemeProvider>
         </body>
       </html>
     </ClerkProvider>

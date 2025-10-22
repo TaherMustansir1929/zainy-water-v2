@@ -85,6 +85,7 @@ export function AppSidebar({ className }: Props) {
                 alt="Zainy Water"
                 width={150}
                 height={150}
+                className="dark:bg-black rounded-md"
               />
             </Link>
           </SidebarGroupLabel>
@@ -97,8 +98,9 @@ export function AppSidebar({ className }: Props) {
                     <SidebarMenuButton
                       asChild
                       className={cn(
-                        "hover:bg-gray-100",
-                        pathname === item.url && "bg-gray-300 hover:bg-gray-300"
+                        "hover:bg-gray-100 dark:hover:bg-gray-800",
+                        pathname === item.url &&
+                          "bg-gray-300 dark:bg-gray-900 hover:bg-gray-300 dark:hover:bg-gray-900"
                       )}
                     >
                       <Link href={item.url} className="text-lg">
@@ -116,8 +118,9 @@ export function AppSidebar({ className }: Props) {
                     <SidebarMenuButton
                       asChild
                       className={cn(
-                        "hover:bg-gray-100",
-                        pathname === item.url && "bg-gray-300 hover:bg-gray-300"
+                        "hover:bg-gray-100 dark:hover:bg-gray-800",
+                        pathname === item.url &&
+                          "bg-gray-300 dark:bg-gray-900 hover:bg-gray-300 dark:hover:bg-gray-900"
                       )}
                     >
                       <Link href={item.url}>
