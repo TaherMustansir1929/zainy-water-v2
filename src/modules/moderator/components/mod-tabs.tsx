@@ -158,9 +158,12 @@ export function ModTabs() {
           <section className="w-full flex flex-col md:items-center md:justify-center gap-y-6 p-2">
             <Card className="w-full max-w-2xl">
               <CardHeader>
-                <CardTitle className="text-primary font-bold text-center flex items-center justify-center gap-2">
-                  <ChartPie />
-                  Bottle Usage
+                <CardTitle className="text-primary font-bold text-xl text-center flex flex-col items-center justify-center gap-2">
+                  <div className="flex flex-row gap-2 justify-center items-center">
+                    <ChartPie />
+                    Bottle Usage
+                  </div>
+                  <DobSelector />
                 </CardTitle>
               </CardHeader>
               <CardContent>
