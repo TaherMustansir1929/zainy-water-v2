@@ -10,6 +10,7 @@ export const markAsDone = os
     z.object({
       id: z.string(),
       done: z.boolean(),
+      dob: z.date(),
     })
   )
   .output(z.void())
@@ -20,8 +21,8 @@ export const markAsDone = os
       .where(
         and(
           eq(BottleUsage.moderator_id, input.id),
-          gte(BottleUsage.createdAt, startOfDay(new Date())),
-          lte(BottleUsage.createdAt, endOfDay(new Date()))
+          gte(BottleUsage.createdAt, startOfDay(input.dob)),
+          lte(BottleUsage.createdAt, endOfDay(input.dob))
         )
       );
 

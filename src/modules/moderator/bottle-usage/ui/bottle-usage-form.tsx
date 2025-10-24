@@ -189,7 +189,7 @@ export const BottleUsageForm = () => {
       return;
     }
 
-    await doneMutation.mutateAsync({ id: moderator_id, done });
+    await doneMutation.mutateAsync({ id: moderator_id, done, dob: currentDob });
   };
 
   const deleteMutation = useMutation(

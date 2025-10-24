@@ -72,7 +72,8 @@ export const getBottleUsage = os
           .where(
             and(
               eq(BottleUsage.moderator_id, input.id),
-              gte(BottleUsage.createdAt, startOfDay(new Date()))
+              gte(BottleUsage.createdAt, startOfDay(input.date)),
+              lte(BottleUsage.createdAt, endOfDay(input.date))
             )
           )
           .orderBy(desc(BottleUsage.createdAt))
