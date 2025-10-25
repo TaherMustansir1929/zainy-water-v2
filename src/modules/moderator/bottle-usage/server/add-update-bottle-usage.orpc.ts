@@ -10,7 +10,7 @@ export const addUpdateBottleUsage = os
   .input(
     z.object({
       moderator_id: z.string(),
-      dob: z.date(),
+      dob: z.date().nullable(),
       filled_bottles: z.number(),
       caps: z.number(),
     })
@@ -27,6 +27,10 @@ export const addUpdateBottleUsage = os
     },
   })
   .handler(async ({ input, errors }) => {
+    if (!input.dob) {
+      throw new ORPCError("BAD_REQUEST: DOB is not provided");
+    }
+
     const [total_bottles] = await db
       .select()
       .from(TotalBottles)

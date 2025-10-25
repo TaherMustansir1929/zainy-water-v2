@@ -16,41 +16,20 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  CalendarIcon,
-  CheckCheckIcon,
-  Loader2,
-  SendHorizonal,
-  Trash,
-  Undo2,
-} from "lucide-react";
-import { useModeratorStore } from "@/lib/ui-states/moderator-state";
-import { toast } from "sonner";
-import { BottleUsageTable } from "./bottle-usage-table";
-import { BottleReturnForm } from "./bottle-return-form";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { orpc } from "@/lib/orpc";
-import { TotalBottles } from "@/db/schema";
 import { Separator } from "@/components/ui/separator";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { format, startOfDay, subDays } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { TotalBottles } from "@/db/schema";
 import { useConfirm } from "@/hooks/use-confirm";
+import { orpc } from "@/lib/orpc";
 import { useDOBStore } from "@/lib/ui-states/date-of-bottle-usage";
+import { useModeratorStore } from "@/lib/ui-states/moderator-state";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { CheckCheckIcon, Loader2, SendHorizonal, Undo2 } from "lucide-react";
 import { useEffect } from "react";
+import { toast } from "sonner";
+import { BottleReturnForm } from "./bottle-return-form";
+import { BottleUsageTable } from "./bottle-usage-table";
 
 const formSchema = z.object({
-  dob: z.date(),
   filled_bottles: z.number().min(0),
   caps: z.number().min(0),
 });
@@ -71,21 +50,10 @@ export const BottleUsageForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      dob: dob || new Date(),
       filled_bottles: 0,
       caps: 0,
     },
   });
-
-  // Sync form date changes to Zustand store
-  const form_dob = form.watch("dob");
-  useEffect(() => {
-    // Only update if there's an actual change and form_dob is valid
-    if (form_dob && dob && form_dob.getTime() !== dob.getTime()) {
-      setDOB(form_dob);
-      console.log(`Setting DOB to ${form_dob}`);
-    }
-  }, [form_dob, dob, setDOB]); // Now safe - uses getTime() comparison
 
   const moderator_id = useModeratorStore((state) => state.moderator?.id);
 
@@ -97,7 +65,7 @@ export const BottleUsageForm = () => {
     : ({} as typeof TotalBottles.$inferSelect);
 
   // Use dob from Zustand store instead of form.watch to prevent unnecessary re-renders
-  const currentDob = dob || new Date();
+  const currentDob = dob;
 
   const bottleUsageQuery = useQuery({
     ...orpc.moderator.bottleUsage.getBottleUsage.queryOptions({
@@ -115,7 +83,7 @@ export const BottleUsageForm = () => {
         toast.success("Bottle usage added successfully");
         await queryClient.invalidateQueries({
           queryKey: orpc.moderator.bottleUsage.getBottleUsage.queryKey({
-            input: { id: moderator_id || "", date: form.getValues("dob") },
+            input: { id: moderator_id || "", date: currentDob },
           }),
         });
       },
@@ -146,7 +114,7 @@ export const BottleUsageForm = () => {
 
     const data = {
       moderator_id: moderator_id,
-      dob: values.dob,
+      dob: currentDob,
       filled_bottles: values.filled_bottles,
       caps: values.caps,
     };
@@ -155,11 +123,7 @@ export const BottleUsageForm = () => {
       const response = await bottleUsageMutation.mutateAsync({ ...data });
       console.log({ response });
       // Reset only the filled_bottles and caps fields, keep the date
-      form.reset({
-        dob: form.getValues("dob"), // Keep the current date
-        filled_bottles: 0,
-        caps: 0,
-      });
+      form.reset();
     } catch (error) {
       alert("Failed to update bottle usage");
       console.error({ error });
@@ -172,7 +136,7 @@ export const BottleUsageForm = () => {
         toast.success("Marked successfully");
         await queryClient.invalidateQueries({
           queryKey: orpc.moderator.bottleUsage.getBottleUsage.queryKey({
-            input: { id: moderator_id || "", date: form.getValues("dob") },
+            input: { id: moderator_id || "", date: currentDob },
           }),
         });
       },
@@ -198,7 +162,7 @@ export const BottleUsageForm = () => {
         toast.success("Deleted successfully");
         await queryClient.invalidateQueries({
           queryKey: orpc.moderator.bottleUsage.getBottleUsage.queryKey({
-            input: { id: moderator_id || "", date: form.getValues("dob") },
+            input: { id: moderator_id || "", date: currentDob },
           }),
         });
       },
@@ -215,11 +179,19 @@ export const BottleUsageForm = () => {
     true
   );
 
-  const handleDeleteBottleUsage = async (dob: Date) => {
+  const handleDeleteBottleUsage = async (
+    dob: Date | null,
+    mod_id: string | null
+  ) => {
+    if (!dob || !mod_id) {
+      toast.error("DOB or Moderator ID is unavailable. Refresh and try again.");
+      return;
+    }
+
     const ok = await confirm();
     if (!ok) return;
 
-    await deleteMutation.mutateAsync({ dob });
+    await deleteMutation.mutateAsync({ dob, moderator_id: mod_id });
   };
 
   return (
@@ -236,79 +208,6 @@ export const BottleUsageForm = () => {
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormField
-              control={form.control}
-              name="dob"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Date of bottle-usage</FormLabel>
-                  <div className="flex justify-between items-center gap-2">
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "flex-1 pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() ||
-                            date < new Date(subDays(new Date(), 30))
-                          }
-                          captionLayout="dropdown"
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    {!(field.value < startOfDay(new Date())) ? (
-                      <Button
-                        type="button"
-                        size={"icon"}
-                        variant={"outline"}
-                        onClick={() =>
-                          handleDeleteBottleUsage(form.getValues("dob"))
-                        }
-                      >
-                        <Trash className="size-4 text-rose-500" />
-                      </Button>
-                    ) : (
-                      <Tooltip>
-                        <TooltipTrigger type="button">
-                          <Button
-                            type="button"
-                            size={"icon"}
-                            variant={"outline"}
-                            disabled
-                          >
-                            <Trash className="size-4 text-rose-500" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Cannot delete past records</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    )}
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
             <FormField
               control={form.control}
               name="filled_bottles"

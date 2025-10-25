@@ -7,11 +7,31 @@ import {
 } from "@/components/ui/popover";
 import { useDOBStore } from "@/lib/ui-states/date-of-bottle-usage";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
+import { addHours, format } from "date-fns";
+import { fromZonedTime } from "date-fns-tz";
 import { CalendarIcon } from "lucide-react";
+
+// Set your default timezone here
+export const DEFAULT_TIMEZONE = "UTC"; // Karachi, Pakistan timezone
 
 export const DobSelector = () => {
   const { dob, setDOB } = useDOBStore();
+
+  const handleDateSelect = (date: Date | undefined) => {
+    if (!date) {
+      setDOB(null);
+      return;
+    }
+
+    // Convert the selected date to the specified timezone at midnight
+    const zonedDate =
+      process.env.NODE_ENV === "development"
+        ? date
+        : addHours(fromZonedTime(date, DEFAULT_TIMEZONE), 5);
+    setDOB(zonedDate);
+
+    console.log(`Date selected: ${zonedDate}`);
+  };
 
   return (
     <div className="grid grid-cols-1 justify-center items-center">
@@ -32,7 +52,7 @@ export const DobSelector = () => {
           <Calendar
             mode="single"
             selected={dob || new Date()}
-            onSelect={(date) => setDOB(date || null)}
+            onSelect={handleDateSelect}
             disabled={(date) =>
               date > new Date() || date < new Date("1900-01-01")
             }

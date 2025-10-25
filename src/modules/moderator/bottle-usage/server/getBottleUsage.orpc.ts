@@ -1,4 +1,4 @@
-import { os } from "@orpc/server";
+import { ORPCError, os } from "@orpc/server";
 import { z } from "zod";
 import { BottleUsage } from "@/db/schema";
 import { db } from "@/db";
@@ -6,12 +6,16 @@ import { and, desc, eq, gte, lte } from "drizzle-orm";
 import { endOfDay, startOfDay, subDays } from "date-fns";
 
 export const getBottleUsage = os
-  .input(z.object({ id: z.string(), date: z.date() }))
+  .input(z.object({ id: z.string(), date: z.date().nullable() }))
   .output(z.union([z.custom<typeof BottleUsage.$inferSelect>(), z.null()]))
   .handler(async ({ input }) => {
     if (!input.id) {
-      throw new Error("Moderator ID is missing");
+      throw new ORPCError("BAD_REQUEST: Moderator ID is missing");
     }
+    if (!input.date) {
+      throw new ORPCError("BAD_REQUEST: DOB is not provided");
+    }
+
     try {
       // First, try to get today's bottle usage
       console.log(
@@ -93,7 +97,7 @@ export const getBottleUsage = os
       console.error("Error fetching bottle usage:", error);
       // Re-throw the error so React Query can handle it properly
       // This allows you to distinguish between errors and null data in your UI
-      throw new Error(
+      throw new ORPCError(
         `Failed to fetch bottle usage for moderator ${input.id}: ${
           error instanceof Error ? error.message : "Unknown error"
         }`

@@ -10,6 +10,7 @@ export const deleteBottleUsage = os
   .input(
     z.object({
       dob: z.date(),
+      moderator_id: z.string(),
     })
   )
   .output(z.void())
@@ -19,6 +20,7 @@ export const deleteBottleUsage = os
       .from(BottleUsage)
       .where(
         and(
+          eq(BottleUsage.moderator_id, input.moderator_id),
           gte(BottleUsage.createdAt, startOfDay(input.dob)),
           lte(BottleUsage.createdAt, endOfDay(input.dob))
         )

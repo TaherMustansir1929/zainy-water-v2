@@ -10,11 +10,15 @@ export const markAsDone = os
     z.object({
       id: z.string(),
       done: z.boolean(),
-      dob: z.date(),
+      dob: z.date().nullable(),
     })
   )
   .output(z.void())
   .handler(async ({ input }) => {
+    if (!input.dob) {
+      throw new ORPCError("BAD_REQUEST: DOB is not provided");
+    }
+
     const [bottleUsage] = await db
       .select()
       .from(BottleUsage)
