@@ -10,4 +10,6 @@ export const dev_emails = [
   "taher.mustansir5253@gmail.com",
 ];
 
-export const DEFAULT_TIMEZONE = "Asia/Karachi";
+// Timezone offset in hours for Asia/Karachi (GMT+5)
+// Only applied in production, not in development
+export const TIME_OFFSET = process.env.NODE_ENV === "production" ? 5 : 0;

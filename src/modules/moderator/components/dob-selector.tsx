@@ -10,23 +10,8 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 
-// Set your default timezone here
-// const DEFAULT_TIMEZONE = "UTC"; // Karachi, Pakistan timezone
-
 export const DobSelector = () => {
   const { dob, setDOB } = useDOBStore();
-
-  const handleDateSelect = (date: Date | undefined) => {
-    if (!date) {
-      setDOB(null);
-      return;
-    }
-
-    // Convert the selected date to the specified timezone at midnight
-    const zonedDate = date;
-
-    console.log(`Date selected: ${zonedDate}`);
-  };
 
   return (
     <div className="grid grid-cols-1 justify-center items-center">
@@ -47,7 +32,7 @@ export const DobSelector = () => {
           <Calendar
             mode="single"
             selected={dob || new Date()}
-            onSelect={handleDateSelect}
+            onSelect={(date) => setDOB(date || null)}
             disabled={(date) =>
               date > new Date() || date < new Date("1900-01-01")
             }

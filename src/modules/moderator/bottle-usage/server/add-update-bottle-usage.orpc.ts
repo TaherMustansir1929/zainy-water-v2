@@ -3,10 +3,9 @@ import { z } from "zod";
 import { db } from "@/db";
 import { BottleUsage, TotalBottles } from "@/db/schema";
 import { and, desc, eq, gte, lte } from "drizzle-orm";
-import { endOfDay, startOfDay } from "date-fns";
-import { toZonedTime } from "date-fns-tz";
+import { endOfDay, startOfDay, addHours } from "date-fns";
 import { format } from "date-fns";
-import { DEFAULT_TIMEZONE } from "@/lib/utils";
+import { TIME_OFFSET } from "@/lib/utils";
 
 export const addUpdateBottleUsage = os
   .input(
@@ -33,8 +32,9 @@ export const addUpdateBottleUsage = os
       throw new ORPCError("BAD_REQUEST: DOB is not provided");
     }
 
-    // Convert the incoming date to Asia/Karachi timezone
-    const tz_date = toZonedTime(input.dob, DEFAULT_TIMEZONE);
+    // Shift the time range by TIME_OFFSET hours to account for GMT+5 (Karachi timezone) in production
+    const from = addHours(startOfDay(input.dob), TIME_OFFSET);
+    const to = addHours(endOfDay(input.dob), TIME_OFFSET);
 
     const [total_bottles] = await db
       .select()
@@ -57,24 +57,24 @@ export const addUpdateBottleUsage = os
       .where(
         and(
           eq(BottleUsage.moderator_id, input.moderator_id),
-          lte(BottleUsage.createdAt, endOfDay(tz_date)),
-          gte(BottleUsage.createdAt, startOfDay(tz_date))
+          lte(BottleUsage.createdAt, to),
+          gte(BottleUsage.createdAt, from)
         )
       )
       .limit(1);
 
     if (!bottleUsage) {
       console.log(
-        `No existing bottle usage found for moderator ${input.moderator_id} on ${format(tz_date, "PPP")}`
+        `No existing bottle usage found for moderator ${input.moderator_id} on ${format(input.dob, "PPP")}`
       );
       throw new ORPCError(
-        `No existing bottle usage found for ${format(tz_date, "PPP")}`
+        `No existing bottle usage found for ${format(input.dob, "PPP")}`
       );
     }
 
     if (bottleUsage?.done) {
       throw new ORPCError(
-        `Bottle usage for ${format(tz_date, "PPP")} is already marked as done`
+        `Bottle usage for ${format(input.dob, "PPP")} is already marked as done`
       );
     }
 

@@ -3,9 +3,8 @@ import { z } from "zod";
 import { BottleUsage } from "@/db/schema";
 import { db } from "@/db";
 import { and, desc, eq, gte, lte } from "drizzle-orm";
-import { endOfDay, startOfDay, subDays } from "date-fns";
-import { toZonedTime } from "date-fns-tz";
-import { DEFAULT_TIMEZONE } from "@/lib/utils";
+import { endOfDay, startOfDay, subDays, addHours } from "date-fns";
+import { TIME_OFFSET } from "@/lib/utils";
 
 export const getBottleUsage = os
   .input(z.object({ id: z.string(), date: z.date().nullable() }))
@@ -18,22 +17,21 @@ export const getBottleUsage = os
       throw new ORPCError("BAD_REQUEST: DOB is not provided");
     }
 
-    // Convert the incoming date to Asia/Karachi timezone
-    const tz_date = toZonedTime(input.date, DEFAULT_TIMEZONE);
+    // Shift the time range by TIME_OFFSET hours to account for GMT+5 (Karachi timezone) in production
+    const from = addHours(startOfDay(input.date), TIME_OFFSET);
+    const to = addHours(endOfDay(input.date), TIME_OFFSET);
 
     try {
       // First, try to get today's bottle usage
-      console.log(
-        `Fetching bottle-usage record:\nFrom: ${startOfDay(tz_date)} \nTo: ${endOfDay(tz_date)}`
-      );
+      console.log(`Fetching bottle-usage record:\nFrom: ${from} \nTo: ${to}`);
       const [bottleUsage] = await db
         .select()
         .from(BottleUsage)
         .where(
           and(
             eq(BottleUsage.moderator_id, input.id),
-            gte(BottleUsage.createdAt, startOfDay(tz_date)),
-            lte(BottleUsage.createdAt, endOfDay(tz_date))
+            gte(BottleUsage.createdAt, from),
+            lte(BottleUsage.createdAt, to)
           )
         )
         .orderBy(desc(BottleUsage.createdAt))
@@ -45,14 +43,20 @@ export const getBottleUsage = os
 
       // If no record exists for today, create one
       // First get the most recent bottle usage to carry over remaining bottles
+      const prevFrom = addHours(
+        startOfDay(subDays(input.date, 1)),
+        TIME_OFFSET
+      );
+      const prevTo = addHours(endOfDay(subDays(input.date, 1)), TIME_OFFSET);
+
       const [previousBottleUsage] = await db
         .select()
         .from(BottleUsage)
         .where(
           and(
             eq(BottleUsage.moderator_id, input.id),
-            gte(BottleUsage.createdAt, startOfDay(subDays(tz_date, 1))),
-            lte(BottleUsage.createdAt, endOfDay(subDays(tz_date, 1)))
+            gte(BottleUsage.createdAt, prevFrom),
+            lte(BottleUsage.createdAt, prevTo)
           )
         )
         .limit(1);
@@ -66,7 +70,7 @@ export const getBottleUsage = os
             filled_bottles: 0,
             empty_bottles: previousBottleUsage?.empty_bottles ?? 0,
             remaining_bottles: previousBottleUsage?.remaining_bottles ?? 0,
-            createdAt: tz_date,
+            createdAt: from,
           })
           .returning();
 
@@ -84,8 +88,8 @@ export const getBottleUsage = os
           .where(
             and(
               eq(BottleUsage.moderator_id, input.id),
-              gte(BottleUsage.createdAt, startOfDay(tz_date)),
-              lte(BottleUsage.createdAt, endOfDay(tz_date))
+              gte(BottleUsage.createdAt, from),
+              lte(BottleUsage.createdAt, to)
             )
           )
           .orderBy(desc(BottleUsage.createdAt))

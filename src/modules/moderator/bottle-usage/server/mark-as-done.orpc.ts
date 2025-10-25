@@ -1,11 +1,10 @@
 import { db } from "@/db";
 import { BottleUsage } from "@/db/schema";
-import { DEFAULT_TIMEZONE } from "@/lib/utils";
 import { ORPCError, os } from "@orpc/server";
-import { endOfDay, startOfDay } from "date-fns";
-import { toZonedTime } from "date-fns-tz";
+import { endOfDay, startOfDay, addHours } from "date-fns";
 import { and, eq, gte, lte } from "drizzle-orm";
 import z from "zod";
+import { TIME_OFFSET } from "@/lib/utils";
 
 export const markAsDone = os
   .input(
@@ -21,8 +20,9 @@ export const markAsDone = os
       throw new ORPCError("BAD_REQUEST: DOB is not provided");
     }
 
-    // Convert the incoming date to Asia/Karachi timezone
-    const tz_date = toZonedTime(input.dob, DEFAULT_TIMEZONE);
+    // Shift the time range by TIME_OFFSET hours to account for GMT+5 (Karachi timezone) in production
+    const from = addHours(startOfDay(input.dob), TIME_OFFSET);
+    const to = addHours(endOfDay(input.dob), TIME_OFFSET);
 
     const [bottleUsage] = await db
       .select()
@@ -30,8 +30,8 @@ export const markAsDone = os
       .where(
         and(
           eq(BottleUsage.moderator_id, input.id),
-          gte(BottleUsage.createdAt, startOfDay(tz_date)),
-          lte(BottleUsage.createdAt, endOfDay(tz_date))
+          gte(BottleUsage.createdAt, from),
+          lte(BottleUsage.createdAt, to)
         )
       );
 
