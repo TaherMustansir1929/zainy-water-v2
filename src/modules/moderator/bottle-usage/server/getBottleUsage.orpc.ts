@@ -14,6 +14,9 @@ export const getBottleUsage = os
     }
     try {
       // First, try to get today's bottle usage
+      console.log(
+        `Fetching bottle-usage record:\nFrom: ${startOfDay(input.date)} \nTo: ${endOfDay(input.date)}`
+      );
       const [bottleUsage] = await db
         .select()
         .from(BottleUsage)

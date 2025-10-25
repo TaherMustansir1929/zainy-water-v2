@@ -54,58 +54,43 @@ export const addUpdateBottleUsage = os
       )
       .limit(1);
 
+    if (!bottleUsage) {
+      console.log(
+        `No existing bottle usage found for moderator ${input.moderator_id} on ${format(input.dob, "PPP")}`
+      );
+      throw new ORPCError(
+        `No existing bottle usage found for ${format(input.dob, "PPP")}`
+      );
+    }
+
     if (bottleUsage?.done) {
       throw new ORPCError(
         `Bottle usage for ${format(input.dob, "PPP")} is already marked as done`
       );
     }
 
-    if (!!bottleUsage) {
-      await db.transaction(async (tx) => {
-        await Promise.all([
-          tx
-            .update(BottleUsage)
-            .set({
-              filled_bottles: bottleUsage.filled_bottles + input.filled_bottles,
-              remaining_bottles:
-                bottleUsage.remaining_bottles + input.filled_bottles,
-              caps: bottleUsage.caps + input.caps,
-            })
-            .where(eq(BottleUsage.id, bottleUsage.id)),
+    await db.transaction(async (tx) => {
+      await Promise.all([
+        tx
+          .update(BottleUsage)
+          .set({
+            filled_bottles: bottleUsage.filled_bottles + input.filled_bottles,
+            remaining_bottles:
+              bottleUsage.remaining_bottles + input.filled_bottles,
+            caps: bottleUsage.caps + input.caps,
+          })
+          .where(eq(BottleUsage.id, bottleUsage.id)),
 
-          tx
-            .update(TotalBottles)
-            .set({
-              available_bottles:
-                total_bottles.available_bottles - input.filled_bottles,
-              used_bottles: total_bottles.used_bottles + input.filled_bottles,
-            })
-            .where(eq(TotalBottles.id, total_bottles.id)),
-        ]);
-      });
+        tx
+          .update(TotalBottles)
+          .set({
+            available_bottles:
+              total_bottles.available_bottles - input.filled_bottles,
+            used_bottles: total_bottles.used_bottles + input.filled_bottles,
+          })
+          .where(eq(TotalBottles.id, total_bottles.id)),
+      ]);
+    });
 
-      return { success: true };
-    } else {
-      await db.transaction(async (tx) => {
-        await Promise.all([
-          tx.insert(BottleUsage).values({
-            moderator_id: input.moderator_id,
-            filled_bottles: input.filled_bottles,
-            remaining_bottles: input.filled_bottles,
-            caps: input.caps,
-          }),
-
-          tx
-            .update(TotalBottles)
-            .set({
-              available_bottles:
-                total_bottles.available_bottles - input.filled_bottles,
-              used_bottles: total_bottles.used_bottles + input.filled_bottles,
-            })
-            .where(eq(TotalBottles.id, total_bottles.id)),
-        ]);
-      });
-
-      return { success: true };
-    }
+    return { success: true };
   });
