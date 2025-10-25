@@ -13,7 +13,10 @@ import { Metadata } from "next";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Admin - Zainy Water",
+  title:
+    process.env.NODE_ENV === "production"
+      ? "Admin - Zainy Water"
+      : "(Dev) Admin - Zainy Water",
   description: "Admin layout for Zainy Water",
 };
 

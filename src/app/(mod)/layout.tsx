@@ -3,7 +3,10 @@ import { ModHeader } from "@/modules/moderator/components/mod-header";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Moderator - Zainy Water",
+  title:
+    process.env.NODE_ENV === "production"
+      ? "Moderator - Zainy Water"
+      : "(Dev) Moderator - Zainy Water",
   description: "Moderator layout for Zainy Water",
 };
 
