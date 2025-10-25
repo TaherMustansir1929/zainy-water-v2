@@ -1,7 +1,10 @@
 import { db } from "@/db";
 import { BottleUsage, TotalBottles } from "@/db/schema";
-import { os } from "@orpc/server";
-import { desc, eq } from "drizzle-orm";
+import { DEFAULT_TIMEZONE } from "@/lib/utils";
+import { ORPCError, os } from "@orpc/server";
+import { endOfDay, startOfDay } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
+import { and, desc, eq, gte, lte } from "drizzle-orm";
 import z from "zod";
 
 export const returnBottleUsage = os
@@ -13,6 +16,7 @@ export const returnBottleUsage = os
         .number()
         .min(0, "Remaining bottles must be non-negative"),
       caps: z.number().min(0, "Caps must be non-negative"),
+      dob: z.date().nullable(),
     })
   )
   .output(z.void())
@@ -35,10 +39,23 @@ export const returnBottleUsage = os
     },
   })
   .handler(async ({ input, errors }) => {
+    if (!input.dob) {
+      throw new ORPCError("BAD_REQUEST: DOB is not provided");
+    }
+
+    // Convert the incoming date to Asia/Karachi timezone
+    const tz_date = toZonedTime(input.dob, DEFAULT_TIMEZONE);
+
     const [bottleUsage] = await db
       .select()
       .from(BottleUsage)
-      .where(eq(BottleUsage.moderator_id, input.moderator_id))
+      .where(
+        and(
+          eq(BottleUsage.moderator_id, input.moderator_id),
+          gte(BottleUsage.createdAt, startOfDay(tz_date)),
+          lte(BottleUsage.createdAt, endOfDay(tz_date))
+        )
+      )
       .orderBy(desc(BottleUsage.createdAt))
       .limit(1);
 

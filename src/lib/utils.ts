@@ -9,3 +9,5 @@ export const dev_emails = [
   "aliasgharm184@gmail.com",
   "taher.mustansir5253@gmail.com",
 ];
+
+export const DEFAULT_TIMEZONE = "Asia/Karachi";

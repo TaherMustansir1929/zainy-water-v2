@@ -4,6 +4,8 @@ import { BottleUsage } from "@/db/schema";
 import { db } from "@/db";
 import { and, desc, eq, gte, lte } from "drizzle-orm";
 import { endOfDay, startOfDay, subDays } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
+import { DEFAULT_TIMEZONE } from "@/lib/utils";
 
 export const getBottleUsage = os
   .input(z.object({ id: z.string(), date: z.date().nullable() }))
@@ -16,10 +18,13 @@ export const getBottleUsage = os
       throw new ORPCError("BAD_REQUEST: DOB is not provided");
     }
 
+    // Convert the incoming date to Asia/Karachi timezone
+    const tz_date = toZonedTime(input.date, DEFAULT_TIMEZONE);
+
     try {
       // First, try to get today's bottle usage
       console.log(
-        `Fetching bottle-usage record:\nFrom: ${startOfDay(input.date)} \nTo: ${endOfDay(input.date)}`
+        `Fetching bottle-usage record:\nFrom: ${startOfDay(tz_date)} \nTo: ${endOfDay(tz_date)}`
       );
       const [bottleUsage] = await db
         .select()
@@ -27,8 +32,8 @@ export const getBottleUsage = os
         .where(
           and(
             eq(BottleUsage.moderator_id, input.id),
-            gte(BottleUsage.createdAt, startOfDay(input.date)),
-            lte(BottleUsage.createdAt, endOfDay(input.date))
+            gte(BottleUsage.createdAt, startOfDay(tz_date)),
+            lte(BottleUsage.createdAt, endOfDay(tz_date))
           )
         )
         .orderBy(desc(BottleUsage.createdAt))
@@ -46,8 +51,8 @@ export const getBottleUsage = os
         .where(
           and(
             eq(BottleUsage.moderator_id, input.id),
-            gte(BottleUsage.createdAt, startOfDay(subDays(input.date, 1))),
-            lte(BottleUsage.createdAt, endOfDay(subDays(input.date, 1)))
+            gte(BottleUsage.createdAt, startOfDay(subDays(tz_date, 1))),
+            lte(BottleUsage.createdAt, endOfDay(subDays(tz_date, 1)))
           )
         )
         .limit(1);
@@ -61,7 +66,7 @@ export const getBottleUsage = os
             filled_bottles: 0,
             empty_bottles: previousBottleUsage?.empty_bottles ?? 0,
             remaining_bottles: previousBottleUsage?.remaining_bottles ?? 0,
-            createdAt: input.date,
+            createdAt: tz_date,
           })
           .returning();
 
@@ -79,8 +84,8 @@ export const getBottleUsage = os
           .where(
             and(
               eq(BottleUsage.moderator_id, input.id),
-              gte(BottleUsage.createdAt, startOfDay(input.date)),
-              lte(BottleUsage.createdAt, endOfDay(input.date))
+              gte(BottleUsage.createdAt, startOfDay(tz_date)),
+              lte(BottleUsage.createdAt, endOfDay(tz_date))
             )
           )
           .orderBy(desc(BottleUsage.createdAt))

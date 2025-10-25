@@ -23,7 +23,13 @@ import { orpc } from "@/lib/orpc";
 import { useDOBStore } from "@/lib/ui-states/date-of-bottle-usage";
 import { useModeratorStore } from "@/lib/ui-states/moderator-state";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CheckCheckIcon, Loader2, SendHorizonal, Undo2 } from "lucide-react";
+import {
+  CheckCheckIcon,
+  Loader2,
+  SendHorizonal,
+  Trash,
+  Undo2,
+} from "lucide-react";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { BottleReturnForm } from "./bottle-return-form";
@@ -181,7 +187,7 @@ export const BottleUsageForm = () => {
 
   const handleDeleteBottleUsage = async (
     dob: Date | null,
-    mod_id: string | null
+    mod_id: string | undefined
   ) => {
     if (!dob || !mod_id) {
       toast.error("DOB or Moderator ID is unavailable. Refresh and try again.");
@@ -260,18 +266,29 @@ export const BottleUsageForm = () => {
               )}
             />
 
-            <Button
-              disabled={submitting}
-              type="submit"
-              className="w-full bg-primary disabled:opacity-100 disabled:hover:cursor-not-allowed shadow-lg shadow-blue-300/40 hover:shadow-xl hover:shadow-blue-400/50 font-bold"
-            >
-              Submit
-              {submitting ? (
-                <Loader2 className="animate-spin" />
-              ) : (
-                <SendHorizonal className="size-4" />
-              )}
-            </Button>
+            <div className="flex gap-4 items-center justify-between">
+              <Button
+                disabled={submitting}
+                type="submit"
+                className="flex-1 bg-primary disabled:opacity-100 disabled:hover:cursor-not-allowed shadow-lg shadow-blue-300/40 hover:shadow-xl hover:shadow-blue-400/50 font-bold"
+              >
+                Submit
+                {submitting ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  <SendHorizonal className="size-4" />
+                )}
+              </Button>
+
+              <Button
+                type="button"
+                variant={"destructive"}
+                size={"icon"}
+                onClick={() => handleDeleteBottleUsage(dob, moderator_id)}
+              >
+                <Trash className="size-4" />
+              </Button>
+            </div>
           </form>
         </Form>
 

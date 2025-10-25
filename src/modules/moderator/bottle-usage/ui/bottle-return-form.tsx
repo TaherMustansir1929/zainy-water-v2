@@ -19,6 +19,7 @@ import { useModeratorStore } from "@/lib/ui-states/moderator-state";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { orpc } from "@/lib/orpc";
+import { useDOBStore } from "@/lib/ui-states/date-of-bottle-usage";
 
 const formSchema = z.object({
   empty_bottles: z.number().min(0),
@@ -37,6 +38,7 @@ export const BottleReturnForm = () => {
   });
 
   const moderator_id = useModeratorStore((state) => state.moderator?.id);
+  const dob = useDOBStore((state) => state.dob);
 
   const queryClient = useQueryClient();
   const bottleReturnMutation = useMutation(
@@ -49,7 +51,7 @@ export const BottleReturnForm = () => {
           }),
           queryClient.invalidateQueries({
             queryKey: orpc.moderator.bottleUsage.getBottleUsage.queryKey({
-              input: { id: moderator_id },
+              input: { id: moderator_id!, date: dob },
             }),
           }),
         ]);
@@ -70,8 +72,9 @@ export const BottleReturnForm = () => {
     }
 
     await bottleReturnMutation.mutateAsync({
-      moderator_id,
       ...values,
+      moderator_id,
+      dob,
     });
 
     form.reset();
