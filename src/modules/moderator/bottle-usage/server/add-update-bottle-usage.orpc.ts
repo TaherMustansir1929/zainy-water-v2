@@ -33,8 +33,8 @@ export const addUpdateBottleUsage = os
     }
 
     // Shift the time range by TIME_OFFSET hours to account for GMT+5 (Karachi timezone) in production
-    const from = addHours(startOfDay(input.dob), TIME_OFFSET);
-    const to = addHours(endOfDay(input.dob), TIME_OFFSET);
+    const from = input.dob;
+    const to = endOfDay(input.dob);
 
     const [total_bottles] = await db
       .select()

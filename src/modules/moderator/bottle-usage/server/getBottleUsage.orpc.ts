@@ -18,8 +18,8 @@ export const getBottleUsage = os
     }
 
     // Shift the time range by TIME_OFFSET hours to account for GMT+5 (Karachi timezone) in production
-    const from = addHours(startOfDay(input.date), TIME_OFFSET);
-    const to = addHours(endOfDay(input.date), TIME_OFFSET);
+    const from = startOfDay(input.date);
+    const to = endOfDay(input.date);
 
     try {
       // First, try to get today's bottle usage
@@ -43,11 +43,8 @@ export const getBottleUsage = os
 
       // If no record exists for today, create one
       // First get the most recent bottle usage to carry over remaining bottles
-      const prevFrom = addHours(
-        startOfDay(subDays(input.date, 1)),
-        TIME_OFFSET
-      );
-      const prevTo = addHours(endOfDay(subDays(input.date, 1)), TIME_OFFSET);
+      const prevFrom = startOfDay(subDays(input.date, 1));
+      const prevTo = endOfDay(subDays(input.date, 1));
 
       const [previousBottleUsage] = await db
         .select()
