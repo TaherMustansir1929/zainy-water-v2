@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { redirect } from "next/navigation";
-import { client } from "@/lib/orpc";
+import { client } from "@/lib/orpc.server";
 
 // Force dynamic rendering for this page
 export const dynamic = "force-dynamic";

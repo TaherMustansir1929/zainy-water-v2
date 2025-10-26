@@ -11,14 +11,14 @@ import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { Atom } from "react-loading-indicators";
 import { CustomerInformationMainSection } from "@/modules/admin/customer-information/ui/customer-info-main-section";
-import { orpc } from "@/lib/orpc";
+import { orpc } from "@/lib/orpc.server";
 
 export default async function CustomerInformationPage() {
   const queryClient = new QueryClient();
 
   await Promise.all([
     queryClient.prefetchQuery(
-      orpc.admin.customerInfo.getAllCustomers.queryOptions(),
+      orpc.admin.customerInfo.getAllCustomers.queryOptions()
     ),
   ]);
 

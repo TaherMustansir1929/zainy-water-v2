@@ -1,5 +1,5 @@
 import ErrorState from "@/components/hydration-states/error-state";
-import { orpc } from "@/lib/orpc";
+import { orpc } from "@/lib/orpc.server";
 import { WelcomeSection } from "@/modules/admin/components/welcome-section";
 import {
   dehydrate,

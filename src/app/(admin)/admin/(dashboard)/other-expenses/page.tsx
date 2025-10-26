@@ -9,7 +9,7 @@ import ErrorState from "@/components/hydration-states/error-state";
 import { ErrorBoundary } from "react-error-boundary";
 import { Suspense } from "react";
 import { Atom } from "react-loading-indicators";
-import { orpc } from "@/lib/orpc";
+import { orpc } from "@/lib/orpc.server";
 
 export default async function OtherExpensePage() {
   const queryClient = new QueryClient();

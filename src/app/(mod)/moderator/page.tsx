@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { ModTabs } from "@/modules/moderator/components/mod-tabs";
-import { client } from "@/lib/orpc";
+import { client } from "@/lib/orpc.server";
 
 const OtherExpensePage = async () => {
   const moderator = await client.moderator.auth.modMiddleware();

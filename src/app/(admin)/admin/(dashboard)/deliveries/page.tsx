@@ -11,7 +11,7 @@ import { Atom } from "react-loading-indicators";
 import ErrorState from "@/components/hydration-states/error-state";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { orpc } from "@/lib/orpc";
+import { orpc } from "@/lib/orpc.server";
 
 export default async function DeliveriesPage() {
   const queryClient = new QueryClient();

@@ -1,5 +1,5 @@
 import ErrorState from "@/components/hydration-states/error-state";
-import { orpc } from "@/lib/orpc";
+import { orpc } from "@/lib/orpc.server";
 import { BottleInventoryMainSection } from "@/modules/admin/bottle-inventory/ui/bottle-inventory-main-section";
 import { WelcomeSection } from "@/modules/admin/components/welcome-section";
 import {

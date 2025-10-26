@@ -11,7 +11,9 @@ declare global {
 const link = new RPCLink({
   url: () => {
     if (typeof window === "undefined") {
-      throw new Error("RPCLink is not allowed on the server side.");
+      throw new Error(
+        "RPCLink is not allowed on the server side. Import from '@/lib/orpc.server' instead."
+      );
     }
 
     return `${window.location.origin}/rpc`;
@@ -19,7 +21,8 @@ const link = new RPCLink({
 });
 
 /**
- * Fallback to client-side client if server-side client is not available.
+ * Client-side only ORPC client.
+ * For server-side usage, import from '@/lib/orpc.server' instead.
  */
 export const client: RouterClient<typeof router> =
   globalThis.$client ?? createORPCClient(link);
